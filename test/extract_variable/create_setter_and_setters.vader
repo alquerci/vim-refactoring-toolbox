@@ -1,0 +1,29 @@
+Given php:
+  <?php
+
+  class Foo
+  {
+      private $bar;
+  }
+
+Do:
+  ;sg
+  1\<CR>
+
+Expect:
+  <?php
+
+  class Foo
+  {
+      private $bar;
+
+      public function setBar($bar)
+      {
+  	    $this->bar = $bar;
+      }
+
+      public function getBar()
+      {
+  	    return $this->bar;
+      }
+  }
