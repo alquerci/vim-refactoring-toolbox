@@ -167,10 +167,13 @@ function! PhpCreateSettersAndGetters() " {{{
             call search(s:php_doc_var_type, 'be', line('.'))
 
             " move on first char of the type
-            normal! f@f l
+            normal! f@f lme
+
+            " move on next space or newline
+            call search('\s', 'e')
 
             " copy the type on @x
-            normal! "xy$
+            normal! "xy`e
 
             normal! `z
             call add(l:property, @x)
