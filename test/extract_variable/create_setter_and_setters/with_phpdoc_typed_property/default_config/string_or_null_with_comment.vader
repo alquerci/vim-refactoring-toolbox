@@ -1,0 +1,35 @@
+Given php:
+  <?php
+
+  class Foo
+  {
+      /**
+       * @var string|null foo
+       */
+      private $bar;
+  }
+
+Do:
+  ;sg
+  1\<CR>
+
+Expect:
+  <?php
+
+  class Foo
+  {
+      /**
+       * @var string|null foo
+       */
+      private $bar;
+
+      public function setBar(?string $bar)
+      {
+  	    $this->bar = $bar;
+      }
+
+      public function getBar(): ?string
+      {
+  	    return $this->bar;
+      }
+  }
