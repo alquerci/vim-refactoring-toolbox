@@ -1,0 +1,35 @@
+Given php:
+  <?php
+
+  class Foo
+  {
+      /**
+       * @var int
+       */
+      private $bar;
+  }
+
+Do:
+  ;sg
+  1\<CR>
+
+Expect:
+  <?php
+
+  class Foo
+  {
+      /**
+       * @var int
+       */
+      private $bar;
+
+      public function setBar(int $bar)
+      {
+  	    $this->bar = $bar;
+      }
+
+      public function getBar(): int
+      {
+  	    return $this->bar;
+      }
+  }

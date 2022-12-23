@@ -1,0 +1,33 @@
+Given php:
+  <?php
+
+  class Foo
+  {
+      private $bar;
+  }
+
+Do:
+  :let g:vim_php_refactoring_make_setter_fluent = 1\<CR>
+  ;sg
+  1\<CR>
+  :let g:vim_php_refactoring_make_setter_fluent = 0\<CR>
+
+Expect:
+  <?php
+
+  class Foo
+  {
+      private $bar;
+
+      public function setBar($bar): self
+      {
+  	    $this->bar = $bar;
+  
+  	    return $this;
+      }
+
+      public function getBar()
+      {
+  	    return $this->bar;
+      }
+  }

@@ -98,6 +98,8 @@ let s:php_regex_local_var   = '\$\<\%(this\>\)\@![A-Za-z0-9]*'
 let s:php_regex_assignment  = '+=\|-=\|*=\|/=\|=\~\|!=\|='
 let s:php_regex_fqcn        = '[\\_A-Za-z0-9]*'
 let s:php_regex_cn          = '[_A-Za-z0-9]\+'
+
+let s:php_doc_var_type      = '@var '
 " }}}
 
 " Fluent {{{
@@ -152,10 +154,35 @@ function! PhpCreateSettersAndGetters() " {{{
     let l:properties = []
     while search(s:php_regex_member_line, 'eW') > 0
         normal! w"xye
-        call add(l:properties, @x)
+
+        let l:property = [] " name, type
+        call add(l:property, @x)
+
+        if '/' == trim(getline(line('.') - 1))[-1:]
+            normal! mz
+
+            call s:BackwardOneLine()
+            call s:BackwardOneLine()
+
+            call search(s:php_doc_var_type, 'be', line('.'))
+
+            " move on first char of the type
+            normal! f@f l
+
+            " copy the type on @x
+            normal! "xy$
+
+            normal! `z
+            call add(l:property, @x)
+        endif
+
+        call add(l:properties, l:property)
     endwhile
     for l:property in l:properties
-        let l:camelCaseName = substitute(l:property, '^_\?\(.\)', '\U\1', '')
+        let l:propertyName = l:property[0]
+        let l:propertyType = s:ConvertPHPDocTypeToHint(get(l:property, 1, 'NONE'))
+
+        let l:camelCaseName = substitute(l:propertyName, '^_\?\(.\)', '\U\1', '')
         if g:vim_php_refactoring_auto_validate_sg == 0
             call s:PhpEchoError('Create set' . l:camelCaseName . '() and get' . l:camelCaseName . '()')
             if inputlist(["0. No", "1. Yes"]) == 0
@@ -163,13 +190,28 @@ function! PhpCreateSettersAndGetters() " {{{
             endif
         endif
         if search(s:php_regex_func_line . "set" . l:camelCaseName . '\>', 'n') == 0
-            call s:PhpInsertMethod("public", "set" . l:camelCaseName, ['$' . substitute(l:property, '^_', '', '') ], "$this->" . l:property . " = $" . substitute(l:property, '^_', '', '') . ";\n")
+            let l:argument = '$' . substitute(l:propertyName, '^_', '', '')
+
+            if 'NONE' != l:propertyType
+                let l:argument = l:propertyType . ' ' . l:argument
+            endif
+
             if g:vim_php_refactoring_make_setter_fluent > 0
+                call s:PhpInsertMethodWithSelfReturnHint("public", "set" . l:camelCaseName, [ l:argument ], "$this->" . l:propertyName . " = $" . substitute(l:propertyName, '^_', '', '') . ";\n")
+
                 call s:PhpInsertFluent()
+            else
+                call s:PhpInsertMethod("public", "set" . l:camelCaseName, [l:argument], "$this->" . l:propertyName . " = $" . substitute(l:propertyName, '^_', '', '') . ";\n")
             endif
         endif
         if search(s:php_regex_func_line . "get" . l:camelCaseName . '\>', 'n') == 0
-            call s:PhpInsertMethod("public", "get" . l:camelCaseName, [], "return $this->" . l:property . ";\n")
+            let l:returnHint = ''
+
+            if 'NONE' != l:propertyType
+                let l:returnHint = ': ' . l:propertyType
+            endif
+
+            call s:PhpInsertMethod("public", "get" . l:camelCaseName, [], "return $this->" . l:propertyName . ";\n", l:returnHint)
         endif
     endfor
 endfunction
@@ -288,15 +330,13 @@ function! PhpExtractVariable() " {{{
     let l:needBlankLineAfter = v:false
 
     " line ends with ,
-    while ',' == trim(getline(line('.')))[-1:]
-        " backward one line
-        call cursor(line('.') - 1, 0)
+    while s:CurrentLineEndsWith(',')
+        call s:BackwardOneLine()
     endwhile
 
     " line ends with [
-    if '[' == trim(getline(line('.')))[-1:]
-        " backward one line
-        call cursor(line('.') - 1, 0)
+    if s:CurrentLineEndsWith('[')
+        call s:BackwardOneLine()
     endif
 
     if empty(trim(getline(line('.'))))
@@ -319,7 +359,7 @@ function! PhpExtractVariable() " {{{
     let l:prefixAssign = repeat(' ', l:indentChars).'$'.l:name.' = '
     call append(line('.'), l:prefixAssign)
 
-    " move cursor at the after the equal sign
+    " move cursor after the equal sign
     call cursor(line('.') + 1, 0)
     normal! $
 
@@ -562,11 +602,19 @@ function! s:PhpInsertPropertyExtended(name, visibility, insertLine, emptyLineBef
 endfunction
 " }}}
 
-function! s:PhpInsertMethod(modifiers, name, params, impl) " {{{
+function! s:PhpInsertMethod(modifiers, name, params, impl, returnHint = '') " {{{
     call search(s:php_regex_func_line, 'beW')
     call search('{', 'W')
     exec "normal! %"
-    exec "normal! o\<CR>" . a:modifiers . " function " . a:name . "(" . join(a:params, ", ") . ")\<CR>{\<CR>" . a:impl . "}\<Esc>=a{"
+    exec "normal! o\<CR>" . a:modifiers . " function " . a:name . "(" . join(a:params, ", ") . ")". a:returnHint ."\<CR>{\<CR>" . a:impl . "}\<Esc>=a{"
+endfunction
+" }}}
+
+function! s:PhpInsertMethodWithSelfReturnHint(modifiers, name, params, impl) " {{{
+    call search(s:php_regex_func_line, 'beW')
+    call search('{', 'W')
+    exec "normal! %"
+    exec "normal! o\<CR>" . a:modifiers . " function " . a:name . "(" . join(a:params, ", ") . "): self\<CR>{\<CR>" . a:impl . "}\<Esc>=a{"
 endfunction
 " }}}
 
@@ -658,5 +706,24 @@ function! s:PhpInsertFluent() " {{{
     else
         echoerr 'Invalid option for g:vim_php_refactoring_make_setter_fluent'
     endif
+endfunction
+" }}}
+
+function! s:CurrentLineEndsWith(char) " {{{
+    return a:char == trim(getline(line('.')))[-1:]
+endfunction
+" }}}
+
+function! s:BackwardOneLine() " {{{
+    call cursor(line('.') - 1, 0)
+endfunction
+" }}}
+
+function! s:ConvertPHPDocTypeToHint(docType) " {{{
+    if '|null' == a:docType[-5:]
+        return '?'.a:docType[0:-6]
+    endif
+
+    return a:docType
 endfunction
 " }}}
