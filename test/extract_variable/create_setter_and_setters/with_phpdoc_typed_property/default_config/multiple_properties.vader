@@ -7,10 +7,16 @@ Given php:
        * @var int
        */
       private $bar;
+
+      /**
+       * @var string
+       */
+      private $baz;
   }
 
 Do:
   ;sg
+  1\<CR>
   1\<CR>
 
 Expect:
@@ -23,6 +29,11 @@ Expect:
        */
       private $bar;
 
+      /**
+       * @var string
+       */
+      private $baz;
+
       public function setBar(int $bar)
       {
   	    $this->bar = $bar;
@@ -31,5 +42,15 @@ Expect:
       public function getBar(): int
       {
   	    return $this->bar;
+      }
+
+      public function setBaz(string $baz)
+      {
+  	    $this->baz = $baz;
+      }
+
+      public function getBaz(): string
+      {
+  	    return $this->baz;
       }
   }

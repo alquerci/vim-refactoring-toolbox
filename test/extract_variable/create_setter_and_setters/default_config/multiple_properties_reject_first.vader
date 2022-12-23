@@ -1,0 +1,34 @@
+Given php:
+  <?php
+
+  class Foo
+  {
+      private $bar;
+
+      private $baz;
+  }
+
+Do:
+  ;sg
+  0\<CR>
+  1\<CR>
+
+Expect:
+  <?php
+
+  class Foo
+  {
+      private $bar;
+
+      private $baz;
+
+      public function setBaz($baz)
+      {
+  	    $this->baz = $baz;
+      }
+
+      public function getBaz()
+      {
+  	    return $this->baz;
+      }
+  }
