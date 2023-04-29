@@ -449,14 +449,34 @@ function! PhpExtractMethod() range " {{{
     elseif len(l:outputs) == 1
         call s:writeLn(l:funcIndent.l:outputs[0] . " = $this->" . l:name . "(" . join(l:parameters, ", ") . ");")
 
-        let l:return = "\<CR>\<CR>".l:indent.l:indent."return " . l:outputs[0] . ";"
+        let l:return = "\<CR>\<CR>".l:funcIndent."return " . l:outputs[0] . ";"
     else
         call s:writeLn(l:funcIndent."list(" . join(l:outputs, ", ") . ") = $this->" . l:name . "(" . join(l:parameters, ", ") . ");")
 
-        let l:return = "\<CR>\<CR>".l:indent.l:indent."return array(" . join(l:outputs, ", ") . ");"
+        let l:return = "\<CR>\<CR>".l:funcIndent."return array(" . join(l:outputs, ", ") . ");"
     endif
+
+    call s:PhpMoveEndOfFunction()
     call s:PhpInsertMultiLineMethod(l:visibility, l:name, l:parametersSignature, @x . l:return)
     normal! `r
+endfunction
+" }}}
+
+function! s:PhpMoveEndOfFunction() " {{{
+    call search(s:php_regex_func_line, 'beW')
+    call search('{', 'W')
+    call searchpair('{', '', '}', 'W')
+endfunction
+" }}}
+
+function! s:PhpInsertMultiLineMethod(modifiers, name, params, impl, returnHint = '') " {{{
+    let l:indent = s:detectIntentation()
+
+    call s:writeLn('')
+    call s:writeLn(l:indent . a:modifiers . " function " . a:name . "(" . join(a:params, ", ") . ")". a:returnHint)
+    call s:writeLn(l:indent . '{')
+    exec "normal! o" . a:impl
+    call s:writeLn(l:indent . '}')
 endfunction
 " }}}
 
@@ -614,26 +634,6 @@ function! s:PhpInsertPropertyExtended(name, visibility, insertLine, emptyLineBef
     call append(a:insertLine + a:emptyLineBefore + 2, '*/')
     call append(a:insertLine + a:emptyLineBefore + 3, a:visibility . " $" . a:name . ';')
     normal! j=5=
-endfunction
-" }}}
-
-function! s:PhpInsertMultiLineMethod(modifiers, name, params, impl, returnHint = '') " {{{
-    call s:PhpMoveEndOfFunction()
-
-    let l:indent = s:detectIntentation()
-
-    call s:writeLn('')
-    call s:writeLn(l:indent . a:modifiers . " function " . a:name . "(" . join(a:params, ", ") . ")". a:returnHint)
-    call s:writeLn(l:indent . '{')
-    exec "normal! o" . a:impl . "\<Esc>=a"
-    call s:writeLn(l:indent . '}')
-endfunction
-" }}}
-
-function! s:PhpMoveEndOfFunction() " {{{
-    call search(s:php_regex_func_line, 'beW')
-    call search('{', 'W')
-    call searchpair('{', '', '}', 'W')
 endfunction
 " }}}
 
