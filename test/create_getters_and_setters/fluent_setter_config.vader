@@ -21,13 +21,13 @@ Expect:
 
       public function setBar($bar): self
       {
-  	    $this->bar = $bar;
-  
-  	    return $this;
+          $this->bar = $bar;
+
+          return $this;
       }
 
       public function getBar()
       {
-  	    return $this->bar;
+          return $this->bar;
       }
   }

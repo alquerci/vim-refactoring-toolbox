@@ -19,11 +19,11 @@ Expect:
 
       public function setBar($bar)
       {
-  	    $this->bar = $bar;
+          $this->bar = $bar;
       }
 
       public function getBar()
       {
-  	    return $this->bar;
+          return $this->bar;
       }
   }

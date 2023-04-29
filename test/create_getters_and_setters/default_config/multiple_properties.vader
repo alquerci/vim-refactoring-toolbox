@@ -24,21 +24,21 @@ Expect:
 
       public function setBar($bar)
       {
-  	    $this->bar = $bar;
+          $this->bar = $bar;
       }
 
       public function getBar()
       {
-  	    return $this->bar;
+          return $this->bar;
       }
 
       public function setBaz($baz)
       {
-  	    $this->baz = $baz;
+          $this->baz = $baz;
       }
 
       public function getBaz()
       {
-  	    return $this->baz;
+          return $this->baz;
       }
   }

@@ -143,7 +143,7 @@ function! PhpCreateGetters() " {{{
             endif
         endif
         if search(s:php_regex_func_line . "get" . l:camelCaseName . '\>', 'n') == 0
-            call s:PhpInsertMethod("public", "get" . l:camelCaseName, [], "return $this->" . l:property . ";\n")
+            call s:PhpInsertMethod("public", "get" . l:camelCaseName, [], "return $this->" . l:property . ";")
         endif
     endfor
 endfunction
@@ -201,11 +201,9 @@ function! PhpCreateSettersAndGetters() " {{{
             endif
 
             if g:vim_php_refactoring_make_setter_fluent > 0
-                call s:PhpInsertMethodWithSelfReturnHint("public", "set" . l:camelCaseName, [ l:argument ], "$this->" . l:propertyName . " = $" . substitute(l:propertyName, '^_', '', '') . ";\n")
-
-                call s:PhpInsertFluent()
+                call s:PhpInsertMethodWithSelfReturnHint("public", "set" . l:camelCaseName, [ l:argument ], "$this->" . l:propertyName . " = $" . substitute(l:propertyName, '^_', '', '') . ";")
             else
-                call s:PhpInsertMethod("public", "set" . l:camelCaseName, [l:argument], "$this->" . l:propertyName . " = $" . substitute(l:propertyName, '^_', '', '') . ";\n")
+                call s:PhpInsertMethod("public", "set" . l:camelCaseName, [l:argument], "$this->" . l:propertyName . " = $" . substitute(l:propertyName, '^_', '', '') . ";")
             endif
         endif
         if search(s:php_regex_func_line . "get" . l:camelCaseName . '\>', 'n') == 0
@@ -215,7 +213,7 @@ function! PhpCreateSettersAndGetters() " {{{
                 let l:returnHint = ': ' . l:propertyType
             endif
 
-            call s:PhpInsertMethod("public", "get" . l:camelCaseName, [], "return $this->" . l:propertyName . ";\n", l:returnHint)
+            call s:PhpInsertMethod("public", "get" . l:camelCaseName, [], "return $this->" . l:propertyName . ";", l:returnHint)
         endif
     endfor
 endfunction
@@ -443,10 +441,10 @@ function! PhpExtractMethod() range " {{{
         let l:return = ''
     elseif len(l:output) == 1
         exec "normal! O" . l:output[0] . " = $this->" . l:name . "(" . join(l:parameters, ", ") . ");\<ESC>=3="
-        let l:return = "return " . l:output[0] . ";\<CR>"
+        let l:return = "return " . l:output[0] . ";"
     else
         exec "normal! Olist(" . join(l:output, ", ") . ") = $this->" . l:name . "(" . join(l:parameters, ", ") . ");\<ESC>=3="
-        let l:return = "return array(" . join(l:output, ", ") . ");\<CR>"
+        let l:return = "return array(" . join(l:output, ", ") . ");"
     endif
     call s:PhpInsertMethod(l:visibility, l:name, l:parametersSignature, @x . l:return)
     normal! `r
@@ -607,18 +605,61 @@ endfunction
 " }}}
 
 function! s:PhpInsertMethod(modifiers, name, params, impl, returnHint = '') " {{{
-    call search(s:php_regex_func_line, 'beW')
-    call search('{', 'W')
-    exec "normal! %"
-    exec "normal! o\<CR>" . a:modifiers . " function " . a:name . "(" . join(a:params, ", ") . ")". a:returnHint ."\<CR>{\<CR>" . a:impl . "}\<Esc>=a{"
+    let l:indent = s:detectIntentation()
+
+    call s:PhpMoveEndOfClass()
+
+    call s:writeLn('')
+    call s:writeLn(l:indent . a:modifiers . " function " . a:name . "(" . join(a:params, ", ") . ")". a:returnHint)
+    call s:writeLn(l:indent . '{')
+    call s:writeLn(l:indent . l:indent . a:impl)
+    call s:writeLn(l:indent . '}')
 endfunction
 " }}}
 
 function! s:PhpInsertMethodWithSelfReturnHint(modifiers, name, params, impl) " {{{
-    call search(s:php_regex_func_line, 'beW')
+    let l:indent = s:detectIntentation()
+
+    call s:PhpMoveEndOfClass()
+
+    call s:writeLn('')
+    call s:writeLn(l:indent . a:modifiers . " function " . a:name . "(" . join(a:params, ", ") . "): self")
+    call s:writeLn(l:indent . '{')
+    call s:writeLn(l:indent . l:indent . a:impl)
+    call s:PhpInsertFluent(l:indent.l:indent)
+    call s:writeLn(l:indent . '}')
+endfunction
+" }}}
+"
+function! s:detectIntentation() " {{{
+    call search(s:php_regex_member_line, 'beW')
+    let l:line = getbufline("%", line('.'))[0]
+
+    return substitute(l:line, '\S.*', '', '')
+endfunction
+" }}}
+
+function! s:PhpMoveEndOfClass() " {{{
+    call search(s:php_regex_class_line, 'beW')
     call search('{', 'W')
-    exec "normal! %"
-    exec "normal! o\<CR>" . a:modifiers . " function " . a:name . "(" . join(a:params, ", ") . "): self\<CR>{\<CR>" . a:impl . "}\<Esc>=a{"
+    call searchpair('{', '', '}', 'W')
+    call s:BackwardOneLine()
+endfunction
+" }}}
+
+function! s:PhpInsertFluent(indent) " {{{
+    if g:vim_php_refactoring_make_setter_fluent == 1
+        call s:writeLn('')
+        call s:writeLn(a:indent . 'return $this;')
+    elseif g:vim_php_refactoring_make_setter_fluent == 2
+        call s:PhpEchoError('Make fluent?')
+        if inputlist(["0. No", "1. Yes"]) == 1
+            call s:writeLn('')
+            call s:writeLn(a:indent.'return $this;')
+        endif
+    else
+        echoerr 'Invalid option for g:vim_php_refactoring_make_setter_fluent'
+    endif
 endfunction
 " }}}
 
@@ -699,27 +740,24 @@ function! s:PhpEchoError(message) " {{{
 endfunction
 " }}}
 
-function! s:PhpInsertFluent() " {{{
-    if g:vim_php_refactoring_make_setter_fluent == 1
-        exec s:php_fluent_this
-    elseif g:vim_php_refactoring_make_setter_fluent == 2
-        call s:PhpEchoError('Make fluent?')
-        if inputlist(["0. No", "1. Yes"]) == 1
-            exec s:php_fluent_this
-        endif
-    else
-        echoerr 'Invalid option for g:vim_php_refactoring_make_setter_fluent'
-    endif
-endfunction
-" }}}
-
 function! s:CurrentLineEndsWith(char) " {{{
     return a:char == trim(getline(line('.')))[-1:]
 endfunction
 " }}}
 
+function! s:writeLn(text) " {{{
+    call append(line('.'), a:text)
+    call s:ForwardOneLine()
+endfunction
+" }}}
+
 function! s:BackwardOneLine() " {{{
     call cursor(line('.') - 1, 0)
+endfunction
+" }}}
+
+function! s:ForwardOneLine() " {{{
+    call cursor(line('.') + 1, 0)
 endfunction
 " }}}
 

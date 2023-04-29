@@ -25,11 +25,11 @@ Expect:
 
       public function setBar(?string $bar)
       {
-  	    $this->bar = $bar;
+          $this->bar = $bar;
       }
 
       public function getBar(): ?string
       {
-  	    return $this->bar;
+          return $this->bar;
       }
   }
