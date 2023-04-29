@@ -438,10 +438,12 @@ function! PhpExtractMethod() range " {{{
     normal! `r
     let l:indent = s:detectIntentation()
     if len(l:output) == 0
-        exec "normal! O$this->" . l:name . "(" . join(l:parameters, ", ") . ");\<ESC>k=3="
+        call s:BackwardOneLine()
+        call s:writeLn(l:indent."$this->" . l:name . "(" . join(l:parameters, ", ") . ");")
         let l:return = ''
     elseif len(l:output) == 1
-        exec "normal! O" . l:output[0] . " = $this->" . l:name . "(" . join(l:parameters, ", ") . ");\<ESC>=3="
+        call s:BackwardOneLine()
+        call s:writeLn(l:indent.l:indent.l:output[0] . " = $this->" . l:name . "(" . join(l:parameters, ", ") . ");")
         let l:return = "\<CR>\<CR>".l:indent.l:indent."return " . l:output[0] . ";"
     else
         exec "normal! Olist(" . join(l:output, ", ") . ") = $this->" . l:name . "(" . join(l:parameters, ", ") . ");\<ESC>=3="

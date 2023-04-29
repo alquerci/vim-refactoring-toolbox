@@ -24,6 +24,7 @@ Expect:
   class HelloWorld {
       public function sayHello($firstName = null) {
           $sentence = $this->prepareSentence($firstName);
+
           echo $sentence;
       }
 
