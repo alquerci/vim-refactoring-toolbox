@@ -533,11 +533,13 @@ endfunction
 
 function! s:PhpReplaceInCurrentFunction(search, replace) " {{{
     normal! mr
+
     call search(s:php_regex_func_line, 'bW')
-    let l:startLine = line('.')
     call search('{', 'W')
-    exec "normal! %"
+    let l:startLine = line('.')
+    call searchpair('{', '', '}', 'W')
     let l:stopLine = line('.')
+
     exec l:startLine . ',' . l:stopLine . ':s/' . a:search . '/'. a:replace .'/ge'
     normal! `r
 endfunction
@@ -545,11 +547,13 @@ endfunction
 
 function! s:PhpReplaceInCurrentClass(search, replace) " {{{
     normal! mr
+
     call search(s:php_regex_class_line, 'beW')
     call search('{', 'W')
     let l:startLine = line('.')
-    exec "normal! %"
+    call searchpair('{', '', '}', 'W')
     let l:stopLine = line('.')
+
     exec l:startLine . ',' . l:stopLine . ':s/' . a:search . '/'. a:replace .'/ge'
     normal! `r
 endfunction
