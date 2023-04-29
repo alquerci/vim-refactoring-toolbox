@@ -410,8 +410,10 @@ function! PhpExtractMethod() range " {{{
     endif
     normal! gv"xdmr
     let l:middleLine = line('.')
+
     call search(s:php_regex_func_line, 'bW')
     let l:startLine = line('.')
+
     call search('(', 'W')
     normal! "pyi(
     call search('{', 'W')
