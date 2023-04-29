@@ -449,11 +449,11 @@ function! PhpExtractMethod() range " {{{
     elseif len(l:outputs) == 1
         call s:writeLn(l:funcIndent.l:outputs[0] . " = $this->" . l:name . "(" . join(l:parameters, ", ") . ");")
 
-        let l:return = "\<CR>\<CR>".l:funcIndent."return " . l:outputs[0] . ";"
+        let l:return = "\<CR>".l:funcIndent."return " . l:outputs[0] . ";"
     else
         call s:writeLn(l:funcIndent."list(" . join(l:outputs, ", ") . ") = $this->" . l:name . "(" . join(l:parameters, ", ") . ");")
 
-        let l:return = "\<CR>\<CR>".l:funcIndent."return array(" . join(l:outputs, ", ") . ");"
+        let l:return = "\<CR>".l:funcIndent."return array(" . join(l:outputs, ", ") . ");"
     endif
 
     call s:PhpMoveEndOfFunction()

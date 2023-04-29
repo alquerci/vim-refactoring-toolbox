@@ -13,7 +13,7 @@ Given php:
 
 Do:
   /sayHello\<CR>
-  j0v3\<CR>
+  j0V3\<CR>
   ;em
   prepareSentence\<CR>
   \<CR>
@@ -24,7 +24,6 @@ Expect:
   class HelloWorld {
       public function sayHello($firstName = null) {
           $sentence = $this->prepareSentence($firstName);
-
           echo $sentence;
       }
 
