@@ -2,9 +2,8 @@
 "
 filetype off
 
-set rtp+=vendor/vader.vim
-set rtp+=.
-set rtp+=after
+set runtimepath=vendor/vader.vim
+set runtimepath+=.
 
 filetype plugin on
 filetype indent on

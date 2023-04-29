@@ -181,6 +181,7 @@ function! PhpCreateSettersAndGetters() " {{{
 
         call add(l:properties, l:property)
     endwhile
+
     for l:property in l:properties
         let l:propertyName = l:property[0]
         let l:propertyType = s:ConvertPHPDocTypeToHint(get(l:property, 1, 'NONE'))
