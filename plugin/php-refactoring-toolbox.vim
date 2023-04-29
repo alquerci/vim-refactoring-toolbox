@@ -436,15 +436,16 @@ function! PhpExtractMethod() range " {{{
         endif
     endfor
     normal! `r
+    let l:indent = s:detectIntentation()
     if len(l:output) == 0
         exec "normal! O$this->" . l:name . "(" . join(l:parameters, ", ") . ");\<ESC>k=3="
         let l:return = ''
     elseif len(l:output) == 1
         exec "normal! O" . l:output[0] . " = $this->" . l:name . "(" . join(l:parameters, ", ") . ");\<ESC>=3="
-        let l:return = "\<CR>\<CR>return " . l:output[0] . ";\<CR>"
+        let l:return = "\<CR>\<CR>".l:indent.l:indent."return " . l:output[0] . ";"
     else
         exec "normal! Olist(" . join(l:output, ", ") . ") = $this->" . l:name . "(" . join(l:parameters, ", ") . ");\<ESC>=3="
-        let l:return = "\<CR>\<CR>return array(" . join(l:output, ", ") . ");\<CR>"
+        let l:return = "\<CR>\<CR>".l:indent.l:indent."return array(" . join(l:output, ", ") . ");"
     endif
     call s:PhpInsertMultiLineMethod(l:visibility, l:name, l:parametersSignature, @x . l:return)
     normal! `r
@@ -605,17 +606,29 @@ endfunction
 " }}}
 
 function! s:PhpInsertMultiLineMethod(modifiers, name, params, impl, returnHint = '') " {{{
-   call search(s:php_regex_func_line, 'beW')
-   call search('{', 'W')
-   exec "normal! %"
-   exec "normal! o\<CR>" . a:modifiers . " function " . a:name . "(" . join(a:params, ", ") . ")". a:returnHint ."\<CR>{\<CR>" . a:impl . "}\<Esc>=a{"
+    call s:PhpMoveEndOfFunction()
+
+    let l:indent = s:detectIntentation()
+
+    call s:writeLn('')
+    call s:writeLn(l:indent . a:modifiers . " function " . a:name . "(" . join(a:params, ", ") . ")". a:returnHint)
+    call s:writeLn(l:indent . '{')
+    exec "normal! o" . a:impl . "\<Esc>=a"
+    call s:writeLn(l:indent . '}')
+endfunction
+" }}}
+
+function! s:PhpMoveEndOfFunction() " {{{
+    call search(s:php_regex_func_line, 'beW')
+    call search('{', 'W')
+    call searchpair('{', '', '}', 'W')
 endfunction
 " }}}
 
 function! s:PhpInsertMethod(modifiers, name, params, impl, returnHint = '') " {{{
-    let l:indent = s:detectIntentation()
-
     call s:PhpMoveEndOfClass()
+
+    let l:indent = s:detectIntentation()
 
     call s:writeLn('')
     call s:writeLn(l:indent . a:modifiers . " function " . a:name . "(" . join(a:params, ", ") . ")". a:returnHint)
@@ -626,9 +639,9 @@ endfunction
 " }}}
 
 function! s:PhpInsertMethodWithSelfReturnHint(modifiers, name, params, impl) " {{{
-    let l:indent = s:detectIntentation()
-
     call s:PhpMoveEndOfClass()
+
+    let l:indent = s:detectIntentation()
 
     call s:writeLn('')
     call s:writeLn(l:indent . a:modifiers . " function " . a:name . "(" . join(a:params, ", ") . "): self")
@@ -640,8 +653,17 @@ endfunction
 " }}}
 "
 function! s:detectIntentation() " {{{
-    call search(s:php_regex_member_line, 'beW')
+    " backup position
+    let l:currentline = line('.')
+    let l:currentcol = col('.')
+
+    let l:regex = '\%(' . join([s:php_regex_member_line, s:php_regex_const_line, s:php_regex_func_line], '\)\|\(') .'\)'
+    call search(l:regex, 'beW')
+
     let l:line = getbufline("%", line('.'))[0]
+
+    " restore cursor position
+    call cursor(l:currentline, l:currentcol)
 
     return substitute(l:line, '\S.*', '', '')
 endfunction
