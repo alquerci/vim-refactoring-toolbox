@@ -13,9 +13,9 @@ Given php:
 
 Do:
   /sayHello\<CR>
-  j0V3\<CR>
+  3jV
   ;em
-  prepareSentence\<CR>
+  appendName\<CR>
   \<CR>
 
 Expect:
@@ -23,16 +23,16 @@ Expect:
 
   class HelloWorld {
       public function sayHello($firstName = null) {
-          $sentence = $this->prepareSentence($firstName);
+          $sentence = 'Hello';
+          if ($firstName) {
+              $sentence = $this->appendName($sentence, $firstName);
+          }
           echo $sentence;
       }
 
-      private function prepareSentence($firstName = null)
+      private function appendName($sentence, $firstName = null)
       {
-          $sentence = 'Hello';
-          if ($firstName) {
-              $sentence .= ' ' . $firstName;
-          }
+          $sentence .= ' ' . $firstName;
 
           return $sentence;
       }

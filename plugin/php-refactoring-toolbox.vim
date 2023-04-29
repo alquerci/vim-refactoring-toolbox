@@ -439,25 +439,33 @@ function! PhpExtractMethod() range " {{{
     endfor
     normal! `r
 
-    let l:indent = s:detectIntentation()
-    let l:funcIndent = l:indent.l:indent
+    " add method call
+    let l:currentIndent = substitute(@x, '\S.*', '', '')
     call s:BackwardOneLine()
     if len(l:outputs) == 0
-        call s:writeLn(l:funcIndent."$this->" . l:name . "(" . join(l:parameters, ", ") . ");")
+        call s:writeLn(l:currentIndent."$this->" . l:name . "(" . join(l:parameters, ", ") . ");")
+    elseif len(l:outputs) == 1
+        call s:writeLn(l:currentIndent.l:outputs[0] . " = $this->" . l:name . "(" . join(l:parameters, ", ") . ");")
+    else
+        call s:writeLn(l:currentIndent."list(" . join(l:outputs, ", ") . ") = $this->" . l:name . "(" . join(l:parameters, ", ") . ");")
+    endif
 
+    " add method
+    let l:baseIndent = s:detectIntentation()
+    let l:returnIndent = l:baseIndent.l:baseIndent
+    if len(l:outputs) == 0
         let l:return = ''
     elseif len(l:outputs) == 1
-        call s:writeLn(l:funcIndent.l:outputs[0] . " = $this->" . l:name . "(" . join(l:parameters, ", ") . ");")
-
-        let l:return = "\<CR>".l:funcIndent."return " . l:outputs[0] . ";"
+        let l:return = "\<CR>".l:returnIndent."return " . l:outputs[0] . ";"
     else
-        call s:writeLn(l:funcIndent."list(" . join(l:outputs, ", ") . ") = $this->" . l:name . "(" . join(l:parameters, ", ") . ");")
-
-        let l:return = "\<CR>".l:funcIndent."return array(" . join(l:outputs, ", ") . ");"
+        let l:return = "\<CR>".l:returnIndent."return array(" . join(l:outputs, ", ") . ");"
     endif
 
     call s:PhpMoveEndOfFunction()
-    call s:PhpInsertMultiLineMethod(l:visibility, l:name, l:parametersSignature, @x . l:return)
+
+    let l:methodBody = substitute(@x, '^'.l:currentIndent, l:returnIndent, 'g')
+    let l:methodBody = substitute(l:methodBody, '\n'.l:currentIndent, '\n'.l:returnIndent, 'g')
+    call s:PhpInsertMultiLineMethod(l:visibility, l:name, l:parametersSignature, l:methodBody . l:return)
     normal! `r
 endfunction
 " }}}

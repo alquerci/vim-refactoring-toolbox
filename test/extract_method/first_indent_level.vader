@@ -1,0 +1,45 @@
+Given php:
+  <?php
+
+  class HelloWorld {
+      public function sayHello($firstName = null) {
+          $sentence = 'Hello';
+          if ($firstName) {
+              $sentence .= ' '.$firstName;
+              if ('John' === $firstName) {
+                  $sentence .= ' Doe';
+              }
+          }
+          echo $sentence;
+      }
+  }
+
+Do:
+  /sayHello\<CR>
+  3jV3j
+  ;em
+  appendName\<CR>
+  \<CR>
+
+Expect:
+  <?php
+
+  class HelloWorld {
+      public function sayHello($firstName = null) {
+          $sentence = 'Hello';
+          if ($firstName) {
+              $sentence = $this->appendName($sentence, $firstName);
+          }
+          echo $sentence;
+      }
+
+      private function appendName($sentence, $firstName = null)
+      {
+          $sentence .= ' '.$firstName;
+          if ('John' === $firstName) {
+              $sentence .= ' Doe';
+          }
+
+          return $sentence;
+      }
+  }
