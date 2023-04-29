@@ -441,12 +441,12 @@ function! PhpExtractMethod() range " {{{
         let l:return = ''
     elseif len(l:output) == 1
         exec "normal! O" . l:output[0] . " = $this->" . l:name . "(" . join(l:parameters, ", ") . ");\<ESC>=3="
-        let l:return = "return " . l:output[0] . ";"
+        let l:return = "\<CR>\<CR>return " . l:output[0] . ";\<CR>"
     else
         exec "normal! Olist(" . join(l:output, ", ") . ") = $this->" . l:name . "(" . join(l:parameters, ", ") . ");\<ESC>=3="
-        let l:return = "return array(" . join(l:output, ", ") . ");"
+        let l:return = "\<CR>\<CR>return array(" . join(l:output, ", ") . ");\<CR>"
     endif
-    call s:PhpInsertMethod(l:visibility, l:name, l:parametersSignature, @x . l:return)
+    call s:PhpInsertMultiLineMethod(l:visibility, l:name, l:parametersSignature, @x . l:return)
     normal! `r
 endfunction
 " }}}
@@ -601,6 +601,14 @@ function! s:PhpInsertPropertyExtended(name, visibility, insertLine, emptyLineBef
     call append(a:insertLine + a:emptyLineBefore + 2, '*/')
     call append(a:insertLine + a:emptyLineBefore + 3, a:visibility . " $" . a:name . ';')
     normal! j=5=
+endfunction
+" }}}
+
+function! s:PhpInsertMultiLineMethod(modifiers, name, params, impl, returnHint = '') " {{{
+   call search(s:php_regex_func_line, 'beW')
+   call search('{', 'W')
+   exec "normal! %"
+   exec "normal! o\<CR>" . a:modifiers . " function " . a:name . "(" . join(a:params, ", ") . ")". a:returnHint ."\<CR>{\<CR>" . a:impl . "}\<Esc>=a{"
 endfunction
 " }}}
 

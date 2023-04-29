@@ -1,0 +1,39 @@
+Given php:
+  <?php
+
+  class HelloWorld {
+      public function sayHello($firstName = null) {
+          $sentence = 'Hello';
+          if ($firstName) {
+              $sentence .= ' ' . $firstName;
+          }
+          echo $sentence;
+      }
+  }
+
+Do:
+  /sayHello\<CR>
+  j0v3\<CR>
+  ;em
+  prepareSentence\<CR>
+  \<CR>
+
+Expect:
+  <?php
+
+  class HelloWorld {
+      public function sayHello($firstName = null) {
+          $sentence = $this->prepareSentence($firstName);
+          echo $sentence;
+      }
+
+      private function prepareSentence($firstName = null)
+      {
+          $sentence = 'Hello';
+          if ($firstName) {
+              $sentence .= ' ' . $firstName;
+          }
+
+          return $sentence;
+      }
+  }
