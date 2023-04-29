@@ -421,7 +421,7 @@ function! PhpExtractMethod() range " {{{
     let l:afterExtract  = join(getline(l:middleLine, l:stopLine))
     let l:parameters = []
     let l:parametersSignature = []
-    let l:output = []
+    let l:outputs = []
     for l:var in s:PhpMatchAllStr(@x, s:php_regex_local_var)
         if match(l:beforeExtract, l:var . '\>') > 0
             call add(l:parameters, l:var)
@@ -432,22 +432,26 @@ function! PhpExtractMethod() range " {{{
             endif
         endif
         if match(l:afterExtract, l:var . '\>') > 0
-            call add(l:output, l:var)
+            call add(l:outputs, l:var)
         endif
     endfor
     normal! `r
+
     let l:indent = s:detectIntentation()
-    if len(l:output) == 0
-        call s:BackwardOneLine()
-        call s:writeLn(l:indent."$this->" . l:name . "(" . join(l:parameters, ", ") . ");")
+    let l:funcIndent = l:indent.l:indent
+    call s:BackwardOneLine()
+    if len(l:outputs) == 0
+        call s:writeLn(l:funcIndent."$this->" . l:name . "(" . join(l:parameters, ", ") . ");")
+
         let l:return = ''
-    elseif len(l:output) == 1
-        call s:BackwardOneLine()
-        call s:writeLn(l:indent.l:indent.l:output[0] . " = $this->" . l:name . "(" . join(l:parameters, ", ") . ");")
-        let l:return = "\<CR>\<CR>".l:indent.l:indent."return " . l:output[0] . ";"
+    elseif len(l:outputs) == 1
+        call s:writeLn(l:funcIndent.l:outputs[0] . " = $this->" . l:name . "(" . join(l:parameters, ", ") . ");")
+
+        let l:return = "\<CR>\<CR>".l:indent.l:indent."return " . l:outputs[0] . ";"
     else
-        exec "normal! Olist(" . join(l:output, ", ") . ") = $this->" . l:name . "(" . join(l:parameters, ", ") . ");\<ESC>=3="
-        let l:return = "\<CR>\<CR>".l:indent.l:indent."return array(" . join(l:output, ", ") . ");"
+        call s:writeLn(l:funcIndent."list(" . join(l:outputs, ", ") . ") = $this->" . l:name . "(" . join(l:parameters, ", ") . ");")
+
+        let l:return = "\<CR>\<CR>".l:indent.l:indent."return array(" . join(l:outputs, ", ") . ");"
     endif
     call s:PhpInsertMultiLineMethod(l:visibility, l:name, l:parametersSignature, @x . l:return)
     normal! `r
