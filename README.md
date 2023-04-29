@@ -238,15 +238,17 @@ You'll be prompted for a method name. Enter a method name and press enter
 class HelloWorld {
     public function sayHello($firstName = null) {
         $sentence = $this->prepareSentence($firstName);
+
         echo $sentence;
     }
 
-    private function prepareSentence($firstName)
+    private function prepareSentence($firstName = null)
     {
         $sentence = 'Hello';
         if ($firstName) {
             $sentence .= ' ' . $firstName;
         }
+
         return $sentence;
     }
 }

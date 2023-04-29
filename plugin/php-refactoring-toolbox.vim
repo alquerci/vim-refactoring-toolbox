@@ -417,7 +417,7 @@ function! PhpExtractMethod() range " {{{
     call search('(', 'W')
     normal! "pyi(
     call search('{', 'W')
-    exec "normal! %"
+    call searchpair('{', '', '}', 'W')
     let l:stopLine = line('.')
     let l:beforeExtract = join(getline(l:startLine, l:middleLine-1))
     let l:afterExtract  = join(getline(l:middleLine, l:stopLine))
