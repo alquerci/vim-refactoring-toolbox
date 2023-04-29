@@ -475,7 +475,8 @@ function! s:PhpInsertMultiLineMethod(modifiers, name, params, impl, returnHint =
     call s:writeLn('')
     call s:writeLn(l:indent . a:modifiers . " function " . a:name . "(" . join(a:params, ", ") . ")". a:returnHint)
     call s:writeLn(l:indent . '{')
-    exec "normal! o" . a:impl
+    call s:writeLn('')
+    call s:paste(a:impl)
     call s:writeLn(l:indent . '}')
 endfunction
 " }}}
@@ -790,6 +791,20 @@ endfunction
 function! s:writeLn(text) " {{{
     call append(line('.'), a:text)
     call s:ForwardOneLine()
+endfunction
+" }}}
+
+function! s:paste(text) " {{{
+    if 1 == &l:paste
+        let l:backuppaste = 'paste'
+    else
+        let l:backuppaste = 'nopaste'
+    endif
+    setlocal paste
+
+    exec "normal! i" . a:text
+
+    exec "setlocal ".l:backuppaste
 endfunction
 " }}}
 
