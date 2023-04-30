@@ -143,6 +143,8 @@ function! PhpCreateGetters() " {{{
             endif
         endif
         if search(s:php_regex_func_line . "get" . l:camelCaseName . '\>', 'n') == 0
+            call s:moveEndOfClass()
+
             call s:PhpInsertMethod("public", "get" . l:camelCaseName, [], "return $this->" . l:property . ";")
         endif
     endfor
@@ -150,74 +152,153 @@ endfunction
 " }}}
 
 function! PhpCreateSettersAndGetters() " {{{
-    normal! gg
-    let l:properties = []
-    while search(s:php_regex_member_line, 'eW') > 0
-        normal! w"xye
+    call s:moveToBeginOfFile()
 
-        let l:property = [] " name, type
-        call add(l:property, @x)
-
-        if '/' == trim(getline(line('.') - 1))[-1:]
-            normal! mz
-
-            call s:BackwardOneLine()
-            call s:BackwardOneLine()
-
-            call search(s:php_doc_var_type, 'be', line('.'))
-
-            " move on first char of the type
-            normal! f@f lme
-
-            " move on next space or newline
-            call search('\s', 'e')
-
-            " copy the type on @x
-            normal! "xy`e
-
-            normal! `z
-            call add(l:property, @x)
-        endif
-
-        call add(l:properties, l:property)
-    endwhile
+    let l:properties = s:parseProperties()
 
     for l:property in l:properties
-        let l:propertyName = l:property[0]
-        let l:propertyType = s:ConvertPHPDocTypeToHint(get(l:property, 1, 'NONE'))
-
-        let l:camelCaseName = substitute(l:propertyName, '^_\?\(.\)', '\U\1', '')
-        if g:vim_php_refactoring_auto_validate_sg == 0
-            call s:PhpEchoError('Create set' . l:camelCaseName . '() and get' . l:camelCaseName . '()')
-            if inputlist(["0. No", "1. Yes"]) == 0
-                continue
-            endif
-        endif
-        if search(s:php_regex_func_line . "set" . l:camelCaseName . '\>', 'n') == 0
-            let l:argument = '$' . substitute(l:propertyName, '^_', '', '')
-
-            if 'NONE' != l:propertyType
-                let l:argument = l:propertyType . ' ' . l:argument
-            endif
-
-            if g:vim_php_refactoring_make_setter_fluent > 0
-                call s:PhpInsertMethodWithSelfReturnHint("public", "set" . l:camelCaseName, [ l:argument ], "$this->" . l:propertyName . " = $" . substitute(l:propertyName, '^_', '', '') . ";")
-            else
-                call s:PhpInsertMethod("public", "set" . l:camelCaseName, [l:argument], "$this->" . l:propertyName . " = $" . substitute(l:propertyName, '^_', '', '') . ";")
-            endif
-        endif
-        if search(s:php_regex_func_line . "get" . l:camelCaseName . '\>', 'n') == 0
-            let l:returnHint = ''
-
-            if 'NONE' != l:propertyType
-                let l:returnHint = ': ' . l:propertyType
-            endif
-
-            call s:PhpInsertMethod("public", "get" . l:camelCaseName, [], "return $this->" . l:propertyName . ";", l:returnHint)
-        endif
+        try
+            call s:createGetterAndSetterForProperty(l:property)
+        catch "skip property"
+            continue
+        endtry
     endfor
 endfunction
 " }}}
+
+fun s:moveToBeginOfFile()
+    normal! gg
+endf
+
+fun s:createGetterAndSetterForProperty(property)
+    let l:propertyName = a:property.name
+    let l:propertyType = s:convertPHPDocTypeToHint(a:property.doctype)
+    let l:camelCaseName = s:convertNameToCamelCase(l:propertyName)
+
+    call s:validateGetterAndSetter(l:camelCaseName)
+
+    call s:declareSetterForProperty(l:camelCaseName, l:propertyName, l:propertyType)
+
+    call s:declareGetterForProperty(l:camelCaseName, l:propertyName, l:propertyType)
+endf
+
+fun s:convertNameToCamelCase(name)
+    return substitute(a:name, '^_\?\(.\)', '\U\1', '')
+endf
+
+fun s:validateGetterAndSetter(camelCaseName)
+    if g:vim_php_refactoring_auto_validate_sg == 0
+        call s:askWhetherToAddGetterAndSetterForProperty(a:camelCaseName)
+    endif
+endf
+
+fun s:askWhetherToAddGetterAndSetterForProperty(camelCaseName)
+    call s:PhpEchoError('Create set' . a:camelCaseName . '() and get' . a:camelCaseName . '()')
+
+    if inputlist(["0. No", "1. Yes"]) == 0
+        throw "skip property"
+    endif
+endf
+
+fun s:declareSetterForProperty(camelCaseName, name, type)
+    if search(s:php_regex_func_line . "set" . a:camelCaseName . '\>', 'n') == 0
+        let l:argument = '$' . substitute(a:name, '^_', '', '')
+
+        if 'NONE' != a:type
+            let l:argument = a:type . ' ' . l:argument
+        endif
+
+        call s:moveEndOfClass()
+
+        if g:vim_php_refactoring_make_setter_fluent > 0
+            call s:PhpInsertMethodWithSelfReturnHint("public", "set" . a:camelCaseName, [ l:argument ], "$this->" . a:name . " = $" . substitute(a:name, '^_', '', '') . ";")
+        else
+            call s:PhpInsertMethod("public", "set" . a:camelCaseName, [l:argument], "$this->" . a:name . " = $" . substitute(a:name, '^_', '', '') . ";")
+        endif
+    endif
+endf
+
+fun s:declareGetterForProperty(camelCaseName, name, type)
+    if search(s:php_regex_func_line . "get" . a:camelCaseName . '\>', 'n') == 0
+        let l:returnHint = ''
+
+        if 'NONE' != a:type
+            let l:returnHint = ': ' . a:type
+        endif
+
+        call s:moveEndOfClass()
+
+        call s:PhpInsertMethod("public", "get" . a:camelCaseName, [], "return $this->" . a:name . ";", l:returnHint)
+    endif
+endf
+
+function! s:convertPHPDocTypeToHint(docType) " {{{
+    if '|null' == a:docType[-5:]
+        return '?'.a:docType[0:-6]
+    endif
+
+    return a:docType
+endfunction
+" }}}
+
+fun s:parseProperties()
+    let l:properties = []
+
+    while s:searchNextProperty() > 0
+        call add(l:properties, s:parsePropertyOnCurrentPosition())
+    endwhile
+
+    return l:properties
+endf
+
+fun s:searchNextProperty()
+    return search(s:php_regex_member_line, 'eW')
+endf
+
+fun s:parsePropertyOnCurrentPosition()
+    let l:property = #{name: 'NONE', doctype: 'NONE'}
+
+    let l:property.name = s:parsePropertyNameOnCursorPosition()
+
+    if s:declarationHavePHPDoc()
+        let l:property.doctype = s:parseDocVarType()
+    endif
+
+    return l:property
+endf
+
+function! s:declarationHavePHPDoc()
+    return '/' == trim(getline(line('.') - 1))[-1:]
+endfunction
+
+fun s:parseDocVarType()
+    let l:cursorPosition = getcurpos()
+
+    call s:backwardOneLine()
+    call s:backwardOneLine()
+
+    call search(s:php_doc_var_type, 'be', line('.'))
+
+    " move on first char of the doctype
+    normal! f@f lme
+
+    " move on next space or newline
+    call search('\s', 'e')
+
+    " copy the doctype on @x
+    normal! "xy`e
+    let l:doctype = @x
+
+    call setpos('.', l:cursorPosition)
+
+    return l:doctype
+endf
+
+fun s:parsePropertyNameOnCursorPosition()
+    normal! w"xye
+
+    return @x
+endf
 
 function! PhpRenameLocalVariable() " {{{
     let l:oldName = substitute(expand('<cword>'), '^\$*', '', '')
@@ -323,6 +404,7 @@ function! PhpExtractVariable() " {{{
     " go to start on selection
     normal! `r
 
+    " getcurpos()
     let l:startLine = line('.')
     let l:startCol = col('.')
 
@@ -332,13 +414,13 @@ function! PhpExtractVariable() " {{{
     let l:needBlankLineAfter = v:false
 
     " line ends with ,
-    while s:CurrentLineEndsWith(',')
-        call s:BackwardOneLine()
+    while s:currentLineEndsWith(',')
+        call s:backwardOneLine()
     endwhile
 
     " line ends with [
-    if s:CurrentLineEndsWith('[')
-        call s:BackwardOneLine()
+    if s:currentLineEndsWith('[')
+        call s:backwardOneLine()
     endif
 
     if empty(trim(getline(line('.'))))
@@ -441,13 +523,13 @@ function! PhpExtractMethod() range " {{{
 
     " add method call
     let l:currentIndent = substitute(@x, '\S.*', '', '')
-    call s:BackwardOneLine()
+    call s:backwardOneLine()
     if len(l:outputs) == 0
-        call s:writeLn(l:currentIndent."$this->" . l:name . "(" . join(l:parameters, ", ") . ");")
+        call s:writeLine(l:currentIndent."$this->" . l:name . "(" . join(l:parameters, ", ") . ");")
     elseif len(l:outputs) == 1
-        call s:writeLn(l:currentIndent.l:outputs[0] . " = $this->" . l:name . "(" . join(l:parameters, ", ") . ");")
+        call s:writeLine(l:currentIndent.l:outputs[0] . " = $this->" . l:name . "(" . join(l:parameters, ", ") . ");")
     else
-        call s:writeLn(l:currentIndent."list(" . join(l:outputs, ", ") . ") = $this->" . l:name . "(" . join(l:parameters, ", ") . ");")
+        call s:writeLine(l:currentIndent."list(" . join(l:outputs, ", ") . ") = $this->" . l:name . "(" . join(l:parameters, ", ") . ");")
     endif
 
     " add method
@@ -480,12 +562,12 @@ endfunction
 function! s:PhpInsertMultiLineMethod(modifiers, name, params, impl, returnHint = '') " {{{
     let l:indent = s:detectIntentation()
 
-    call s:writeLn('')
-    call s:writeLn(l:indent . a:modifiers . " function " . a:name . "(" . join(a:params, ", ") . ")". a:returnHint)
-    call s:writeLn(l:indent . '{')
-    call s:writeLn('')
+    call s:writeLine('')
+    call s:writeLine(l:indent . a:modifiers . " function " . a:name . "(" . join(a:params, ", ") . ")". a:returnHint)
+    call s:writeLine(l:indent . '{')
+    call s:writeLine('')
     call s:paste(a:impl)
-    call s:writeLn(l:indent . '}')
+    call s:writeLine(l:indent . '}')
 endfunction
 " }}}
 
@@ -647,66 +729,58 @@ endfunction
 " }}}
 
 function! s:PhpInsertMethod(modifiers, name, params, impl, returnHint = '') " {{{
-    call s:PhpMoveEndOfClass()
-
     let l:indent = s:detectIntentation()
 
-    call s:writeLn('')
-    call s:writeLn(l:indent . a:modifiers . " function " . a:name . "(" . join(a:params, ", ") . ")". a:returnHint)
-    call s:writeLn(l:indent . '{')
-    call s:writeLn(l:indent . l:indent . a:impl)
-    call s:writeLn(l:indent . '}')
+    call s:writeLine('')
+    call s:writeLine(l:indent . a:modifiers . " function " . a:name . "(" . join(a:params, ", ") . ")". a:returnHint)
+    call s:writeLine(l:indent . '{')
+    call s:writeLine(l:indent . l:indent . a:impl)
+    call s:writeLine(l:indent . '}')
 endfunction
 " }}}
 
 function! s:PhpInsertMethodWithSelfReturnHint(modifiers, name, params, impl) " {{{
-    call s:PhpMoveEndOfClass()
-
     let l:indent = s:detectIntentation()
 
-    call s:writeLn('')
-    call s:writeLn(l:indent . a:modifiers . " function " . a:name . "(" . join(a:params, ", ") . "): self")
-    call s:writeLn(l:indent . '{')
-    call s:writeLn(l:indent . l:indent . a:impl)
+    call s:writeLine('')
+    call s:writeLine(l:indent . a:modifiers . " function " . a:name . "(" . join(a:params, ", ") . "): self")
+    call s:writeLine(l:indent . '{')
+    call s:writeLine(l:indent . l:indent . a:impl)
     call s:PhpInsertFluent(l:indent.l:indent)
-    call s:writeLn(l:indent . '}')
+    call s:writeLine(l:indent . '}')
 endfunction
 " }}}
-"
+
+function! s:moveEndOfClass() " {{{
+    call search(s:php_regex_class_line, 'beW')
+    call search('{', 'W')
+    call searchpair('{', '', '}', 'W')
+    call s:backwardOneLine()
+endfunction
+" }}}
+
 function! s:detectIntentation() " {{{
-    " backup position
-    let l:currentline = line('.')
-    let l:currentcol = col('.')
-
-    let l:regex = '\%(' . join([s:php_regex_member_line, s:php_regex_const_line, s:php_regex_func_line], '\)\|\(') .'\)'
-    call search(l:regex, 'beW')
-
-    let l:line = getbufline("%", line('.'))[0]
-
-    " restore cursor position
-    call cursor(l:currentline, l:currentcol)
+    let l:line = getline(s:searchLineOfPreviousClassDeclaration())
 
     return substitute(l:line, '\S.*', '', '')
 endfunction
 " }}}
 
-function! s:PhpMoveEndOfClass() " {{{
-    call search(s:php_regex_class_line, 'beW')
-    call search('{', 'W')
-    call searchpair('{', '', '}', 'W')
-    call s:BackwardOneLine()
+function s:searchLineOfPreviousClassDeclaration()
+    let l:declarationPattern = '\%(' . join([s:php_regex_member_line, s:php_regex_const_line, s:php_regex_func_line], '\)\|\(') .'\)'
+
+    return search(l:declarationPattern, 'bn')
 endfunction
-" }}}
 
 function! s:PhpInsertFluent(indent) " {{{
     if g:vim_php_refactoring_make_setter_fluent == 1
-        call s:writeLn('')
-        call s:writeLn(a:indent . 'return $this;')
+        call s:writeLine('')
+        call s:writeLine(a:indent . 'return $this;')
     elseif g:vim_php_refactoring_make_setter_fluent == 2
         call s:PhpEchoError('Make fluent?')
         if inputlist(["0. No", "1. Yes"]) == 1
-            call s:writeLn('')
-            call s:writeLn(a:indent.'return $this;')
+            call s:writeLine('')
+            call s:writeLine(a:indent.'return $this;')
         endif
     else
         echoerr 'Invalid option for g:vim_php_refactoring_make_setter_fluent'
@@ -791,14 +865,14 @@ function! s:PhpEchoError(message) " {{{
 endfunction
 " }}}
 
-function! s:CurrentLineEndsWith(char) " {{{
+function! s:currentLineEndsWith(char) " {{{
     return a:char == trim(getline(line('.')))[-1:]
 endfunction
 " }}}
 
-function! s:writeLn(text) " {{{
+function! s:writeLine(text) " {{{
     call append(line('.'), a:text)
-    call s:ForwardOneLine()
+    call s:forwardOneLine()
 endfunction
 " }}}
 
@@ -816,21 +890,12 @@ function! s:paste(text) " {{{
 endfunction
 " }}}
 
-function! s:BackwardOneLine() " {{{
+function! s:backwardOneLine() " {{{
     call cursor(line('.') - 1, 0)
 endfunction
 " }}}
 
-function! s:ForwardOneLine() " {{{
+function! s:forwardOneLine() " {{{
     call cursor(line('.') + 1, 0)
-endfunction
-" }}}
-
-function! s:ConvertPHPDocTypeToHint(docType) " {{{
-    if '|null' == a:docType[-5:]
-        return '?'.a:docType[0:-6]
-    endif
-
-    return a:docType
 endfunction
 " }}}
