@@ -18,6 +18,10 @@ if !exists('g:vim_php_refactoring_phpdoc')
     let g:vim_php_refactoring_phpdoc = 'PhpDoc'
 endif
 
+if !exists('g:vim_php_refactoring_usage_logdir')
+    let g:vim_php_refactoring_usage_logdir = getenv('HOME').'/.vim/log/vim-php-refactoring-toolbox'
+endif
+
 if !exists('g:vim_php_refactoring_use_default_mapping')
     let g:vim_php_refactoring_use_default_mapping = 1
 endif
@@ -74,6 +78,14 @@ if g:vim_php_refactoring_use_default_mapping == 1
 endif
 " }}}
 
+fun s:incrementUsage(name)
+    let l:directory = g:vim_php_refactoring_usage_logdir
+
+    call mkdir(l:directory, 'p')
+
+    call writefile([a:name], l:directory.'/usages.log', 'a')
+endf
+
 " +--------------------------------------------------------------+
 " |   VIM REGEXP REMINDER   |    Vim Regex       |   Perl Regex   |
 " |===============================================================|
@@ -103,6 +115,8 @@ let s:php_doc_var_type      = '@var '
 " }}}
 
 function! PhpDocAll() " {{{
+    call s:incrementUsage('PhpDocAll')
+
     if exists("*" . g:vim_php_refactoring_phpdoc) == 0
         call s:PhpEchoError(g:vim_php_refactoring_phpdoc . '() vim function doesn''t exists.')
         return
@@ -124,6 +138,8 @@ endfunction
 " }}}
 
 function! PhpCreateGetters() " {{{
+    call s:incrementUsage('PhpCreateGetters')
+
     call s:moveToBeginOfFile()
 
     let l:properties = []
@@ -149,6 +165,8 @@ endfunction
 " }}}
 
 function! PhpCreateSettersAndGetters() " {{{
+    call s:incrementUsage('PhpCreateSettersAndGetters')
+
     call s:moveToBeginOfFile()
 
     let l:properties = s:parseProperties()
@@ -298,6 +316,8 @@ fun s:parsePropertyNameOnCursorPosition()
 endf
 
 function! PhpRenameLocalVariable() " {{{
+    call s:incrementUsage('PhpRenameLocalVariable')
+
     let l:oldName = substitute(expand('<cword>'), '^\$*', '', '')
     let l:newName = inputdialog('Rename ' . l:oldName . ' to: ')
     if g:vim_php_refactoring_auto_validate_rename == 0
@@ -313,6 +333,8 @@ endfunction
 " }}}
 
 function! PhpRenameClassVariable() " {{{
+    call s:incrementUsage('PhpRenameClassVariable')
+
     let l:oldName = substitute(expand('<cword>'), '^\$*', '', '')
     let l:newName = inputdialog('Rename ' . l:oldName . ' to: ')
     if g:vim_php_refactoring_auto_validate_rename == 0
@@ -328,6 +350,8 @@ endfunction
 " }}}
 
 function! PhpRenameMethod() " {{{
+    call s:incrementUsage('PhpRenameMethod')
+
     let l:oldName = substitute(expand('<cword>'), '^\$*', '', '')
     let l:newName = inputdialog('Rename ' . l:oldName . ' to: ')
     if g:vim_php_refactoring_auto_validate_rename == 0
@@ -343,6 +367,8 @@ endfunction
 " }}}
 
 function! PhpExtractUse() " {{{
+    call s:incrementUsage('PhpExtractUse')
+
     normal! mr
     let l:fqcn = s:PhpGetFQCNUnderCursor()
     let l:use  = s:PhpGetDefaultUse(l:fqcn)
@@ -363,6 +389,8 @@ endfunction
 " }}}
 
 function! PhpExtractConst() " {{{
+    call s:incrementUsage('PhpExtractConst')
+
     if visualmode() != 'v'
         call s:PhpEchoError('Extract constant only works in Visual mode, not in Visual Line or Visual block')
         return
@@ -376,6 +404,8 @@ endfunction
 " }}}
 
 function! PhpExtractVariable() " {{{
+    call s:incrementUsage('PhpExtractVariable')
+
     if visualmode() != 'v'
         call s:PhpEchoError('Extract variable only works in Visual mode, not in Visual Line or Visual block')
         return
@@ -457,6 +487,8 @@ endfunction
 " }}}
 
 function! PhpExtractClassProperty() " {{{
+    call s:incrementUsage('PhpExtractClassProperty')
+
     normal! mr
     let l:name = substitute(expand('<cword>'), '^\$*', '', '')
     call s:PhpReplaceInCurrentFunction('$' . l:name . '\>', '$this->' . l:name)
@@ -474,6 +506,8 @@ endfunction
 " }}}
 
 function! PhpExtractMethod() range " {{{
+    call s:incrementUsage('PhpExtractMethod')
+
     if visualmode() == ''
         call s:PhpEchoError('Extract method doesn''t works in Visual Block mode. Use Visual line or Visual mode.')
         return
@@ -569,6 +603,8 @@ endfunction
 " }}}
 
 function! PhpCreateProperty() " {{{
+    call s:incrementUsage('PhpCreateProperty')
+
     let l:name = inputdialog("Name of new property: ")
     if g:vim_php_refactoring_auto_validate_visibility == 0
         let l:visibility = inputdialog("Visibility (default is " . g:vim_php_refactoring_default_property_visibility . "): ")
@@ -583,6 +619,8 @@ endfunction
 " }}}
 
 function! PhpDetectUnusedUseStatements() " {{{
+    call s:incrementUsage('PhpDetectUnusedUseStatements')
+
     normal! mrgg
     while search('^use', 'W')
         let l:startLine = line('.')
@@ -602,6 +640,8 @@ endfunction
 " }}}
 
 function! PhpAlignAssigns() range " {{{
+    call s:incrementUsage('PhpAlignAssigns')
+
 " This funcion was took from :
 " Vim refactoring plugin
 " Maintainer: Eustaquio 'TaQ' Rangel
