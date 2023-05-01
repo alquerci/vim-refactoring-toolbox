@@ -124,7 +124,8 @@ endfunction
 " }}}
 
 function! PhpCreateGetters() " {{{
-    normal! gg
+    call s:moveToBeginOfFile()
+
     let l:properties = []
     while search(s:php_regex_member_line, 'eW') > 0
         normal! w"xye
