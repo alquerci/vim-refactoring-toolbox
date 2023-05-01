@@ -102,10 +102,6 @@ let s:php_regex_cn          = '[_A-Za-z0-9]\+'
 let s:php_doc_var_type      = '@var '
 " }}}
 
-" Fluent {{{
-let s:php_fluent_this = "normal! jo\<CR>return $this;"
-" }}}
-
 function! PhpDocAll() " {{{
     if exists("*" . g:vim_php_refactoring_phpdoc) == 0
         call s:PhpEchoError(g:vim_php_refactoring_phpdoc . '() vim function doesn''t exists.')
