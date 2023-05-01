@@ -5,10 +5,7 @@ Given php:
       public function sayHello($firstName = null) {
           $sentence = 'Hello';
           if ($firstName) {
-              $sentence .= ' '.$firstName;
-              if ('John' === $firstName) {
-                  $sentence .= ' Doe';
-              }
+              $sentence .= ' ' . $firstName;
           }
           echo $sentence;
       }
@@ -16,9 +13,9 @@ Given php:
 
 Do:
   /sayHello\<CR>
-  3jV3j
+  jV3j
   ;em
-  appendName\<CR>
+  prepareSentence\<CR>
   \<CR>
 
 Expect:
@@ -26,18 +23,15 @@ Expect:
 
   class HelloWorld {
       public function sayHello($firstName = null) {
-          $sentence = 'Hello';
-          if ($firstName) {
-              $sentence = $this->appendName($sentence, $firstName);
-          }
+          $sentence = $this->prepareSentence($firstName);
           echo $sentence;
       }
 
-      private function appendName($sentence, $firstName = null)
+      private function prepareSentence($firstName = null)
       {
-          $sentence .= ' '.$firstName;
-          if ('John' === $firstName) {
-              $sentence .= ' Doe';
+          $sentence = 'Hello';
+          if ($firstName) {
+              $sentence .= ' ' . $firstName;
           }
 
           return $sentence;
