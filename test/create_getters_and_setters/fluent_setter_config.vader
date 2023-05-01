@@ -7,10 +7,10 @@ Given php:
   }
 
 Do:
-  :let g:vim_php_refactoring_make_setter_fluent = 1\<CR>
+  :let g:vim_php_refactoring_make_setter_fluent = 1\<Enter>
   ;sg
-  1\<CR>
-  :let g:vim_php_refactoring_make_setter_fluent = 0\<CR>
+  1\<Enter>
+  :let g:vim_php_refactoring_make_setter_fluent = 0\<Enter>
 
 Expect:
   <?php

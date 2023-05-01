@@ -13,9 +13,9 @@ Given php:
 
 Do:
   /sayHello\<Enter>
-  3jV
+  j3j
   ;em
-  appendName\<Enter>
+  /sayHello\<Enter>
   \<Enter>
 
 Expect:
@@ -25,15 +25,8 @@ Expect:
       public function sayHello($firstName = null) {
           $sentence = 'Hello';
           if ($firstName) {
-              $sentence = $this->appendName($sentence, $firstName);
+              $sentence .= ' ' . $firstName;
           }
           echo $sentence;
-      }
-
-      private function appendName($sentence, $firstName = null)
-      {
-          $sentence .= ' ' . $firstName;
-
-          return $sentence;
       }
   }

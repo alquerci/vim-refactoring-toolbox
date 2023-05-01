@@ -11,11 +11,11 @@ Given php (condition on if and on function):
   }
 
 Do (select the condition and extract variable):
-  /foo\<CR>
+  /foo\<Enter>
   vi(
   ;ev
-  firstNameIsValid\<CR>
-  1\<CR>
+  firstNameIsValid\<Enter>
+  1\<Enter>
 
 Expect php (variable is extracted):
   <?php

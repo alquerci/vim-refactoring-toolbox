@@ -8,11 +8,11 @@ Given php:
   ];
 
 Do:
-  /1234\<CR>
+  /1234\<Enter>
   viw
   ;ev
-  baz\<CR>
-  3\<CR>
+  baz\<Enter>
+  3\<Enter>
 
 Expect:
   <?php

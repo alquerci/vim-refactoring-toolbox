@@ -11,7 +11,7 @@ Given php:
 
 Do:
   ;sg
-  1\<CR>
+  1\<Enter>
 
 Expect:
   <?php

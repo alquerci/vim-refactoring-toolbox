@@ -6,11 +6,11 @@ Given php:
   }
 
 Do:
-  /ipsum\<CR>
+  /ipsum\<Enter>
   vi(
   ;ev
-  foo\<CR>
-  \<CR>
+  foo\<Enter>
+  \<Enter>
 
 Expect:
   <?php

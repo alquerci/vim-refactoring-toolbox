@@ -9,11 +9,11 @@ Given php:
   ];
 
 Do:
-  /1234\<CR>
+  /1234\<Enter>
   viw
   ;ev
-  baz\<CR>
-  \<CR>
+  baz\<Enter>
+  \<Enter>
 
 Expect:
   <?php

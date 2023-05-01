@@ -13,26 +13,26 @@ Given php:
 
 Do:
   /sayHello\<Enter>
-  3jV
+  jV3j
   ;em
-  appendName\<Enter>
-  \<Enter>
+  prepareSentence\<Enter>
+  protected\<Enter>
 
 Expect:
   <?php
 
   class HelloWorld {
       public function sayHello($firstName = null) {
-          $sentence = 'Hello';
-          if ($firstName) {
-              $sentence = $this->appendName($sentence, $firstName);
-          }
+          $sentence = $this->prepareSentence($firstName);
           echo $sentence;
       }
 
-      private function appendName($sentence, $firstName = null)
+      protected function prepareSentence($firstName = null)
       {
-          $sentence .= ' ' . $firstName;
+          $sentence = 'Hello';
+          if ($firstName) {
+              $sentence .= ' ' . $firstName;
+          }
 
           return $sentence;
       }

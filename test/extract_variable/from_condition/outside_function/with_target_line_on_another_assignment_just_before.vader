@@ -8,11 +8,11 @@ Given php (condition on if):
   }
 
 Do (select the condition and extract variable):
-  /foo\<CR>
+  /foo\<Enter>
   vi(
   ;ev
-  foo\<CR>
-  2\<CR>
+  foo\<Enter>
+  2\<Enter>
 
 Expect php (variable is extracted):
   <?php

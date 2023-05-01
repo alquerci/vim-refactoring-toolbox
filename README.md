@@ -75,20 +75,20 @@ let g:vim_php_refactoring_make_setter_fluent = 2
 
 ## Default Mappings
 
-    nnoremap <unique> <Leader>rlv :call PhpRenameLocalVariable()<CR>
-    nnoremap <unique> <Leader>rcv :call PhpRenameClassVariable()<CR>
-    nnoremap <unique> <Leader>rm :call PhpRenameMethod()<CR>
-    nnoremap <unique> <Leader>eu :call PhpExtractUse()<CR>
-    vnoremap <unique> <Leader>ec :call PhpExtractConst()<CR>
-    vnoremap <unique> <Leader>ev :call PhpExtractVariable()<CR>
-    nnoremap <unique> <Leader>ep :call PhpExtractClassProperty()<CR>
-    vnoremap <unique> <Leader>em :call PhpExtractMethod()<CR>
-    nnoremap <unique> <Leader>np :call PhpCreateProperty()<CR>
-    nnoremap <unique> <Leader>du :call PhpDetectUnusedUseStatements()<CR>
-    vnoremap <unique> <Leader>== :call PhpAlignAssigns()<CR>
-    nnoremap <unique> <Leader>sg :call PhpCreateSettersAndGetters()<CR>
-    nnoremap <unique> <Leader>cog :call PhpCreateGetters()<CR>
-    nnoremap <unique> <Leader>da :call PhpDocAll()<CR>
+    nnoremap <unique> <Leader>rlv :call PhpRenameLocalVariable()<Enter>
+    nnoremap <unique> <Leader>rcv :call PhpRenameClassVariable()<Enter>
+    nnoremap <unique> <Leader>rm :call PhpRenameMethod()<Enter>
+    nnoremap <unique> <Leader>eu :call PhpExtractUse()<Enter>
+    vnoremap <unique> <Leader>ec :call PhpExtractConst()<Enter>
+    vnoremap <unique> <Leader>ev :call PhpExtractVariable()<Enter>
+    nnoremap <unique> <Leader>ep :call PhpExtractClassProperty()<Enter>
+    vnoremap <unique> <Leader>em :call PhpExtractMethod()<Enter>
+    nnoremap <unique> <Leader>np :call PhpCreateProperty()<Enter>
+    nnoremap <unique> <Leader>du :call PhpDetectUnusedUseStatements()<Enter>
+    vnoremap <unique> <Leader>== :call PhpAlignAssigns()<Enter>
+    nnoremap <unique> <Leader>sg :call PhpCreateSettersAndGetters()<Enter>
+    nnoremap <unique> <Leader>cog :call PhpCreateGetters()<Enter>
+    nnoremap <unique> <Leader>da :call PhpDocAll()<Enter>
 
 ## Playground.php
 

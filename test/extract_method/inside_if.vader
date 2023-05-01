@@ -4,7 +4,7 @@ Given php:
   class HelloWorld {
       public function sayHello($firstName = null) {
           $sentence = 'Hello';
-          if ($firstName) {
+          if (null !== $firstName) {
               $sentence .= ' ' . $firstName;
           }
           echo $sentence;
@@ -12,10 +12,10 @@ Given php:
   }
 
 Do:
-  /sayHello\<Enter>
-  3jV
+  /null !==\<Enter>
+  vi(
   ;em
-  appendName\<Enter>
+  shouldAppendFirstName\<Enter>
   \<Enter>
 
 Expect:
@@ -24,16 +24,14 @@ Expect:
   class HelloWorld {
       public function sayHello($firstName = null) {
           $sentence = 'Hello';
-          if ($firstName) {
-              $sentence = $this->appendName($sentence, $firstName);
+          if ($firstName = $this->shouldAppendFirstName($firstName)) {
+              $sentence .= ' ' . $firstName;
           }
           echo $sentence;
       }
 
-      private function appendName($sentence, $firstName = null)
+      private function shouldAppendFirstName($firstName = null)
       {
-          $sentence .= ' ' . $firstName;
-
-          return $sentence;
+          return null !== $firstName;
       }
   }

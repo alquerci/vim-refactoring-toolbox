@@ -7,9 +7,9 @@ Given php:
   }
 
 Do:
-  :let g:vim_php_refactoring_auto_validate_sg = 1\<CR>
+  :let g:vim_php_refactoring_auto_validate_sg = 1\<Enter>
   ;sg
-  :let g:vim_php_refactoring_auto_validate_sg = 0\<CR>
+  :let g:vim_php_refactoring_auto_validate_sg = 0\<Enter>
 
 Expect:
   <?php

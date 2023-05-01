@@ -12,11 +12,11 @@ Given php:
   }
 
 Do:
-  /sayHello\<CR>
+  /sayHello\<Enter>
   jV3j
   ;em
-  prepareSentence\<CR>
-  \<CR>
+  prepareSentence\<Enter>
+  \<Enter>
 
 Expect:
   <?php

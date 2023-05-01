@@ -1,0 +1,43 @@
+Given php:
+  <?php
+
+  class HelloWorld {
+      public function sayHello($firstName = null) {
+          $prefix = '';
+          $suffix = '';
+          $prefix = 'Hello';
+          if ($firstName) {
+              $suffix = ' ' . $firstName;
+          }
+          echo $prefix.$suffix;
+      }
+  }
+
+Do:
+  /sayHello\<Enter>
+  3jV3j
+  ;em
+  prepareSentence\<Enter>
+  \<Enter>
+
+Expect:
+  <?php
+
+  class HelloWorld {
+      public function sayHello($firstName = null) {
+          $prefix = '';
+          $suffix = '';
+          list($prefix, $suffix) = $this->prepareSentence($prefix, $firstName, $suffix);
+          echo $prefix.$suffix;
+      }
+
+      private function prepareSentence($prefix, $firstName = null, $suffix)
+      {
+          $prefix = 'Hello';
+          if ($firstName) {
+              $suffix = ' ' . $firstName;
+          }
+
+          return array($prefix, $suffix);
+      }
+  }

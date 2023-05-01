@@ -7,7 +7,7 @@ Given php:
   }
 
 Do:
-  ;sg
+  ;cog
   1\<Enter>
 
 Expect:
@@ -16,11 +16,6 @@ Expect:
   class Foo
   {
       private $bar;
-
-      public function setBar($bar)
-      {
-          $this->bar = $bar;
-      }
 
       public function getBar()
       {

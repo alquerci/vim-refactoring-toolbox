@@ -13,11 +13,11 @@ Given php:
   }
 
 Do:
-  /sayHello\<CR>
+  /sayHello\<Enter>
   3jVj
   ;em
-  appendName\<CR>
-  \<CR>
+  appendName\<Enter>
+  \<Enter>
 
 Expect:
   <?php
