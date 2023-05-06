@@ -27,7 +27,7 @@ Expect:
           echo $sentence;
       }
 
-      protected function prepareSentence($firstName = null)
+      protected function prepareSentence($firstName)
       {
           $sentence = 'Hello';
           if ($firstName) {

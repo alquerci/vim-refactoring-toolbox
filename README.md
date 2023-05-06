@@ -242,7 +242,7 @@ class HelloWorld {
         echo $sentence;
     }
 
-    private function prepareSentence($firstName = null)
+    private function prepareSentence($firstName)
     {
         $sentence = 'Hello';
         if ($firstName) {

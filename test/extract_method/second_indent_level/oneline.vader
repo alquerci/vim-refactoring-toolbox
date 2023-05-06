@@ -30,7 +30,7 @@ Expect:
           echo $sentence;
       }
 
-      private function appendName($sentence, $firstName = null)
+      private function appendName($sentence, $firstName)
       {
           $sentence .= ' ' . $firstName;
 

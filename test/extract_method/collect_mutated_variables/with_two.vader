@@ -31,7 +31,7 @@ Expect:
           echo $prefix.$suffix;
       }
 
-      private function prepareSentence($prefix, $firstName = null, $suffix)
+      private function prepareSentence($prefix, $firstName, $suffix)
       {
           $prefix = 'Hello';
           if ($firstName) {

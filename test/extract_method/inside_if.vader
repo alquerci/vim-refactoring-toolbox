@@ -30,7 +30,7 @@ Expect:
           echo $sentence;
       }
 
-      private function shouldAppendFirstName($firstName = null)
+      private function shouldAppendFirstName($firstName)
       {
           return null !== $firstName;
       }
