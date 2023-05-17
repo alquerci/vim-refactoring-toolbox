@@ -14,5 +14,5 @@ let php_refactoring_toolbox#regex#func_line = '^\s*\%(\%(private\|protected\|pub
 let php_refactoring_toolbox#regex#member_line = '^\s*\%(\%(private\|protected\|public\|static\)\%(\_s\+?\?[\\|_A-Za-z0-9]\+\)\?\s*\)\+\$'
 let php_refactoring_toolbox#regex#const_line = '^\s*const\s\+[^;]\+;'
 let php_refactoring_toolbox#regex#local_var = '\$\<\%(this\>\)\@![A-Za-z0-9]*'
-let php_refactoring_toolbox#regex#local_var_mutate = '\$\<\%(this\>\)\@![A-Za-z0-9]*\_s*\%([.+*%/&|^-]\|\*\*\|<<\|>>\|??\)\?='
+let php_refactoring_toolbox#regex#local_var_mutate = '\$\<\%(this\>\)\@![A-Za-z0-9]*\%(\[\_.*\]\)\?\_s*\%([.+*%/&|^-]\|\*\*\|<<\|>>\|??\)\?='
 let php_refactoring_toolbox#regex#doc_var_type = '@var '
