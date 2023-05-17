@@ -1,0 +1,43 @@
+Given php:
+  <?php
+
+  class ClassName {
+      public function currentMethodName($unassigned) {
+          $localVariable = 'Hello';
+
+          if ($unassigned) {
+              $localVariable = ' '.$unassigned;
+          }
+
+          echo $localVariable.$unassigned;
+      }
+  }
+
+Do:
+  /currentMethodName\<Enter>
+  3jV2j
+  ;em
+  extractedMethodName\<Enter>
+  \<Enter>
+
+Expect:
+  <?php
+
+  class ClassName {
+      public function currentMethodName($unassigned) {
+          $localVariable = 'Hello';
+
+          $localVariable = $this->extractedMethodName($unassigned, $localVariable);
+
+          echo $localVariable.$unassigned;
+      }
+
+      private function extractedMethodName($unassigned, $localVariable)
+      {
+          if ($unassigned) {
+              $localVariable = ' '.$unassigned;
+          }
+
+          return $localVariable;
+      }
+  }

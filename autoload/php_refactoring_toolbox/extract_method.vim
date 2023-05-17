@@ -2,6 +2,7 @@ let s:php_regex_func_line = php_refactoring_toolbox#regex#func_line
 let s:php_regex_member_line = php_refactoring_toolbox#regex#member_line
 let s:php_regex_const_line = php_refactoring_toolbox#regex#const_line
 let s:php_regex_local_var = php_refactoring_toolbox#regex#local_var
+let s:php_regex_local_var_mutate = php_refactoring_toolbox#regex#local_var_mutate
 let s:NULL = 'NONE'
 
 function! php_refactoring_toolbox#extract_method#execute()
@@ -64,7 +65,7 @@ endfunction
 function! s:extractReturnVariables(codeToExtract)
     let l:methodCodeAfter = s:collectMethodCodeAfterCurrentLine()
 
-    return s:extractVariablesPresentInBothCode(a:codeToExtract, l:methodCodeAfter)
+    return s:extractMutatedVariablesUsedAfter(a:codeToExtract, l:methodCodeAfter)
 endfunction
 
 function! s:insertMethodCall(codeToExtract, definition)
@@ -190,11 +191,11 @@ function! s:getTopLineOfCurrentMethod()
     return l:topLine
 endfunction
 
-function! s:extractVariablesPresentInBothCode(first, second)
+function! s:extractMutatedVariablesUsedAfter(code, codeAfter)
     let l:variables = []
 
-    for l:var in s:extractAllLocalVariables(a:first)
-        if match(a:second, l:var . '\>') > 0
+    for l:var in s:extractMutatedLocalVariables(a:code)
+        if s:variableExistsOnCode(l:var, a:codeAfter)
             call add(l:variables, l:var)
         endif
     endfor
@@ -202,19 +203,44 @@ function! s:extractVariablesPresentInBothCode(first, second)
     return l:variables
 endfunction
 
+function! s:extractVariablesPresentInBothCode(first, second)
+    let l:variables = []
+
+    for l:var in s:extractAllLocalVariables(a:first)
+        if s:variableExistsOnCode(l:var, a:second)
+            call add(l:variables, l:var)
+        endif
+    endfor
+
+    return l:variables
+endfunction
+
+function! s:variableExistsOnCode(variable, code)
+    return match(a:code, a:variable . '\>') > 0
+endfunction
+
 function! s:extractAllLocalVariables(haystack)
-    let l:result = []
-    let l:matchPos = match(a:haystack, s:php_regex_local_var, 0)
+    return s:extractStringListThatMatchPatternWithCondition(a:haystack, s:php_regex_local_var, s:php_regex_local_var)
+endfunction
+
+function! s:extractMutatedLocalVariables(haystack)
+    return s:extractStringListThatMatchPatternWithCondition(a:haystack, s:php_regex_local_var, s:php_regex_local_var_mutate)
+endfunction
+
+function! s:extractStringListThatMatchPatternWithCondition(haystack, stringPattern, conditionPattern)
+    let l:strings = []
+    let l:matchPos = match(a:haystack, a:conditionPattern, 0)
 
     while l:matchPos > 0
-        let l:str = matchstr(a:haystack, s:php_regex_local_var, l:matchPos)
-        if index(l:result, l:str) < 0
-            call add(l:result, l:str)
+        let l:str = matchstr(a:haystack, a:stringPattern, l:matchPos)
+        if index(l:strings, l:str) < 0
+            call add(l:strings, l:str)
         endif
-        let l:matchPos = match(a:haystack, s:php_regex_local_var, l:matchPos + strlen(l:str))
+
+        let l:matchPos = match(a:haystack, a:conditionPattern, l:matchPos + strlen(l:str))
     endwhile
 
-    return l:result
+    return l:strings
 endfunction
 
 function! s:joinLinesBetween(topLine, bottomLine)

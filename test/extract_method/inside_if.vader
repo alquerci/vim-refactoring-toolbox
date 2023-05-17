@@ -24,7 +24,7 @@ Expect:
   class HelloWorld {
       public function sayHello($firstName = null) {
           $sentence = 'Hello';
-          if ($firstName = $this->shouldAppendFirstName($firstName)) {
+          if ($this->shouldAppendFirstName($firstName)) {
               $sentence .= ' ' . $firstName;
           }
           echo $sentence;

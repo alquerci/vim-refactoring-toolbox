@@ -1,0 +1,37 @@
+Given php:
+  <?php
+
+  class ClassName {
+      public function currentMethodName() {
+          $localVariable = 'Hello';
+          $unusedVariable = 'World';
+
+          echo $localVariable;
+      }
+  }
+
+Do:
+  /currentMethodName\<Enter>
+  jVj
+  ;em
+  extractedMethodName\<Enter>
+  \<Enter>
+
+Expect:
+  <?php
+
+  class ClassName {
+      public function currentMethodName() {
+          $localVariable = $this->extractedMethodName();
+
+          echo $localVariable;
+      }
+
+      private function extractedMethodName()
+      {
+          $localVariable = 'Hello';
+          $unusedVariable = 'World';
+
+          return $localVariable;
+      }
+  }
