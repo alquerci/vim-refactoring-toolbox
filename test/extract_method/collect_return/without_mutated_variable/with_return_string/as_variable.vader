@@ -1,0 +1,29 @@
+Given php:
+  <?php
+
+  class ClassName {
+      public function currentMethodName() {
+          $return = 'value';
+      }
+  }
+
+Do:
+  /currentMethodName\<Enter>
+  jV
+  ;em
+  extractedMethodName\<Enter>
+  \<Enter>
+
+Expect:
+  <?php
+
+  class ClassName {
+      public function currentMethodName() {
+          $this->extractedMethodName();
+      }
+
+      private function extractedMethodName()
+      {
+          $return = 'value';
+      }
+  }

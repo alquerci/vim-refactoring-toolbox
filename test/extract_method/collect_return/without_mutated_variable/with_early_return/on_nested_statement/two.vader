@@ -1,0 +1,37 @@
+Given php:
+  <?php
+
+  class ClassName {
+      public function currentMethodName() {
+          if ('condition') {
+              return 'special value';
+          } else {
+              return 'default value';
+          }
+      }
+  }
+
+Do:
+  /currentMethodName\<Enter>
+  jV4j
+  ;em
+  extractedMethodName\<Enter>
+  \<Enter>
+
+Expect:
+  <?php
+
+  class ClassName {
+      public function currentMethodName() {
+          return $this->extractedMethodName();
+      }
+
+      private function extractedMethodName()
+      {
+          if ('condition') {
+              return 'special value';
+          } else {
+              return 'default value';
+          }
+      }
+  }

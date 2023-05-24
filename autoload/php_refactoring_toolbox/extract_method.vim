@@ -63,6 +63,10 @@ function! s:extractArguments(codeToExtract)
 endfunction
 
 function! s:extractReturnVariables(codeToExtract)
+    if s:codeHasReturn(a:codeToExtract)
+        return []
+    endif
+
     let l:methodCodeAfter = s:collectMethodCodeAfterCurrentLine()
 
     return s:extractMutatedVariablesUsedAfter(a:codeToExtract, l:methodCodeAfter)
@@ -71,49 +75,98 @@ endfunction
 function! s:insertMethodCall(codeToExtract, definition)
     let l:backupPosition = getcurpos()
 
-    let l:currentIndent = s:getBaseIndentOfText(a:codeToExtract)
+    let l:statement = s:makeMethodCallStatement(a:codeToExtract, a:definition)
 
-    " append semi-colon only if extracted code ends with new line
-    let l:endExpression = s:isInlineCode(a:codeToExtract) ? '' : ';'
-
-    let l:methodCallExpression = printf('$this->%s(%s)%s', a:definition.name, join(a:definition.arguments, ', '), l:endExpression)
-    if len(a:definition.returnVariables) == 0
-        call s:writeText(l:currentIndent.l:methodCallExpression)
-    elseif len(a:definition.returnVariables) == 1
-        call s:writeText(l:currentIndent.a:definition.returnVariables[0].' = '.l:methodCallExpression)
-    else
-        let l:leftSide = printf('list(%s)', join(a:definition.returnVariables, ', '))
-        call s:writeText(l:currentIndent.l:leftSide.' = '.l:methodCallExpression)
-    endif
+    call s:writeText(l:statement)
 
     call setpos('.', l:backupPosition)
+endfunction
+
+function! s:makeMethodCallStatement(codeToExtract, definition)
+    let l:indent = s:getBaseIndentOfText(a:codeToExtract)
+    let l:methodCall = s:makeMethodCall(a:codeToExtract, a:definition)
+
+    if s:codeHasReturn(a:codeToExtract)
+        return l:indent.'return '.l:methodCall
+    else
+        let l:assigment = s:makeAssigment(a:definition.returnVariables)
+
+        return l:indent.l:assigment.l:methodCall
+    endif
+endfunction
+
+function! s:makeMethodCall(codeToExtract, definition)
+    " append semi-colon only if extracted code ends with new line
+    let l:endExpression = s:isInlineCode(a:codeToExtract) ? '' : ';'
+    let l:arguments = join(a:definition.arguments, ', ')
+
+    return printf('$this->%s(%s)%s', a:definition.name, l:arguments, l:endExpression)
+endfunction
+
+function! s:makeAssigment(returnVariables)
+    if len(a:returnVariables) == 0
+        return ''
+    elseif len(a:returnVariables) == 1
+        return a:returnVariables[0].' = '
+    else
+        return printf('list(%s)', join(a:returnVariables, ', ')).' = '
+    endif
+endfunction
+
+function! s:codeHasReturn(code)
+    let l:returnKeywordPattern = '^\_s*return\_s'
+    let l:lines = split(a:code, "\n")
+
+    return match(l:lines, l:returnKeywordPattern) > -1
 endfunction
 
 function! s:addMethod(codeToExtract, definition)
     let l:backupPosition = getcurpos()
 
-    let l:baseIndent = s:detectIntentation()
-    let l:returnIndent = l:baseIndent.l:baseIndent
-    let l:methodBody = a:codeToExtract
-    if s:isInlineCode(a:codeToExtract)
-        let l:return = ''
-        let l:methodBody = 'return '.l:methodBody.';'
-    elseif len(a:definition.returnVariables) == 0
-        let l:return = ''
-    elseif len(a:definition.returnVariables) == 1
-        let l:return = "\<Enter>".l:returnIndent.'return ' . a:definition.returnVariables[0] . ';'
-    else
-        let l:return = "\<Enter>".l:returnIndent.'return array(' . join(a:definition.returnVariables, ', ') . ');'
-    endif
+    let l:methodBody = s:prepareMethodBody(a:codeToExtract, a:definition.returnVariables)
 
     call s:moveEndOfFunction()
 
-    let l:currentIndent = s:getBaseIndentOfText(a:codeToExtract)
-    let l:methodBody = substitute(l:methodBody, '^'.l:currentIndent, l:returnIndent, 'g')
-    let l:methodBody = substitute(l:methodBody, '\n'.l:currentIndent, '\n'.l:returnIndent, 'g')
-    call s:insertMethod(a:definition.visibility, a:definition.name, a:definition.arguments, l:methodBody . l:return)
+    call s:insertMethod(a:definition.visibility, a:definition.name, a:definition.arguments, l:methodBody)
 
     call setpos('.', l:backupPosition)
+endfunction
+
+function! s:computeReturnIntent()
+    let l:baseIndent = s:detectIntentation()
+
+    return l:baseIndent.l:baseIndent
+endfunction
+
+function! s:prepareMethodBody(codeToExtract, returnVariables)
+    let l:returnIndent = s:computeReturnIntent()
+    let l:currentIndent = s:getBaseIndentOfText(a:codeToExtract)
+
+    let l:methodBody = substitute(a:codeToExtract, '^'.l:currentIndent, l:returnIndent, 'g')
+    let l:methodBody =  substitute(l:methodBody, '\n'.l:currentIndent, '\n'.l:returnIndent, 'g')
+    let l:methodBody =  substitute(l:methodBody, '\n$', '', 'g')
+
+    if s:isInlineCode(a:codeToExtract)
+        let l:methodBody = ''
+    elseif len(a:returnVariables) > 0
+        let l:methodBody = l:methodBody."\<Enter>\<Enter>"
+    endif
+
+    let l:return = s:prepareReturnStatement(a:codeToExtract, a:returnVariables, l:returnIndent)
+
+    return l:methodBody.l:return
+endfunction
+
+function! s:prepareReturnStatement(codeToExtract, returnVariables, returnIndent)
+    if s:isInlineCode(a:codeToExtract)
+        return a:returnIndent.'return '.a:codeToExtract.';'
+    elseif len(a:returnVariables) == 0
+        return ''
+    elseif len(a:returnVariables) == 1
+        return a:returnIndent.'return ' . a:returnVariables[0] . ';'
+    else
+        return a:returnIndent.'return array(' . join(a:returnVariables, ', ') . ');'
+    endif
 endfunction
 
 function! s:isInlineCode(codeToExtract)

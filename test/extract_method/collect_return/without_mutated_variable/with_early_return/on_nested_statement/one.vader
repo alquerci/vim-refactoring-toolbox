@@ -1,0 +1,33 @@
+Given php:
+  <?php
+
+  class ClassName {
+      public function currentMethodName() {
+          if ('condition') {
+              return $localVariable;
+          }
+      }
+  }
+
+Do:
+  /currentMethodName\<Enter>
+  jV2j
+  ;em
+  extractedMethodName\<Enter>
+  \<Enter>
+
+Expect:
+  <?php
+
+  class ClassName {
+      public function currentMethodName() {
+          return $this->extractedMethodName();
+      }
+
+      private function extractedMethodName()
+      {
+          if ('condition') {
+              return $localVariable;
+          }
+      }
+  }
