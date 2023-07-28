@@ -1,0 +1,24 @@
+Given php:
+  <?php
+
+  function aFunctionName()
+  {
+      $anArgumentVariable;
+      $newName;
+  }
+
+Do:
+  :let g:vim_php_refactoring_auto_validate_rename = 0\<Enter>
+  /anArgumentVariable\<Enter>
+  ;rlv
+  newName\<Enter>
+  0\<Enter>
+
+Expect:
+  <?php
+
+  function aFunctionName()
+  {
+      $anArgumentVariable;
+      $newName;
+  }

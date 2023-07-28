@@ -128,6 +128,13 @@ function! PhpExtractMethod() range " {{{
 endfunction
 " }}}
 
+function! PhpRenameLocalVariable() " {{{
+    call s:incrementUsage('PhpRenameLocalVariable')
+
+    call php_refactoring_toolbox#rename_local_variable#execute()
+endfunction
+" }}}
+
 function! PhpDocAll() " {{{
     call s:incrementUsage('PhpDocAll')
 
@@ -148,23 +155,6 @@ function! PhpDocAll() " {{{
         call s:PhpDocument()
     endwhile
     normal! `a
-endfunction
-" }}}
-
-function! PhpRenameLocalVariable() " {{{
-    call s:incrementUsage('PhpRenameLocalVariable')
-
-    let l:oldName = substitute(expand('<cword>'), '^\$*', '', '')
-    let l:newName = inputdialog('Rename ' . l:oldName . ' to: ')
-    if g:vim_php_refactoring_auto_validate_rename == 0
-        if s:PhpSearchInCurrentFunction('\C$' . l:newName . '\>', 'n') > 0
-            call s:PhpEchoError('$' . l:newName . ' seems to already exist in the current function scope. Rename anyway ?')
-            if inputlist(["0. No", "1. Yes"]) == 0
-                return
-            endif
-        endif
-    endif
-    call s:PhpReplaceInCurrentFunction('\C$' . l:oldName . '\>', '$' . l:newName)
 endfunction
 " }}}
 
@@ -327,7 +317,7 @@ function! PhpExtractClassProperty() " {{{
 
     normal! mr
     let l:name = substitute(expand('<cword>'), '^\$*', '', '')
-    call s:PhpReplaceInCurrentFunction('$' . l:name . '\>', '$this->' . l:name)
+    call s:PhpReplaceInsideCurrentFunctionBody('$' . l:name . '\>', '$this->' . l:name)
     if g:vim_php_refactoring_auto_validate_visibility == 0
         let l:visibility = inputdialog("Visibility (default is " . g:vim_php_refactoring_default_property_visibility . "): ")
         if empty(l:visibility)
@@ -337,6 +327,20 @@ function! PhpExtractClassProperty() " {{{
         let l:visibility =  g:vim_php_refactoring_default_property_visibility
     endif
     call s:PhpInsertProperty(l:name, l:visibility)
+    normal! `r
+endfunction
+" }}}
+
+function! s:PhpReplaceInsideCurrentFunctionBody(search, replace) " {{{
+    normal! mr
+
+    call search(s:php_regex_func_line, 'bW')
+    call search('{', 'W')
+    let l:startLine = line('.')
+    call searchpair('{', '', '}', 'W')
+    let l:stopLine = line('.')
+
+    exec l:startLine . ',' . l:stopLine . ':s/' . a:search . '/'. a:replace .'/ge'
     normal! `r
 endfunction
 " }}}
@@ -415,20 +419,6 @@ function! s:PhpDocument() " {{{
         exec "call " . g:vim_php_refactoring_phpdoc . '()'
         normal! `r
     endif
-endfunction
-" }}}
-
-function! s:PhpReplaceInCurrentFunction(search, replace) " {{{
-    normal! mr
-
-    call search(s:php_regex_func_line, 'bW')
-    call search('{', 'W')
-    let l:startLine = line('.')
-    call searchpair('{', '', '}', 'W')
-    let l:stopLine = line('.')
-
-    exec l:startLine . ',' . l:stopLine . ':s/' . a:search . '/'. a:replace .'/ge'
-    normal! `r
 endfunction
 " }}}
 
@@ -528,18 +518,6 @@ function! s:PhpPopList(list) " {{{
             return l:elem
         endif
     endfor
-endfunction
-" }}}
-
-function! s:PhpSearchInCurrentFunction(pattern, flags) " {{{
-    normal! mr
-    call search(s:php_regex_func_line, 'bW')
-    let l:startLine = line('.')
-    call search('{', 'W')
-    exec "normal! %"
-    let l:stopLine = line('.')
-    normal! `r
-    return s:PhpSearchInRange(a:pattern, a:flags, l:startLine, l:stopLine)
 endfunction
 " }}}
 

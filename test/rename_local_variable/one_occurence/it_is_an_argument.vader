@@ -1,0 +1,19 @@
+Given php:
+  <?php
+
+  function aFunctionName($anArgumentVariable)
+  {
+  }
+
+Do:
+  /anArgumentVariable\<Enter>
+  ;rlv
+  newName\<Enter>
+  \<Enter>
+
+Expect:
+  <?php
+
+  function aFunctionName($newName)
+  {
+  }
