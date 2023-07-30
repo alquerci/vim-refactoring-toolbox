@@ -7,6 +7,7 @@ PHP Refactoring Toolbox for VIM
 * Rename Local Variable
 * Rename Class Variable
 * Rename Method
+* Rename Directory (required phpactor/phpactor)
 * Extract Use
 * Extract Const
 * Extract Variable
@@ -72,11 +73,14 @@ let g:vim_php_refactoring_make_setter_fluent = 1
 let g:vim_php_refactoring_make_setter_fluent = 2
 ```
 
+If you want to rename directory with mapping `rd` you need to install phpactor/phpactor
+
 
 ## Default Mappings
 
     nnoremap <unique> <Leader>rlv :call PhpRenameLocalVariable()<Enter>
     nnoremap <unique> <Leader>rcv :call PhpRenameClassVariable()<Enter>
+    nnoremap <unique> <Leader>rd :call PhpRenameDirectory()<Enter>
     nnoremap <unique> <Leader>rm :call PhpRenameMethod()<Enter>
     nnoremap <unique> <Leader>eu :call PhpExtractUse()<Enter>
     vnoremap <unique> <Leader>ec :call PhpExtractConst()<Enter>

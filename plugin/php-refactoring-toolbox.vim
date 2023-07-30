@@ -63,6 +63,7 @@ endif
 if g:vim_php_refactoring_use_default_mapping == 1
     nnoremap <unique> <Leader>rlv :call PhpRenameLocalVariable()<Enter>
     nnoremap <unique> <Leader>rcv :call PhpRenameClassVariable()<Enter>
+    nnoremap <unique> <Leader>rd :call PhpRenameDirectory()<Enter>
     nnoremap <unique> <Leader>eu :call PhpExtractUse()<Enter>
     nnoremap <unique> <Leader>rm :call PhpRenameMethod()<Enter>
     vnoremap <unique> <Leader>ec :call PhpExtractConst()<Enter>
@@ -132,6 +133,13 @@ function! PhpRenameLocalVariable() " {{{
     call s:incrementUsage('PhpRenameLocalVariable')
 
     call php_refactoring_toolbox#rename_local_variable#execute()
+endfunction
+" }}}
+
+function! PhpRenameDirectory() " {{{
+    call s:incrementUsage('PhpRenameDirectory')
+
+    call php_refactoring_toolbox#rename_directory#execute()
 endfunction
 " }}}
 

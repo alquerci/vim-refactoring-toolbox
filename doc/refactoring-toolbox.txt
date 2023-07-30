@@ -27,6 +27,7 @@ Default Mappings                                                         *refact
 
 nnoremap <unique> <Leader>rlv :call PhpRenameLocalVariable()<Enter>
 nnoremap <unique> <Leader>rcv :call PhpRenameClassVariable()<Enter>
+nnoremap <unique> <Leader>rd :call PhpRenameDirectory()<Enter>
 nnoremap <unique> <Leader>rm :call PhpRenameMethod()<Enter>
 nnoremap <unique> <Leader>eu :call PhpExtractUse()<Enter>
 vnoremap <unique> <Leader>ec :call PhpExtractConst()<Enter>
