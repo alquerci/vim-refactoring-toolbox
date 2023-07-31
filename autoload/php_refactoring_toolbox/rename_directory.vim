@@ -1,6 +1,6 @@
 function! php_refactoring_toolbox#rename_directory#execute()
     let l:oldDirectory = s:askQuestion("Old directory?")
-    let l:newDirectory = s:askQuestion("New directory?")
+    let l:newDirectory = s:askQuestion("New directory?", l:oldDirectory)
 
     let l:files = s:searchPhpFilesInDirectory(l:oldDirectory)
 
