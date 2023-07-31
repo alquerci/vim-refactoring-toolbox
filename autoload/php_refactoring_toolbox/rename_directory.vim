@@ -1,18 +1,15 @@
 function! php_refactoring_toolbox#rename_directory#execute()
-    try
-        let l:oldDirectory = s:askQuestion("Old directory?")
-        let l:newDirectory = s:askQuestion("New directory?")
+    let l:oldDirectory = s:askQuestion("Old directory?")
+    let l:newDirectory = s:askQuestion("New directory?")
 
-        let l:files = s:searchPhpFilesInDirectory(l:oldDirectory)
+    let l:files = s:searchPhpFilesInDirectory(l:oldDirectory)
 
-        for l:file in l:files
-            let l:oldPath = l:file
-            let l:newPath = substitute(l:file, l:oldDirectory, l:newDirectory, '')
+    for l:file in l:files
+        let l:oldPath = l:file
+        let l:newPath = substitute(l:file, l:oldDirectory, l:newDirectory, '')
 
-            call s:movePhpFile(l:oldPath, l:newPath)
-        endfor
-    catch /user_cancel/
-    endtry
+        call s:movePhpFile(l:oldPath, l:newPath)
+    endfor
 endfunction
 
 function! s:searchPhpFilesInDirectory(directory)
@@ -30,18 +27,9 @@ function! s:askQuestion(question, default = '')
 endfunction
 
 function! s:makeQuestionPrompt(question, default)
-    return a:question.' ["'.a:default.'"] '
+    return a:question.' '
 endfunction
 
 function! s:sendQuestionAndCollectAnswer(prompt, default)
-    let l:cancelMarker = "//<Esc>"
-    let l:defaultMarker = ''
-
-    let l:answer = inputdialog(a:prompt, l:defaultMarker, l:cancelMarker)
-
-    if l:cancelMarker == l:answer
-        throw 'user_cancel'
-    endif
-
-    return l:defaultMarker == l:answer ? a:default : l:answer
+    return input(a:prompt, a:default, "dir")
 endfunction
