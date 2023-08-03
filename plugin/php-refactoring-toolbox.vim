@@ -133,7 +133,7 @@ endfunction
 function! PhpRenameLocalVariable() " {{{
     call s:incrementUsage('PhpRenameLocalVariable')
 
-    call php_refactoring_toolbox#rename_local_variable#execute()
+    call php_refactoring_toolbox#rename_variable#execute()
 endfunction
 " }}}
 

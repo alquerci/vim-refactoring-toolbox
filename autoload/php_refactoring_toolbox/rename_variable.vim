@@ -1,6 +1,6 @@
 let s:php_regex_func_line = php_refactoring_toolbox#regex#func_line
 
-function! php_refactoring_toolbox#rename_local_variable#execute()
+function! php_refactoring_toolbox#rename_variable#execute()
     let l:oldName = substitute(expand('<cword>'), '^\$*', '', '')
     let l:newName = inputdialog('Rename ' . l:oldName . ' to: ')
 

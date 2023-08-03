@@ -1,0 +1,25 @@
+Given php:
+  <?php
+
+  function action()
+  {
+      $aVariable;
+  }
+
+Before (load twice php file type plugin):
+  execute 'runtime! ftplugin/php/*.vim'
+  execute 'runtime! ftplugin/php/*.vim'
+
+Do:
+  /aVariable\<Enter>
+  ;rv
+  newName\<Enter>
+  \<Enter>
+
+Expect:
+  <?php
+
+  function action()
+  {
+      $newName;
+  }

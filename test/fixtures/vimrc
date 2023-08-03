@@ -11,4 +11,5 @@ filetype indent on
 syntax enable
 
 let mapleader = ";"
+let maplocalleader = ";"
 let g:vim_php_refactoring_usage_logdir = './var/log'
