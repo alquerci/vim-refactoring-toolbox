@@ -1,0 +1,34 @@
+Given php:
+  <?php
+
+  function action()
+  {
+      $aVariable = null;
+      $aVariable;
+
+      $anotherVariable = true;
+      $anotherVariable;
+
+      $withEqualSignOnValue = '=';
+      $withEqualSignOnValue;
+  }
+
+Do:
+  /aVariable\<Enter>
+  ;iv
+  /anotherVariable\<Enter>
+  ;iv
+  /withEqualSignOnValue\<Enter>
+  ;iv
+
+Expect:
+  <?php
+
+  function action()
+  {
+      null;
+
+      true;
+
+      '=';
+  }

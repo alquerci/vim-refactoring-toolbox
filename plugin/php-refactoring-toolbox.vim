@@ -68,6 +68,7 @@ if g:vim_php_refactoring_use_default_mapping == 1
     nnoremap <unique> <Leader>rm :call PhpRenameMethod()<Enter>
     vnoremap <unique> <Leader>ec :call PhpExtractConst()<Enter>
     vnoremap <unique> <Leader>ev :call PhpExtractVariable()<Enter>
+    nnoremap <unique> <Leader>iv :call PhpInlineVariable()<Enter>
     nnoremap <unique> <Leader>ep :call PhpExtractClassProperty()<Enter>
     vnoremap <unique> <Leader>em :call PhpExtractMethod()<Enter>
     nnoremap <unique> <Leader>np :call PhpCreateProperty()<Enter>
@@ -133,6 +134,13 @@ function! PhpRenameLocalVariable() " {{{
     call s:incrementUsage('PhpRenameLocalVariable')
 
     call php_refactoring_toolbox#rename_local_variable#execute()
+endfunction
+" }}}
+
+function! PhpInlineVariable() " {{{
+    call s:incrementUsage('PhpInlineVariable')
+
+    call php_refactoring_toolbox#inline_variable#execute()
 endfunction
 " }}}
 
