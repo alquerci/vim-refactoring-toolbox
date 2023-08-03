@@ -1,0 +1,20 @@
+Given php:
+  <?php
+
+  function action()
+  {
+      $aVariable = null === $variable;
+      $aVariable;
+  }
+
+Do:
+  /aVariable\<Enter>
+  ;iv
+
+Expect:
+  <?php
+
+  function action()
+  {
+      null === $variable;
+  }

@@ -15,7 +15,7 @@ endfunction
 
 function! s:readValueOnCurrentPosition()
     let l:value = getbufline(s:CURRENT_BUFFER, s:getCurrentLine())[0]
-    let l:value = substitute(l:value, '.*= ', '', '')
+    let l:value = substitute(l:value, '[^=]*= ', '', '')
 
     return substitute(l:value, ';$', '', '')
 endfunction
