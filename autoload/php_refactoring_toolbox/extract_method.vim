@@ -4,6 +4,8 @@ let s:php_regex_const_line = php_refactoring_toolbox#regex#const_line
 let s:php_regex_local_var = php_refactoring_toolbox#regex#local_var
 let s:php_regex_local_var_mutate = php_refactoring_toolbox#regex#local_var_mutate
 let s:NULL = 'NONE'
+let s:NO_MATCH = -1
+let s:EXPR_NOT_FOUND = -1
 
 function! php_refactoring_toolbox#extract_method#execute()
     try
@@ -117,7 +119,7 @@ function! s:codeHasReturn(code)
     let l:returnKeywordPattern = '^\_s*return\_s'
     let l:lines = split(a:code, "\n")
 
-    return match(l:lines, l:returnKeywordPattern) > -1
+    return match(l:lines, l:returnKeywordPattern) != s:NO_MATCH
 endfunction
 
 function! s:addMethod(codeToExtract, definition)
@@ -269,7 +271,7 @@ function! s:extractVariablesPresentInBothCode(first, second)
 endfunction
 
 function! s:variableExistsOnCode(variable, code)
-    return match(a:code, a:variable . '\>') > 0
+    return match(a:code, a:variable . '\>') != s:NO_MATCH
 endfunction
 
 function! s:extractAllLocalVariables(haystack)
@@ -284,9 +286,10 @@ function! s:extractStringListThatMatchPatternWithCondition(haystack, stringPatte
     let l:strings = []
     let l:matchPos = match(a:haystack, a:conditionPattern, 0)
 
-    while l:matchPos > 0
+    while l:matchPos != s:NO_MATCH
         let l:str = matchstr(a:haystack, a:stringPattern, l:matchPos)
-        if index(l:strings, l:str) < 0
+
+        if s:EXPR_NOT_FOUND == index(l:strings, l:str)
             call add(l:strings, l:str)
         endif
 

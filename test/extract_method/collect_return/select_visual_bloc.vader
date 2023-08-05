@@ -1,0 +1,37 @@
+Given php:
+  <?php
+
+  class AClassName
+  {
+      public function aPublicFunction()
+      {
+          $firstVariable = 'first variable value';
+
+          return $firstVariable;
+      }
+  }
+
+Do:
+  /firstVariable\<Enter>
+  hvt;
+  ;em
+  returnFirstVariable\<Enter>
+  \<Enter>
+
+Expect:
+  <?php
+
+  class AClassName
+  {
+      public function aPublicFunction()
+      {
+          $firstVariable = $this->returnFirstVariable();
+
+          return $firstVariable;
+      }
+
+      private function returnFirstVariable()
+      {
+          return $firstVariable = 'first variable value';
+      }
+  }

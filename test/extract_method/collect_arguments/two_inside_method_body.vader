@@ -1,0 +1,39 @@
+Given php:
+  <?php
+
+  class AClassName
+  {
+      public function aPublicFunction()
+      {
+          $firstVariable = 'first variable value';
+          $secondVariable = 'second variable value';
+
+          return $firstVariable.$secondVariable;
+      }
+  }
+
+Do:
+  /return\<Enter>
+  V
+  ;em
+  eatTwoVariables\<Enter>
+  \<Enter>
+
+Expect:
+  <?php
+
+  class AClassName
+  {
+      public function aPublicFunction()
+      {
+          $firstVariable = 'first variable value';
+          $secondVariable = 'second variable value';
+
+          return $this->eatTwoVariables($firstVariable, $secondVariable);
+      }
+
+      private function eatTwoVariables($firstVariable, $secondVariable)
+      {
+          return $firstVariable.$secondVariable;
+      }
+  }
