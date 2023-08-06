@@ -1,4 +1,7 @@
 let s:php_regex_class_line = php_refactoring_toolbox#regex#class_line
+let s:regex_after_word_boundary = php_refactoring_toolbox#regex#after_word_boudary
+let s:php_regex_before_property = '\C\%(\%(\%(public\|protected\|private\|static\|readonly\)\%(\_s\+?\?[\\|_A-Za-z0-9]\+\)\?\_s\+\)\+\$\|$this->\)\@<='
+let s:SEARCH_NO_MATCH = 0
 
 function! php_refactoring_toolbox#rename_property#execute()
     let l:oldName = s:readNameOnCurrentPosition()
@@ -12,7 +15,7 @@ function! php_refactoring_toolbox#rename_property#execute()
         endtry
     endif
 
-    call s:phpReplaceInCurrentClass('\C\%(\%(\%(public\|protected\|private\|static\)\%(\_s\+?\?[\\|_A-Za-z0-9]\+\)\?\_s\+\)\+\$\|$this->\)\@<=' . l:oldName . '\>', l:newName)
+    call s:replacePropertyName(l:oldName, l:newName)
 endfunction
 
 function! s:readNameOnCurrentPosition()
@@ -29,7 +32,7 @@ endfunction
 
 function! s:askForConfirmationWhenNewNameAlreadyExists(newName)
     if s:newNameAlreadyExists(a:newName)
-        call s:phpEchoError(a:newName . ' seems to already exist in the current class. Rename anyway ?')
+        call s:echoError(a:newName . ' seems to already exist in the current class. Rename anyway ?')
         if inputlist(["0. No", "1. Yes"]) == 0
             throw 'already_exists'
         endif
@@ -37,32 +40,19 @@ function! s:askForConfirmationWhenNewNameAlreadyExists(newName)
 endfunction
 
 function! s:newNameAlreadyExists(newName)
-    return s:phpSearchInCurrentClass('\C\%(\%(\%(public\|protected\|private\|static\)\%(\_s\+?\?[\\|_A-Za-z0-9]\+\)\?\_s\+\)\+\$\|$this->\)\@<=' . a:newName . '\>', 'n') > 0
+    let l:propertyPattern = s:makePropertyPattern(a:newName)
+
+    return s:searchInCurrentClass(l:propertyPattern) != s:SEARCH_NO_MATCH
 endfunction
 
-function! s:phpSearchInCurrentClass(pattern, flags)
-    normal! mr
-    call search(s:php_regex_class_line, 'beW')
-    call search('{', 'W')
-    let l:startLine = line('.')
-    exec "normal! %"
-    let l:stopLine = line('.')
-    normal! `r
-    return s:PhpSearchInRange(a:pattern, a:flags, l:startLine, l:stopLine)
+function! s:searchInCurrentClass(pattern)
+    let [l:startLine, l:stopLine] = s:findCurrentClassLineRange()
+
+    return s:searchInRange(a:pattern, l:startLine, l:stopLine)
 endfunction
 
-function! s:PhpSearchInRange(pattern, flags, startLine, endLine)
-    return search('\%>' . a:startLine . 'l\%<' . a:endLine . 'l' . a:pattern, a:flags)
-endfunction
-
-function! s:phpEchoError(message)
-    echohl ErrorMsg
-    echomsg a:message
-    echohl NONE
-endfunction
-
-function! s:phpReplaceInCurrentClass(search, replace)
-    normal! mr
+function! s:findCurrentClassLineRange()
+    let l:backupPosition = getcurpos()
 
     call search(s:php_regex_class_line, 'beW')
     call search('{', 'W')
@@ -70,6 +60,37 @@ function! s:phpReplaceInCurrentClass(search, replace)
     call searchpair('{', '', '}', 'W')
     let l:stopLine = line('.')
 
+    call setpos('.', l:backupPosition)
+
+    return [l:startLine, l:stopLine]
+endfunction
+
+function! s:searchInRange(pattern, startLine, endLine)
+    return search('\%>' . a:startLine . 'l\%<' . a:endLine . 'l' . a:pattern, 'n')
+endfunction
+
+function! s:echoError(message)
+    echohl ErrorMsg
+    echomsg a:message
+    echohl NONE
+endfunction
+
+function! s:replacePropertyName(oldName, newName)
+    let l:propertyPattern = s:makePropertyPattern(a:oldName)
+
+    call s:replaceInCurrentClass(l:propertyPattern, a:newName)
+endfunction
+
+function! s:makePropertyPattern(propertyName)
+    return s:php_regex_before_property.a:propertyName.s:regex_after_word_boundary
+endfunction
+
+function! s:replaceInCurrentClass(search, replace)
+    let l:backupPosition = getcurpos()
+
+    let [l:startLine, l:stopLine] = s:findCurrentClassLineRange()
+
     exec l:startLine . ',' . l:stopLine . ':s/' . a:search . '/'. a:replace .'/ge'
-    normal! `r
+
+    call setpos('.', l:backupPosition)
 endfunction
