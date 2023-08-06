@@ -137,6 +137,13 @@ function! PhpRenameLocalVariable() " {{{
 endfunction
 " }}}
 
+function! PhpRenameClassVariable() " {{{
+    call s:incrementUsage('PhpRenameClassVariable')
+
+    call php_refactoring_toolbox#rename_property#execute()
+endfunction
+" }}}
+
 function! PhpInlineVariable() " {{{
     call s:incrementUsage('PhpInlineVariable')
 
@@ -171,23 +178,6 @@ function! PhpDocAll() " {{{
         call s:PhpDocument()
     endwhile
     normal! `a
-endfunction
-" }}}
-
-function! PhpRenameClassVariable() " {{{
-    call s:incrementUsage('PhpRenameClassVariable')
-
-    let l:oldName = substitute(expand('<cword>'), '^\$*', '', '')
-    let l:newName = inputdialog('Rename ' . l:oldName . ' to: ')
-    if g:vim_php_refactoring_auto_validate_rename == 0
-        if s:PhpSearchInCurrentClass('\C\%(\%(\%(public\|protected\|private\|static\)\%(\_s\+?\?[\\|_A-Za-z0-9]\+\)\?\_s\+\)\+\$\|$this->\)\@<=' . l:newName . '\>', 'n') > 0
-            call s:PhpEchoError(l:newName . ' seems to already exist in the current class. Rename anyway ?')
-            if inputlist(["0. No", "1. Yes"]) == 0
-                return
-            endif
-        endif
-    endif
-    call s:PhpReplaceInCurrentClass('\C\%(\%(\%(public\|protected\|private\|static\)\%(\_s\+?\?[\\|_A-Za-z0-9]\+\)\?\_s\+\)\+\$\|$this->\)\@<=' . l:oldName . '\>', l:newName)
 endfunction
 " }}}
 

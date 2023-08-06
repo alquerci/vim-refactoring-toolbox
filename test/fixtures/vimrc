@@ -13,3 +13,18 @@ syntax enable
 let mapleader = ";"
 let maplocalleader = ";"
 let g:vim_php_refactoring_usage_logdir = './var/log'
+
+function! TestResetConfiguration()
+    let g:vim_php_refactoring_auto_validate = 0
+    let g:vim_php_refactoring_auto_validate_sg = g:vim_php_refactoring_auto_validate
+    let g:vim_php_refactoring_auto_validate_g = g:vim_php_refactoring_auto_validate
+    let g:vim_php_refactoring_auto_validate_rename = g:vim_php_refactoring_auto_validate
+    let g:vim_php_refactoring_auto_validate_visibility = g:vim_php_refactoring_auto_validate
+    let g:vim_php_refactoring_default_property_visibility = 'private'
+    let g:vim_php_refactoring_default_method_visibility = 'private'
+    let g:vim_php_refactoring_make_setter_fluent = 0
+endfunction
+
+function! TestWriteVariable(name, value)
+    execute 'normal! i'.a:name.'='.a:value
+endfunction

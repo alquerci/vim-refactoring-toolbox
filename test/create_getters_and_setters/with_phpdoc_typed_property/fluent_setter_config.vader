@@ -13,7 +13,7 @@ Do:
   :let g:vim_php_refactoring_make_setter_fluent = 1\<Enter>
   ;sg
   1\<Enter>
-  :let g:vim_php_refactoring_make_setter_fluent = 0\<Enter>
+  :call TestResetConfiguration()\<Enter>
 
 Expect:
   <?php
