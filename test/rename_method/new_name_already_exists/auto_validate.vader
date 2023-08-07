@@ -1,0 +1,44 @@
+Given php:
+  <?php
+
+  class AClassName
+  {
+      private function usageFunctionName()
+      {
+          $this->functionToRename()
+      }
+
+      private function functionToRename()
+      {
+      }
+
+      private function newFunctionName()
+      {
+      }
+  }
+
+Do:
+  :let g:vim_php_refactoring_auto_validate_rename = 1\<Enter>
+  /functionToRename\<Enter>
+  ;rm
+  newFunctionName\<Enter>
+  :call TestResetConfiguration()\<Enter>
+
+Expect:
+  <?php
+
+  class AClassName
+  {
+      private function usageFunctionName()
+      {
+          $this->newFunctionName()
+      }
+
+      private function newFunctionName()
+      {
+      }
+
+      private function newFunctionName()
+      {
+      }
+  }

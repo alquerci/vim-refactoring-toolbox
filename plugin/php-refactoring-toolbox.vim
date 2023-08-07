@@ -130,6 +130,13 @@ function! PhpExtractMethod() range " {{{
 endfunction
 " }}}
 
+function! PhpRenameMethod() " {{{
+    call s:incrementUsage('PhpRenameMethod')
+
+    call php_refactoring_toolbox#rename_method#execute()
+endfunction
+" }}}
+
 function! PhpRenameLocalVariable() " {{{
     call s:incrementUsage('PhpRenameLocalVariable')
 
@@ -178,23 +185,6 @@ function! PhpDocAll() " {{{
         call s:PhpDocument()
     endwhile
     normal! `a
-endfunction
-" }}}
-
-function! PhpRenameMethod() " {{{
-    call s:incrementUsage('PhpRenameMethod')
-
-    let l:oldName = substitute(expand('<cword>'), '^\$*', '', '')
-    let l:newName = inputdialog('Rename ' . l:oldName . ' to: ')
-    if g:vim_php_refactoring_auto_validate_rename == 0
-        if s:PhpSearchInCurrentClass('\%(\%(' . s:php_regex_func_line . '\)\|$this->\)\@<=' . l:newName . '\>', 'n') > 0
-            call s:PhpEchoError(l:newName . ' seems to already exist in the current class. Rename anyway ?')
-            if inputlist(["0. No", "1. Yes"]) == 0
-                return
-            endif
-        endif
-    endif
-    call s:PhpReplaceInCurrentClass('\%(\%(' . s:php_regex_func_line . '\)\|$this->\)\@<=' . l:oldName . '\>', l:newName)
 endfunction
 " }}}
 
@@ -524,18 +514,6 @@ function! s:PhpPopList(list) " {{{
             return l:elem
         endif
     endfor
-endfunction
-" }}}
-
-function! s:PhpSearchInCurrentClass(pattern, flags) " {{{
-    normal! mr
-    call search(s:php_regex_class_line, 'beW')
-    call search('{', 'W')
-    let l:startLine = line('.')
-    exec "normal! %"
-    let l:stopLine = line('.')
-    normal! `r
-    return s:PhpSearchInRange(a:pattern, a:flags, l:startLine, l:stopLine)
 endfunction
 " }}}
 
