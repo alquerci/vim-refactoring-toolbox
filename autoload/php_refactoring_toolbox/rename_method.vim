@@ -24,7 +24,7 @@ function! s:readNameOnCurrentPosition()
 endfunction
 
 function! s:askForNewName(oldName)
-    return inputdialog('Rename ' . a:oldName . ' to: ')
+    return input('Rename ' . a:oldName . ' to: ', a:oldName)
 endfunction
 
 function! s:shouldAskUserToValidateRename()

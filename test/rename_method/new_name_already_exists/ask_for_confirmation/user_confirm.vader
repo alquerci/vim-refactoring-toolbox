@@ -12,7 +12,7 @@ Given php:
       {
       }
 
-      private function newFunctionName()
+      private function functionToRenameSuffix()
       {
       }
   }
@@ -20,7 +20,7 @@ Given php:
 Do:
   /functionToRename\<Enter>
   ;rm
-  newFunctionName\<Enter>
+  Suffix\<Enter>
   1\<Enter>
 
 Expect:
@@ -30,14 +30,14 @@ Expect:
   {
       private function usageFunctionName()
       {
-          $this->newFunctionName()
+          $this->functionToRenameSuffix()
       }
 
-      private function newFunctionName()
+      private function functionToRenameSuffix()
       {
       }
 
-      private function newFunctionName()
+      private function functionToRenameSuffix()
       {
       }
   }

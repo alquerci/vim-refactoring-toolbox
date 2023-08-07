@@ -16,7 +16,7 @@ Given php:
 Do:
   /functionToRename\<Enter>
   ;rm
-  Suffix\<Enter>
+  \<BS>\<BS>\<BS>\<BS>\<BS>\<BS>Suffix\<Enter>
 
 Expect:
   <?php
@@ -25,10 +25,10 @@ Expect:
   {
       private function usageFunctionName()
       {
-          $this->functionToRenameSuffix()
+          $this->functionToSuffix()
       }
 
-      private function functionToRenameSuffix()
+      private function functionToSuffix()
       {
       }
   }

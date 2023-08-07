@@ -16,7 +16,7 @@ Given php:
 Do:
   /functionToRename\<Enter>
   ;rm
-  newFunctionName\<Enter>
+  Suffix\<Enter>
 
 Expect:
   <?php
@@ -25,10 +25,10 @@ Expect:
   {
       private static function usageFunctionName()
       {
-          self::newFunctionName()
+          self::functionToRenameSuffix()
       }
 
-      private static function newFunctionName()
+      private static function functionToRenameSuffix()
       {
       }
   }

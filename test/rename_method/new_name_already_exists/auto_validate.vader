@@ -12,7 +12,7 @@ Given php:
       {
       }
 
-      private function newFunctionName()
+      private function functionToRenameSuffix()
       {
       }
   }
@@ -21,7 +21,7 @@ Do:
   :let g:vim_php_refactoring_auto_validate_rename = 1\<Enter>
   /functionToRename\<Enter>
   ;rm
-  newFunctionName\<Enter>
+  Suffix\<Enter>
   :call TestResetConfiguration()\<Enter>
 
 Expect:
@@ -31,14 +31,14 @@ Expect:
   {
       private function usageFunctionName()
       {
-          $this->newFunctionName()
+          $this->functionToRenameSuffix()
       }
 
-      private function newFunctionName()
+      private function functionToRenameSuffix()
       {
       }
 
-      private function newFunctionName()
+      private function functionToRenameSuffix()
       {
       }
   }
