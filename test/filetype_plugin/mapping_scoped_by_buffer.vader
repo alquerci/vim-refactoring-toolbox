@@ -6,19 +6,18 @@ Given php:
       $aVariable;
   }
 
-Before:
-  call TestLoadFileTypeInIsolation('php')
-
 Do:
+  :new\<Enter>
+  :call TestLoadFileType('php')\<Enter>
+  :bdelete\<Enter>
   /aVariable\<Enter>
   ;rv
-  newName\<Enter>
-  \<Enter>
+  G\<Enter>
 
 Expect:
   <?php
 
   function action()
   {
-      $newName;
+      $aVariablv;
   }

@@ -1,0 +1,7 @@
+Execute:
+  new
+  new
+  call TestLoadFileType('php')
+  bdelete
+  call TestLoadFileType('php')
+  bdelete

@@ -6,8 +6,8 @@ Given php:
       private $aPropertyName;
   }
 
-Before (load php file type plugin):
-  execute 'runtime! ftplugin/php/*.vim'
+Before:
+  call TestLoadFileTypeInIsolation('php')
 
 Do:
   /aPropertyName\<Enter>

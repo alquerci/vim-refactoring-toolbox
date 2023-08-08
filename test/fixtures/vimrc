@@ -13,8 +13,9 @@ syntax enable
 let mapleader = ";"
 let maplocalleader = ";"
 let g:vim_php_refactoring_usage_logdir = './var/log'
+let g:test_tmpdir = './var/tmp'
 
-function! TestResetConfiguration()
+function TestResetConfiguration()
     let g:vim_php_refactoring_auto_validate = 0
     let g:vim_php_refactoring_auto_validate_sg = g:vim_php_refactoring_auto_validate
     let g:vim_php_refactoring_auto_validate_g = g:vim_php_refactoring_auto_validate
@@ -25,6 +26,29 @@ function! TestResetConfiguration()
     let g:vim_php_refactoring_make_setter_fluent = 0
 endfunction
 
-function! TestWriteVariable(name, value)
+function TestDebug(name, value)
+    call append(line('.'), '')
+    call cursor(line('.') + 1, 0)
+
     execute 'normal! i'.a:name.'='.a:value
+endfunction
+
+function TestLoadFileTypeInIsolation(type)
+    call s:copyCurrentBuffer()
+    call s:makeNewBufferWithLastCopy()
+
+    call TestLoadFileType(a:type)
+endfunction
+
+function TestLoadFileType(type)
+    execute 'runtime! ftplugin/'.a:type.'/*.vim'
+endfunction
+
+function s:copyCurrentBuffer()
+    execute 'normal! ggyG'
+endfunction
+
+function s:makeNewBufferWithLastCopy()
+    new
+    execute 'normal! pkdd'
 endfunction
