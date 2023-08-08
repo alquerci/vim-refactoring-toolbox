@@ -8,12 +8,12 @@ Given php:
 Do:
   /anArgumentVariable\<Enter>
   ;rlv
-  newName\<Enter>
+  New\<Enter>
   \<Enter>
 
 Expect:
   <?php
 
-  function aFunctionName($newName)
+  function aFunctionName($anArgumentVariableNew)
   {
   }

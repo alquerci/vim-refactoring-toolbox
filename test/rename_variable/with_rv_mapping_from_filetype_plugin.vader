@@ -12,7 +12,7 @@ Before:
 Do:
   /aVariable\<Enter>
   ;rv
-  newName\<Enter>
+  New\<Enter>
   \<Enter>
 
 Expect:
@@ -20,5 +20,5 @@ Expect:
 
   function action()
   {
-      $newName;
+      $aVariableNew;
   }

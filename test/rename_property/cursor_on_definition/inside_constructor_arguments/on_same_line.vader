@@ -1,0 +1,25 @@
+Given php:
+  <?php
+
+  class AClassName
+  {
+      public function __construct(private $aPropertyName)
+      {
+      }
+  }
+
+Do:
+  /aPropertyName\<Enter>
+  ;rcv
+  newPropertyName\<Enter>
+  \<Enter>
+
+Expect:
+  <?php
+
+  class AClassName
+  {
+      public function __construct(private $newPropertyName)
+      {
+      }
+  }

@@ -3,13 +3,13 @@ Given php:
 
   function aFunctionName()
   {
-      $anArgumentVariable;
+      $aVariable;
   }
 
 Do:
-  /anArgumentVariable\<Enter>
+  /aVariable\<Enter>
   ;rlv
-  newName\<Enter>
+  New\<Enter>
   \<Enter>
 
 Expect:
@@ -17,5 +17,5 @@ Expect:
 
   function aFunctionName()
   {
-      $newName;
+      $aVariableNew;
   }

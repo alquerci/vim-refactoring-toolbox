@@ -1,7 +1,9 @@
 let s:php_regex_class_line = php_refactoring_toolbox#regex#class_line
 let s:regex_after_word_boundary = php_refactoring_toolbox#regex#after_word_boudary
-let s:php_regex_before_property = '\C\%(\%(\%(public\|protected\|private\|static\|readonly\)\%(\_s\+?\?[\\|_A-Za-z0-9]\+\)\?\_s\+\)\+\$\|$this->\)\@<='
-let s:SEARCH_NO_MATCH = 0
+let s:regex_case_sensitive = php_refactoring_toolbox#regex#case_sensitive
+let s:regex_property_declaration_or_usage = php_refactoring_toolbox#regex#member_declaration_or_usage
+let s:regex_lookbehind_positive = php_refactoring_toolbox#regex#lookbehind_positive
+let s:SEARCH_NOT_FOUND = 0
 
 function! php_refactoring_toolbox#rename_property#execute()
     let l:oldName = s:readNameOnCurrentPosition()
@@ -42,7 +44,7 @@ endfunction
 function! s:newNameAlreadyExists(newName)
     let l:propertyPattern = s:makePropertyPattern(a:newName)
 
-    return s:searchInCurrentClass(l:propertyPattern) != s:SEARCH_NO_MATCH
+    return s:searchInCurrentClass(l:propertyPattern) != s:SEARCH_NOT_FOUND
 endfunction
 
 function! s:searchInCurrentClass(pattern)
@@ -82,7 +84,9 @@ function! s:replacePropertyName(oldName, newName)
 endfunction
 
 function! s:makePropertyPattern(propertyName)
-    return s:php_regex_before_property.a:propertyName.s:regex_after_word_boundary
+    let l:is_prefixed_with_property_marker = s:regex_case_sensitive.s:regex_property_declaration_or_usage.s:regex_lookbehind_positive
+
+    return l:is_prefixed_with_property_marker.a:propertyName.s:regex_after_word_boundary
 endfunction
 
 function! s:replaceInCurrentClass(search, replace)

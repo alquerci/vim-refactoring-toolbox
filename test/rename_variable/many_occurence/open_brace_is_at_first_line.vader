@@ -2,20 +2,20 @@ Given php:
   <?php
 
   function aFunctionName() {
-      $anArgumentVariable;
-      $anArgumentVariable;
+      $aVariable;
+      $aVariable;
   }
 
 Do:
-  /anArgumentVariable\<Enter>
+  /aVariable\<Enter>
   ;rlv
-  newName\<Enter>
+  New\<Enter>
   \<Enter>
 
 Expect:
   <?php
 
   function aFunctionName() {
-      $newName;
-      $newName;
+      $aVariableNew;
+      $aVariableNew;
   }

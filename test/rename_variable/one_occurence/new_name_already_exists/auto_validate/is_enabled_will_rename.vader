@@ -3,15 +3,15 @@ Given php:
 
   function aFunctionName()
   {
-      $anArgumentVariable;
-      $newName;
+      $aVariable;
+      $aVariableNew;
   }
 
 Do:
   :let g:vim_php_refactoring_auto_validate_rename = 1\<Enter>
-  /anArgumentVariable\<Enter>
+  /aVariable\<Enter>
   ;rlv
-  newName\<Enter>
+  New\<Enter>
   \<Enter>
   :call TestResetConfiguration()\<Enter>
 
@@ -20,6 +20,6 @@ Expect:
 
   function aFunctionName()
   {
-      $newName;
-      $newName;
+      $aVariableNew;
+      $aVariableNew;
   }
