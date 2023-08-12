@@ -1,0 +1,21 @@
+Given php:
+  <?php
+
+  $anArray = [
+      'first_key' => 1234,
+  ];
+
+Do:
+  /1234\<Enter>
+  va[
+  ;ev
+  extractedArray\<Enter>
+
+Expect:
+  <?php
+
+  $extractedArray = [
+      'first_key' => 1234,
+  ];
+
+  $anArray = $extractedArray;

@@ -18,7 +18,6 @@ Do (select the condition and extract variable):
   vi(
   ;ev
   firstNameIsValid\<Enter>
-  1\<Enter>
 
 Expect php (variable is extracted):
   <?php

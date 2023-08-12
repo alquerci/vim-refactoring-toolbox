@@ -20,7 +20,6 @@ Do (select the condition and extract variable):
   vi(
   ;ev
   firstNameIsValid\<Enter>
-  2\<Enter>
 
 Expect php (variable is extracted):
   <?php
@@ -30,6 +29,7 @@ Expect php (variable is extracted):
       private function prepareSentence()
       {
           $sentence = 'Hello';
+
           $firstNameIsValid = 'foo' === $firstName;
 
           if ($firstNameIsValid) {

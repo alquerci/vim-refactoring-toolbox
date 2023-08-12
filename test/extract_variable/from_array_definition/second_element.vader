@@ -13,12 +13,12 @@ Do:
   viw
   ;ev
   baz\<Enter>
-  \<Enter>
 
 Expect:
   <?php
 
   $sentence = 'Hello';
+
   $baz = 1234;
 
   $foo = [

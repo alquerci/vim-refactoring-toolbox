@@ -10,7 +10,6 @@ Do:
   vi(
   ;ev
   foo\<Enter>
-  \<Enter>
 
 Expect:
   <?php
