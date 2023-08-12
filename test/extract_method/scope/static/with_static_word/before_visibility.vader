@@ -1,0 +1,31 @@
+Given php:
+  <?php
+
+  class AClass {
+      static public function aStaticMethod()
+      {
+          "statement to extract";
+      }
+  }
+
+Do:
+  /statement to extract\<Enter>
+  V
+  ;em
+  extractedStaticMethod\<Enter>
+  \<Enter>
+
+Expect:
+  <?php
+
+  class AClass {
+      static public function aStaticMethod()
+      {
+          self::extractedStaticMethod();
+      }
+
+      private static function extractedStaticMethod()
+      {
+          "statement to extract";
+      }
+  }

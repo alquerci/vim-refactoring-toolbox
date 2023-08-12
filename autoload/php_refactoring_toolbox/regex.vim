@@ -11,12 +11,14 @@
 " | After word boundary     |   WORD\>            | \b             |
 " +----------------------------------------------------------------+
 
-let php_refactoring_toolbox#regex#class_line  = '^\%(\%(final\s\+\|abstract\s\+\)\?class\>\|trait\>\)'
-let php_refactoring_toolbox#regex#func_line = '^\s*\%(\%(private\|protected\|public\|static\|abstract\)\s*\)*function\_s\+'
-
-let s:type_declaration = '\%(?\?[\\|_A-Za-z0-9]\+\)'
 let s:modifier_visibility = '\%(private\|protected\|public\)'
 let s:modifier_scope = '\%(static\|readonly\)'
+let s:type_declaration = '\%(?\?[\\|_A-Za-z0-9]\+\)'
+
+let php_refactoring_toolbox#regex#class_line  = '^\%(\%(final\s\+\|abstract\s\+\)\?class\>\|trait\>\)'
+let php_refactoring_toolbox#regex#func_line = '^\s*\%(\%(private\|protected\|public\|static\|abstract\)\s*\)*function\_s\+'
+let php_refactoring_toolbox#regex#static_func = 'static\s\+'.s:modifier_visibility.'\?\s*\(function\)\@='
+
 let s:visibility_or_scope_property_modifiers = '\%(\%('.s:modifier_visibility.'\|'.s:modifier_scope.'\)\s\+\)\{1,2}'
 let s:member = '\s*\%('.s:visibility_or_scope_property_modifiers.'\%('.s:type_declaration.'\s\+\)\?\)\$'
 let php_refactoring_toolbox#regex#member_line = '^'.s:member

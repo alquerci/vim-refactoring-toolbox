@@ -1,4 +1,5 @@
 let s:php_regex_func_line = php_refactoring_toolbox#regex#func_line
+let s:php_regex_static_func = php_refactoring_toolbox#regex#static_func
 let s:php_regex_member_line = php_refactoring_toolbox#regex#member_line
 let s:php_regex_const_line = php_refactoring_toolbox#regex#const_line
 let s:php_regex_local_var = php_refactoring_toolbox#regex#local_var
@@ -11,12 +12,13 @@ function! php_refactoring_toolbox#extract_method#execute()
     try
         call s:validateMode()
 
-        let l:methodDefinition = #{name: s:NULL, visibility: s:NULL, arguments: [], returnVariables: []}
+        let l:methodDefinition = #{name: s:NULL, visibility: s:NULL, arguments: [], returnVariables: [], isStatic: s:NULL}
 
         let l:methodDefinition.name = s:askForMethodName()
         let l:methodDefinition.visibility = s:getVisibility(g:vim_php_refactoring_default_method_visibility)
 
         let l:codeToExtract = s:cutCodeToExtractAndMoveToInsertPosition()
+        let l:methodDefinition.isStatic = s:insertPositionIsInStaticMethod()
 
         let l:methodDefinition.arguments = s:extractArguments(l:codeToExtract)
         let l:methodDefinition.returnVariables = s:extractReturnVariables(l:codeToExtract)
@@ -56,6 +58,18 @@ function! s:cutCodeToExtractAndMoveToInsertPosition()
     normal! gv"xs
 
     return @x
+endfunction
+
+function s:insertPositionIsInStaticMethod()
+    let l:definitionLine = search(s:php_regex_func_line, 'bnW')
+
+    return s:definitionAtLineIsStatic(l:definitionLine)
+endfunction
+
+function s:definitionAtLineIsStatic(line)
+    let l:content = getline(a:line)
+
+    return match(l:content, s:php_regex_static_func) != s:NO_MATCH
 endfunction
 
 function! s:extractArguments(codeToExtract)
@@ -98,11 +112,19 @@ function! s:makeMethodCallStatement(codeToExtract, definition)
 endfunction
 
 function! s:makeMethodCall(codeToExtract, definition)
-    " append semi-colon only if extracted code ends with new line
     let l:endExpression = s:isInlineCode(a:codeToExtract) ? '' : ';'
     let l:arguments = join(a:definition.arguments, ', ')
+    let l:context = s:prepareMethodCallContext(a:definition)
 
-    return printf('$this->%s(%s)%s', a:definition.name, l:arguments, l:endExpression)
+    return printf('%s%s(%s)%s', l:context, a:definition.name, l:arguments, l:endExpression)
+endfunction
+
+function s:prepareMethodCallContext(definition)
+    if a:definition.isStatic
+        return 'self::'
+    endif
+
+    return '$this->'
 endfunction
 
 function! s:makeAssigment(returnVariables)
@@ -126,18 +148,13 @@ function! s:addMethod(codeToExtract, definition)
     let l:backupPosition = getcurpos()
 
     let l:methodBody = s:prepareMethodBody(a:codeToExtract, a:definition.returnVariables)
+    let l:methodModifiers = s:prepareMethodModifiers(a:definition)
 
     call s:moveEndOfFunction()
 
-    call s:insertMethod(a:definition.visibility, a:definition.name, a:definition.arguments, l:methodBody)
+    call s:insertMethod(l:methodModifiers, a:definition.name, a:definition.arguments, l:methodBody)
 
     call setpos('.', l:backupPosition)
-endfunction
-
-function! s:computeReturnIntent()
-    let l:baseIndent = s:detectIntentation()
-
-    return l:baseIndent.l:baseIndent
 endfunction
 
 function! s:prepareMethodBody(codeToExtract, returnVariables)
@@ -159,6 +176,12 @@ function! s:prepareMethodBody(codeToExtract, returnVariables)
     return l:methodBody.l:return
 endfunction
 
+function! s:computeReturnIntent()
+    let l:baseIndent = s:detectIntentation()
+
+    return l:baseIndent.l:baseIndent
+endfunction
+
 function! s:prepareReturnStatement(codeToExtract, returnVariables, returnIndent)
     if s:isInlineCode(a:codeToExtract)
         return a:returnIndent.'return '.a:codeToExtract.';'
@@ -169,6 +192,14 @@ function! s:prepareReturnStatement(codeToExtract, returnVariables, returnIndent)
     else
         return a:returnIndent.'return array(' . join(a:returnVariables, ', ') . ');'
     endif
+endfunction
+
+function s:prepareMethodModifiers(definition)
+    if a:definition.isStatic
+        return a:definition.visibility.' static'
+    endif
+
+    return a:definition.visibility
 endfunction
 
 function! s:isInlineCode(codeToExtract)

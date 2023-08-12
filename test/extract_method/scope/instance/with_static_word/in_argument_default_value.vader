@@ -1,0 +1,31 @@
+Given php:
+  <?php
+
+  class AClass {
+      public function instanceMethod($argument = ' static ')
+      {
+          "statement to extract";
+      }
+  }
+
+Do:
+  /statement to extract\<Enter>
+  V
+  ;em
+  extractedMethod\<Enter>
+  \<Enter>
+
+Expect:
+  <?php
+
+  class AClass {
+      public function instanceMethod($argument = ' static ')
+      {
+          $this->extractedMethod();
+      }
+
+      private function extractedMethod()
+      {
+          "statement to extract";
+      }
+  }
