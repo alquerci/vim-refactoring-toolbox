@@ -9,7 +9,7 @@ Given php:
 Do:
   /aPropertyName\<Enter>
   ;rcv
-  newPropertyName\<Enter>
+  New\<Enter>
   \<Enter>
 
 Expect:
@@ -17,5 +17,5 @@ Expect:
 
   class AClassName
   {
-      private readonly $newPropertyName;
+      private readonly $aPropertyNameNew;
   }

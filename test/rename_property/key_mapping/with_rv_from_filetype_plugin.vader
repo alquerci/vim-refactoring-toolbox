@@ -12,7 +12,7 @@ Before:
 Do:
   /aPropertyName\<Enter>
   ;rp
-  newPropertyName\<Enter>
+  New\<Enter>
   \<Enter>
 
 Expect:
@@ -20,5 +20,5 @@ Expect:
 
   class AClassName
   {
-      private $newPropertyName;
+      private $aPropertyNameNew;
   }

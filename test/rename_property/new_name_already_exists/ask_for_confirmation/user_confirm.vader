@@ -4,13 +4,13 @@ Given php:
   class AClassName
   {
       private $aPropertyName;
-      private $newPropertyName;
+      private $aPropertyNameNew;
   }
 
 Do:
   /aPropertyName\<Enter>
   ;rcv
-  newPropertyName\<Enter>
+  New\<Enter>
   1\<Enter>
 
 Expect:
@@ -18,6 +18,6 @@ Expect:
 
   class AClassName
   {
-      private $newPropertyName;
-      private $newPropertyName;
+      private $aPropertyNameNew;
+      private $aPropertyNameNew;
   }

@@ -15,7 +15,7 @@ Do:
   /aPropertyName\<Enter>
   n
   ;rcv
-  newPropertyName\<Enter>
+  New\<Enter>
   \<Enter>
 
 Expect:
@@ -23,10 +23,10 @@ Expect:
 
   class AClassName
   {
-      private $newPropertyName;
+      private $aPropertyNameNew;
 
       public function aFunctionName()
       {
-          $this->newPropertyName = 'property value';
+          $this->aPropertyNameNew = 'property value';
       }
   }

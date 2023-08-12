@@ -12,7 +12,7 @@ Given php:
 Do:
   /aPropertyName\<Enter>
   ;rcv
-  newPropertyName\<Enter>
+  New\<Enter>
   \<Enter>
 
 Expect:
@@ -21,7 +21,7 @@ Expect:
   class AClassName
   {
       public function __construct(
-          private $newPropertyName
+          private $aPropertyNameNew
       ) {
       }
   }

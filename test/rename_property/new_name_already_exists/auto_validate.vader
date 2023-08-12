@@ -4,14 +4,14 @@ Given php:
   class AClassName
   {
       private $aPropertyName;
-      private $newPropertyName;
+      private $aPropertyNameNew;
   }
 
 Do:
   :let g:vim_php_refactoring_auto_validate_rename = 1\<Enter>
   /aPropertyName\<Enter>
   ;rcv
-  newPropertyName\<Enter>
+  New\<Enter>
   :call TestResetConfiguration()\<Enter>
 
 Expect:
@@ -19,6 +19,6 @@ Expect:
 
   class AClassName
   {
-      private $newPropertyName;
-      private $newPropertyName;
+      private $aPropertyNameNew;
+      private $aPropertyNameNew;
   }
