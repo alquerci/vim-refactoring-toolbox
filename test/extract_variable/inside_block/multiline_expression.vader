@@ -1,0 +1,25 @@
+Given php:
+  <?php
+
+  while (true) {
+      $anArray = [
+          'first_key' => 1234,
+      ];
+  }
+
+Do:
+  /first_key\<Enter>
+  va[
+  ;ev
+  extractedArray\<Enter>
+
+Expect:
+  <?php
+
+  while (true) {
+      $extractedArray = [
+          'first_key' => 1234,
+      ];
+
+      $anArray = $extractedArray;
+  }

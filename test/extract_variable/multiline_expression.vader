@@ -6,7 +6,7 @@ Given php:
   ];
 
 Do:
-  /1234\<Enter>
+  /first_key\<Enter>
   va[
   ;ev
   extractedArray\<Enter>
