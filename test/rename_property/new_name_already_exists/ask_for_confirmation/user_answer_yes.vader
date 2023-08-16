@@ -1,0 +1,23 @@
+Given php:
+  <?php
+
+  class AClassName
+  {
+      private $aPropertyName;
+      private $aPropertyNameNew;
+  }
+
+Do:
+  /aPropertyName\<Enter>
+  ;rcv
+  New\<Enter>
+  2\<Enter>
+
+Expect:
+  <?php
+
+  class AClassName
+  {
+      private $aPropertyNameNew;
+      private $aPropertyNameNew;
+  }

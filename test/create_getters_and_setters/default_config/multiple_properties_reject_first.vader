@@ -10,8 +10,8 @@ Given php:
 
 Do:
   ;sg
-  0\<Enter>
   1\<Enter>
+  2\<Enter>
 
 Expect:
   <?php

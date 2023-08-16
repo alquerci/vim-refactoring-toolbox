@@ -11,7 +11,7 @@ Do:
   /aVariable\<Enter>
   ;rlv
   New\<Enter>
-  1\<Enter>
+  2\<Enter>
 
 Expect:
   <?php

@@ -5,7 +5,9 @@ let s:php_doc_var_type = php_refactoring_toolbox#regex#doc_var_type
 let s:php_regex_class_line  = php_refactoring_toolbox#regex#class_line
 let s:NULL = 'NONE'
 
-function! php_refactoring_toolbox#create_getter_and_setter#execute()
+function! php_refactoring_toolbox#create_getter_and_setter#execute(input)
+    let s:input = a:input
+
     for l:property in s:parseProperties()
         try
             call s:createGetterAndSetterForProperty(l:property)
@@ -15,7 +17,9 @@ function! php_refactoring_toolbox#create_getter_and_setter#execute()
     endfor
 endfunction
 
-function! php_refactoring_toolbox#create_getter_and_setter#createOnlyGetters()
+function! php_refactoring_toolbox#create_getter_and_setter#createOnlyGetters(input)
+    let s:input = a:input
+
     for l:property in s:parseProperties()
         try
             call s:createGetterForProperty(l:property)
@@ -146,11 +150,11 @@ function! s:askWhetherToAddGetterForProperty(camelCaseName)
 endfunction
 
 function! s:askWithMessage(message)
-    call s:echoError(a:message)
-
-    if inputlist(["0. No", "1. Yes"]) == 0
-        throw "skip property"
+    if s:input.askConfirmation(a:message)
+        return
     endif
+
+    throw "skip property"
 endfunction
 
 function! s:declareSetterForProperty(camelCaseName, name, type)
@@ -163,12 +167,20 @@ function! s:declareSetterForProperty(camelCaseName, name, type)
 
         call s:moveEndOfClass()
 
-        if g:vim_php_refactoring_make_setter_fluent > 0
+        if s:fluentReturnIsEnabled()
             call s:insertMethodWithSelfReturnHint("public", "set" . a:camelCaseName, [ l:argument ], "$this->" . a:name . " = $" . substitute(a:name, '^_', '', '') . ";")
         else
             call s:insertMethod("public", "set" . a:camelCaseName, [l:argument], "$this->" . a:name . " = $" . substitute(a:name, '^_', '', '') . ";")
         endif
     endif
+endfunction
+
+function s:fluentReturnIsEnabled()
+    if g:vim_php_refactoring_make_setter_fluent == 2
+        return s:input.askConfirmation('Make fluent?')
+    endif
+
+    return g:vim_php_refactoring_make_setter_fluent == 1
 endfunction
 
 function! s:declareGetterForProperty(camelCaseName, name, type)
@@ -207,18 +219,8 @@ function! s:insertMethod(modifiers, name, params, impl, returnHint = '')
 endfunction
 
 function! s:insertFluentReturn(indent)
-    if g:vim_php_refactoring_make_setter_fluent == 1
-        call s:writeLine('')
-        call s:writeLine(a:indent . 'return $this;')
-    elseif g:vim_php_refactoring_make_setter_fluent == 2
-        call s:echoError('Make fluent?')
-        if inputlist(["0. No", "1. Yes"]) == 1
-            call s:writeLine('')
-            call s:writeLine(a:indent.'return $this;')
-        endif
-    else
-        echoerr 'Invalid option for g:vim_php_refactoring_make_setter_fluent'
-    endif
+    call s:writeLine('')
+    call s:writeLine(a:indent . 'return $this;')
 endfunction
 
 function! s:detectIntentation()
@@ -231,12 +233,6 @@ function! s:searchLineOfPreviousClassDeclaration()
     let l:declarationPattern = '\%(' . join([s:php_regex_member_line, s:php_regex_const_line, s:php_regex_func_line], '\)\|\(') .'\)'
 
     return search(l:declarationPattern, 'bn')
-endfunction
-
-function! s:echoError(message)
-    echohl ErrorMsg
-    echomsg a:message
-    echohl NONE
 endfunction
 
 function! s:moveEndOfClass()

@@ -1,30 +1,36 @@
-function php_refactoring_toolbox#extract_variable#execute()
-    if visualmode() != 'v'
-        call s:PhpEchoError('Extract variable only works in Visual mode, not in Visual Line or Visual block')
-        return
-    endif
+function php_refactoring_toolbox#extract_variable#execute(input)
+    let s:input = a:input
 
     " input
-    let l:name = input('Name of new variable: ')
+    try
+        if visualmode() != 'v'
+            call s:echoError('Extract variable only works in Visual mode, not in Visual Line or Visual block')
+            return
+        endif
 
-    " add marker
-    let l:backupPosition = getcurpos()
+        let l:name = s:input.askQuestion('Name of new variable?')
 
-    let l:codeToExtract = s:cutCodeToExtractAndMoveToInsertPosition()
+        " add marker
+        let l:backupPosition = getcurpos()
 
-    " type variable name
-    call s:writeText('$'.l:name)
+        let l:codeToExtract = s:cutCodeToExtractAndMoveToInsertPosition()
 
-    " go to start on selection
-    call setpos('.', l:backupPosition)
+        " type variable name
+        call s:writeText('$'.l:name)
 
-    call s:writeDefinition(l:name, l:codeToExtract)
+        " go to start on selection
+        call setpos('.', l:backupPosition)
 
-    " go to start on selection
-    call setpos('.', l:backupPosition)
+        call s:writeDefinition(l:name, l:codeToExtract)
+
+        " go to start on selection
+        call setpos('.', l:backupPosition)
+    catch /user_cancel/
+        return
+    endtry
 endfunction
 
-function! s:PhpEchoError(message) " {{{
+function! s:echoError(message) " {{{
     echohl ErrorMsg
     echomsg a:message
     echohl NONE

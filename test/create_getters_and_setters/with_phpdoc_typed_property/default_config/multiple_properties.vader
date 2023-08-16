@@ -16,8 +16,8 @@ Given php:
 
 Do:
   ;sg
-  1\<Enter>
-  1\<Enter>
+  2\<Enter>
+  2\<Enter>
 
 Expect:
   <?php

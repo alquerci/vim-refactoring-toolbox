@@ -1,0 +1,23 @@
+Given php:
+  <?php
+
+  function aFunctionName()
+  {
+      $aVariable;
+      $aVariableNew;
+  }
+
+Do:
+  /aVariable\<Enter>
+  ;rlv
+  New\<Enter>
+  \<Enter>
+
+Expect:
+  <?php
+
+  function aFunctionName()
+  {
+      $aVariable;
+      $aVariableNew;
+  }

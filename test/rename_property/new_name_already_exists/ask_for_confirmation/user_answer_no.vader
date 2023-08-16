@@ -18,6 +18,6 @@ Expect:
 
   class AClassName
   {
-      private $aPropertyNameNew;
+      private $aPropertyName;
       private $aPropertyNameNew;
   }

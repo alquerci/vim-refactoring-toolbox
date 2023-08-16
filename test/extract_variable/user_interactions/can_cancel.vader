@@ -1,0 +1,16 @@
+Given php:
+  <?php
+
+  $anExpression = 1234;
+
+Do:
+  /1234\<Enter>
+  viw
+  ;ev
+  //<Esc>
+  \<Enter>
+
+Expect:
+  <?php
+
+  $anExpression = 1234;

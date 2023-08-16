@@ -5,19 +5,15 @@ let s:regex_property_declaration_or_usage = php_refactoring_toolbox#regex#member
 let s:regex_lookbehind_positive = php_refactoring_toolbox#regex#lookbehind_positive
 let s:SEARCH_NOT_FOUND = 0
 
-function! php_refactoring_toolbox#rename_property#execute()
+function! php_refactoring_toolbox#rename_property#execute(input)
+    let s:input = a:input
+
     let l:oldName = s:readNameOnCurrentPosition()
     let l:newName = s:askForNewName(l:oldName)
 
-    if s:shouldAskUserToValidateRename()
-        try
-            call s:askForConfirmationWhenNewNameAlreadyExists(l:newName)
-        catch /already_exists/
-            return
-        endtry
+    if s:canRenamePropertyTo(l:newName)
+        call s:replacePropertyName(l:oldName, l:newName)
     endif
-
-    call s:replacePropertyName(l:oldName, l:newName)
 endfunction
 
 function! s:readNameOnCurrentPosition()
@@ -25,7 +21,19 @@ function! s:readNameOnCurrentPosition()
 endfunction
 
 function! s:askForNewName(oldName)
-    return input('Rename ' . a:oldName . ' to: ', a:oldName)
+    return s:input.askQuestionWithProposedAnswer('Rename '.a:oldName.' to:', a:oldName)
+endfunction
+
+function s:canRenamePropertyTo(newName)
+    if s:shouldAskUserToValidateRename()
+        try
+            call s:askForConfirmationWhenNewNameAlreadyExists(a:newName)
+        catch /already_exists/
+            return v:false
+        endtry
+    endif
+
+    return v:true
 endfunction
 
 function! s:shouldAskUserToValidateRename()
@@ -34,10 +42,11 @@ endfunction
 
 function! s:askForConfirmationWhenNewNameAlreadyExists(newName)
     if s:newNameAlreadyExists(a:newName)
-        call s:echoError(a:newName . ' seems to already exist in the current class. Rename anyway ?')
-        if inputlist(["0. No", "1. Yes"]) == 0
-            throw 'already_exists'
+        if s:input.askConfirmation('Property named '.a:newName.' seems to already exist in the current class. Rename anyway ?')
+            return
         endif
+
+        throw 'already_exists'
     endif
 endfunction
 
@@ -69,12 +78,6 @@ endfunction
 
 function! s:searchInRange(pattern, startLine, endLine)
     return search('\%>' . a:startLine . 'l\%<' . a:endLine . 'l' . a:pattern, 'n')
-endfunction
-
-function! s:echoError(message)
-    echohl ErrorMsg
-    echomsg a:message
-    echohl NONE
 endfunction
 
 function! s:replacePropertyName(oldName, newName)

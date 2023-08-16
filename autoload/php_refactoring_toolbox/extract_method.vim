@@ -8,7 +8,9 @@ let s:NULL = 'NONE'
 let s:NO_MATCH = -1
 let s:EXPR_NOT_FOUND = -1
 
-function! php_refactoring_toolbox#extract_method#execute()
+function! php_refactoring_toolbox#extract_method#execute(input)
+    let s:input = a:input
+
     try
         call s:validateMode()
 
@@ -43,7 +45,7 @@ function! s:validateMode()
 endfunction
 
 function! s:askForMethodName()
-    return s:askQuestion('Name of new method?')
+    return s:input.askQuestion('Name of new method?')
 endfunction
 
 function! s:getVisibility(default)
@@ -215,30 +217,7 @@ function! s:getBaseIndentOfText(text)
 endfunction
 
 function! s:askForMethodVisibility(default)
-    return s:askQuestion('Visibility?', a:default)
-endfunction
-
-function! s:askQuestion(question, default = '')
-    let l:prompt = s:makeQuestionPrompt(a:question, a:default)
-
-    return s:sendQuestionAndCollectAnswer(l:prompt, a:default)
-endfunction
-
-function! s:makeQuestionPrompt(question, default)
-    return a:question.' ["'.a:default.'"] '
-endfunction
-
-function! s:sendQuestionAndCollectAnswer(prompt, default)
-    let l:cancelMarker = "//<Esc>"
-    let l:defaultMarker = ''
-
-    let l:answer = inputdialog(a:prompt, l:defaultMarker, l:cancelMarker)
-
-    if l:cancelMarker == l:answer
-        throw 'user_cancel'
-    endif
-
-    return l:defaultMarker == l:answer ? a:default : l:answer
+    return s:input.askQuestion('Visibility?', a:default)
 endfunction
 
 function! s:collectMethodCodeAfterCurrentLine()

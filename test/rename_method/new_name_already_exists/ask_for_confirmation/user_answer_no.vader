@@ -1,0 +1,43 @@
+Given php:
+  <?php
+
+  class AClassName
+  {
+      private function usageFunctionName()
+      {
+          $this->functionToRename()
+      }
+
+      private function functionToRename()
+      {
+      }
+
+      private function functionToRenameSuffix()
+      {
+      }
+  }
+
+Do:
+  /functionToRename\<Enter>
+  ;rm
+  Suffix\<Enter>
+  1\<Enter>
+
+Expect:
+  <?php
+
+  class AClassName
+  {
+      private function usageFunctionName()
+      {
+          $this->functionToRename()
+      }
+
+      private function functionToRename()
+      {
+      }
+
+      private function functionToRenameSuffix()
+      {
+      }
+  }

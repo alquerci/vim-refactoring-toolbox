@@ -17,13 +17,13 @@ endfunction
 function s:renameVariable() " {{{
     call php_refactoring_toolbox#usage#increment('PhpRenameVariable')
 
-    call php_refactoring_toolbox#rename_variable#execute()
+    call php_refactoring_toolbox#rename_variable#execute(php_refactoring_toolbox#input#make())
 endfunction
 
 function s:renameProperty() " {{{
     call php_refactoring_toolbox#usage#increment('PhpRenameProperty')
 
-    call php_refactoring_toolbox#rename_property#execute()
+    call php_refactoring_toolbox#rename_property#execute(php_refactoring_toolbox#input#make())
 endfunction
 
 function s:addNormalMapping(name, keys, executeFunction)

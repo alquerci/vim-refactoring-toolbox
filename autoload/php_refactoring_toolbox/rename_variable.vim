@@ -3,19 +3,15 @@ let s:regex_after_word_boundary = php_refactoring_toolbox#regex#after_word_bouda
 let s:regex_case_sensitive = php_refactoring_toolbox#regex#case_sensitive
 let s:SEARCH_NOT_FOUND = 0
 
-function! php_refactoring_toolbox#rename_variable#execute()
+function! php_refactoring_toolbox#rename_variable#execute(input)
+    let s:input = a:input
+
     let l:oldName = s:readNameOnCurrentPosition()
     let l:newName = s:askForNewName(l:oldName)
 
-    if s:shouldAskUserToValidateRename()
-        try
-            call s:askForConfirmationWhenNewNameAlreadyExists(l:newName)
-        catch /already_exists/
-            return
-        endtry
+    if s:canRenameVariableTo(l:newName)
+        call s:renameVariableName(l:oldName, l:newName)
     endif
-
-    call s:replaceVariableName(l:oldName, '$'.l:newName)
 endfunction
 
 function! s:readNameOnCurrentPosition()
@@ -23,26 +19,37 @@ function! s:readNameOnCurrentPosition()
 endfunction
 
 function! s:askForNewName(oldName)
-    return input('Rename ' . a:oldName . ' to: ', a:oldName)
+    return s:input.askQuestionWithProposedAnswer('Rename '.a:oldName.' to:', a:oldName)
 endfunction
 
-function! s:shouldAskUserToValidateRename()
-    return g:vim_php_refactoring_auto_validate_rename == 0
-endfunction
-
-function! s:askForConfirmationWhenNewNameAlreadyExists(newName)
-    if s:newNameAlreadyExists(a:newName)
-        call s:echoError('$' . a:newName . ' seems to already exist in the current function scope. Rename anyway ?')
-        if inputlist(["0. No", "1. Yes"]) == 0
-            throw 'already_exists'
-        endif
+function s:canRenameVariableTo(newName)
+    if s:shouldAskUserToValidateRename(a:newName)
+        return s:userConfirmRename(a:newName)
     endif
+
+    return v:true
+endfunction
+
+function! s:shouldAskUserToValidateRename(newName)
+    if s:autoValidateRenameIsEnabled()
+        return v:false
+    endif
+
+    return s:newNameAlreadyExists(a:newName)
+endfunction
+
+function s:autoValidateRenameIsEnabled()
+    return g:vim_php_refactoring_auto_validate_rename == 1
 endfunction
 
 function! s:newNameAlreadyExists(newName)
     let l:variablePattern = s:makeVariablePattern(a:newName)
 
     return s:searchInCurrentFunction(l:variablePattern) != s:SEARCH_NOT_FOUND
+endfunction
+
+function! s:makeVariablePattern(variableName)
+    return s:regex_case_sensitive.'$'.a:variableName.s:regex_after_word_boundary
 endfunction
 
 function! s:searchInCurrentFunction(pattern)
@@ -67,23 +74,19 @@ function! s:findCurrentFunctionLineRange()
 endfunction
 
 function! s:searchInRange(pattern, startLine, endLine)
-    return search('\%>' . a:startLine . 'l\%<' . a:endLine . 'l' . a:pattern, 'n')
+    return search('\%>'.a:startLine.'l\%<'.a:endLine.'l'.a:pattern, 'n')
 endfunction
 
-function! s:echoError(message)
-    echohl ErrorMsg
-    echomsg a:message
-    echohl NONE
+function s:userConfirmRename(newName)
+    let l:question = '$'.a:newName.' seems to already exist in the current function scope. Rename anyway ?'
+
+    return s:input.askConfirmation(l:question)
 endfunction
 
-function! s:replaceVariableName(oldName, newName)
+function! s:renameVariableName(oldName, newName)
     let l:variablePattern = s:makeVariablePattern(a:oldName)
 
-    call s:replaceInCurrentFunction(l:variablePattern, a:newName)
-endfunction
-
-function! s:makeVariablePattern(variableName)
-    return s:regex_case_sensitive.'$'.a:variableName.s:regex_after_word_boundary
+    call s:replaceInCurrentFunction(l:variablePattern, '$'.a:newName)
 endfunction
 
 function! s:replaceInCurrentFunction(search, replace)

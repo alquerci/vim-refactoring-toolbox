@@ -3,32 +3,29 @@ Given php:
 
   class Foo
   {
-      /**
-       * @var string|null
-       */
       private $bar;
   }
 
 Do:
+  :let g:vim_php_refactoring_make_setter_fluent = 2\<Enter>
   ;sg
   2\<Enter>
+  1\<Enter>
+  :call TestResetConfiguration()\<Enter>
 
 Expect:
   <?php
 
   class Foo
   {
-      /**
-       * @var string|null
-       */
       private $bar;
 
-      public function setBar(?string $bar)
+      public function setBar($bar)
       {
           $this->bar = $bar;
       }
 
-      public function getBar(): ?string
+      public function getBar()
       {
           return $this->bar;
       }

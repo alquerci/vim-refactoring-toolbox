@@ -112,49 +112,49 @@ let s:php_regex_cn          = '[_A-Za-z0-9]\+'
 function! PhpCreateGetters() " {{{
     call s:incrementUsage('PhpCreateGetters')
 
-    call php_refactoring_toolbox#create_getter_and_setter#createOnlyGetters()
+    call php_refactoring_toolbox#create_getter_and_setter#createOnlyGetters(php_refactoring_toolbox#input#make())
 endfunction
 " }}}
 
 function! PhpCreateSettersAndGetters() " {{{
     call s:incrementUsage('PhpCreateSettersAndGetters')
 
-    call php_refactoring_toolbox#create_getter_and_setter#execute()
+    call php_refactoring_toolbox#create_getter_and_setter#execute(php_refactoring_toolbox#input#make())
 endfunction
 " }}}
 
 function! PhpExtractMethod() range " {{{
     call s:incrementUsage('PhpExtractMethod')
 
-    call php_refactoring_toolbox#extract_method#execute()
+    call php_refactoring_toolbox#extract_method#execute(php_refactoring_toolbox#input#make())
 endfunction
 " }}}
 
 function! PhpRenameMethod() " {{{
     call s:incrementUsage('PhpRenameMethod')
 
-    call php_refactoring_toolbox#rename_method#execute()
+    call php_refactoring_toolbox#rename_method#execute(php_refactoring_toolbox#input#make())
 endfunction
 " }}}
 
 function! PhpExtractVariable() range " {{{
     call s:incrementUsage('PhpExtractVariable')
 
-    call php_refactoring_toolbox#extract_variable#execute()
+    call php_refactoring_toolbox#extract_variable#execute(php_refactoring_toolbox#input#make())
 endfunction
 " }}}
 
 function! PhpRenameLocalVariable() " {{{
     call s:incrementUsage('PhpRenameLocalVariable')
 
-    call php_refactoring_toolbox#rename_variable#execute()
+    call php_refactoring_toolbox#rename_variable#execute(php_refactoring_toolbox#input#make())
 endfunction
 " }}}
 
 function! PhpRenameClassVariable() " {{{
     call s:incrementUsage('PhpRenameClassVariable')
 
-    call php_refactoring_toolbox#rename_property#execute()
+    call php_refactoring_toolbox#rename_property#execute(php_refactoring_toolbox#input#make())
 endfunction
 " }}}
 
@@ -168,7 +168,7 @@ endfunction
 function! PhpRenameDirectory() " {{{
     call s:incrementUsage('PhpRenameDirectory')
 
-    call php_refactoring_toolbox#rename_directory#execute()
+    call php_refactoring_toolbox#rename_directory#execute(php_refactoring_toolbox#input#make())
 endfunction
 " }}}
 

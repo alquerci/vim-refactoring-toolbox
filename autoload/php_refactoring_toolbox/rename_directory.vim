@@ -1,4 +1,6 @@
-function! php_refactoring_toolbox#rename_directory#execute()
+function! php_refactoring_toolbox#rename_directory#execute(input)
+    let s:input = a:input
+
     let l:oldDirectory = s:askQuestion("Old directory?")
     let l:newDirectory = s:askQuestion("New directory?", l:oldDirectory)
 
@@ -21,15 +23,5 @@ function! s:movePhpFile(oldPath, newPath)
 endfunction
 
 function! s:askQuestion(question, default = '')
-    let l:prompt = s:makeQuestionPrompt(a:question, a:default)
-
-    return s:sendQuestionAndCollectAnswer(l:prompt, a:default)
-endfunction
-
-function! s:makeQuestionPrompt(question, default)
-    return a:question.' '
-endfunction
-
-function! s:sendQuestionAndCollectAnswer(prompt, default)
-    return input(a:prompt, a:default, "dir")
+    return s:input.askQuestionWithProposedAnswerAndDirectoryCompletion(a:question, a:default)
 endfunction

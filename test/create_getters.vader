@@ -8,7 +8,7 @@ Given php:
 
 Do:
   ;cog
-  1\<Enter>
+  2\<Enter>
 
 Expect:
   <?php
