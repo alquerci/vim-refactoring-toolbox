@@ -18,64 +18,23 @@ if !exists('g:vim_php_refactoring_phpdoc')
     let g:vim_php_refactoring_phpdoc = 'PhpDoc'
 endif
 
-if !exists('g:vim_php_refactoring_usage_logdir')
-    let g:vim_php_refactoring_usage_logdir = getenv('HOME').'/.vim/log/vim-php-refactoring-toolbox'
+if !exists('g:vim_php_refactoring_default_property_visibility')
+    let g:vim_php_refactoring_default_property_visibility = 'private'
 endif
 
 if !exists('g:vim_php_refactoring_use_default_mapping')
     let g:vim_php_refactoring_use_default_mapping = 1
 endif
-
-if !exists('g:vim_php_refactoring_auto_validate')
-    let g:vim_php_refactoring_auto_validate = 0
-endif
-
-if !exists('g:vim_php_refactoring_auto_validate_sg')
-    let g:vim_php_refactoring_auto_validate_sg = g:vim_php_refactoring_auto_validate
-endif
-
-if !exists('g:vim_php_refactoring_auto_validate_g')
-    let g:vim_php_refactoring_auto_validate_g = g:vim_php_refactoring_auto_validate
-endif
-
-if !exists('g:vim_php_refactoring_auto_validate_rename')
-    let g:vim_php_refactoring_auto_validate_rename = g:vim_php_refactoring_auto_validate
-endif
-
-if !exists('g:vim_php_refactoring_auto_validate_visibility')
-    let g:vim_php_refactoring_auto_validate_visibility = g:vim_php_refactoring_auto_validate
-endif
-
-if !exists('g:vim_php_refactoring_default_property_visibility')
-    let g:vim_php_refactoring_default_property_visibility = 'private'
-endif
-
-if !exists('g:vim_php_refactoring_default_method_visibility')
-    let g:vim_php_refactoring_default_method_visibility = 'private'
-endif
-
-if !exists('g:vim_php_refactoring_make_setter_fluent')
-    let g:vim_php_refactoring_make_setter_fluent = 0
-endif
 " }}}
 
 " Refactoring mapping {{{
 if g:vim_php_refactoring_use_default_mapping == 1
-    nnoremap <unique> <Leader>rlv :call PhpRenameLocalVariable()<Enter>
-    nnoremap <unique> <Leader>rcv :call PhpRenameClassVariable()<Enter>
-    nnoremap <unique> <Leader>rd :call PhpRenameDirectory()<Enter>
     nnoremap <unique> <Leader>eu :call PhpExtractUse()<Enter>
-    nnoremap <unique> <Leader>rm :call PhpRenameMethod()<Enter>
     vnoremap <unique> <Leader>ec :call PhpExtractConst()<Enter>
-    vnoremap <unique> <Leader>ev :call PhpExtractVariable()<Enter>
-    nnoremap <unique> <Leader>iv :call PhpInlineVariable()<Enter>
     nnoremap <unique> <Leader>ep :call PhpExtractClassProperty()<Enter>
-    vnoremap <unique> <Leader>em :call PhpExtractMethod()<Enter>
     nnoremap <unique> <Leader>np :call PhpCreateProperty()<Enter>
     nnoremap <unique> <Leader>du :call PhpDetectUnusedUseStatements()<Enter>
     vnoremap <unique> <Leader>== :call PhpAlignAssigns()<Enter>
-    nnoremap <unique> <Leader>sg :call PhpCreateSettersAndGetters()<Enter>
-    nnoremap <unique> <Leader>cog :call PhpCreateGetters()<Enter>
     nnoremap <unique> <Leader>da :call PhpDocAll()<Enter>
 endif
 " }}}
@@ -107,69 +66,6 @@ let s:php_regex_func_line = php_refactoring_toolbox#regex#func_line
 let s:php_regex_assignment  = '+=\|-=\|*=\|/=\|=\~\|!=\|='
 let s:php_regex_fqcn        = '[\\_A-Za-z0-9]*'
 let s:php_regex_cn          = '[_A-Za-z0-9]\+'
-" }}}
-
-function! PhpCreateGetters() " {{{
-    call s:incrementUsage('PhpCreateGetters')
-
-    call php_refactoring_toolbox#create_getter_and_setter#createOnlyGetters(php_refactoring_toolbox#input#make())
-endfunction
-" }}}
-
-function! PhpCreateSettersAndGetters() " {{{
-    call s:incrementUsage('PhpCreateSettersAndGetters')
-
-    call php_refactoring_toolbox#create_getter_and_setter#execute(php_refactoring_toolbox#input#make())
-endfunction
-" }}}
-
-function! PhpExtractMethod() range " {{{
-    call s:incrementUsage('PhpExtractMethod')
-
-    call php_refactoring_toolbox#extract_method#execute(php_refactoring_toolbox#input#make())
-endfunction
-" }}}
-
-function! PhpRenameMethod() " {{{
-    call s:incrementUsage('PhpRenameMethod')
-
-    call php_refactoring_toolbox#rename_method#execute(php_refactoring_toolbox#input#make())
-endfunction
-" }}}
-
-function! PhpExtractVariable() range " {{{
-    call s:incrementUsage('PhpExtractVariable')
-
-    call php_refactoring_toolbox#extract_variable#execute(php_refactoring_toolbox#input#make())
-endfunction
-" }}}
-
-function! PhpRenameLocalVariable() " {{{
-    call s:incrementUsage('PhpRenameLocalVariable')
-
-    call php_refactoring_toolbox#rename_variable#execute(php_refactoring_toolbox#input#make())
-endfunction
-" }}}
-
-function! PhpRenameClassVariable() " {{{
-    call s:incrementUsage('PhpRenameClassVariable')
-
-    call php_refactoring_toolbox#rename_property#execute(php_refactoring_toolbox#input#make())
-endfunction
-" }}}
-
-function! PhpInlineVariable() " {{{
-    call s:incrementUsage('PhpInlineVariable')
-
-    call php_refactoring_toolbox#inline_variable#execute()
-endfunction
-" }}}
-
-function! PhpRenameDirectory() " {{{
-    call s:incrementUsage('PhpRenameDirectory')
-
-    call php_refactoring_toolbox#rename_directory#execute(php_refactoring_toolbox#input#make())
-endfunction
 " }}}
 
 function! PhpDocAll() " {{{

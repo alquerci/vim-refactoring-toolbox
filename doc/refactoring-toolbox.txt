@@ -8,40 +8,101 @@ __________        _____               __               .__                 _____
         \/     \/           \/     \/                          \//_____/                                  \/            \/
 
 ===============================================================================
-CONTENTS                                                       *refactoring-toolbox-contents*
+CONTENTS                                         *refactoring-toolbox-contents*
 
-    1. Intro........................................|refactoring-toolbox-intro|
-    2. Mappings.....................................|refactoring-toolbox-mappings|
-    2. Examples.....................................|refactoring-toolbox-examples|
-    2. Playground...................................|refactoring-toolbox-playground|
+    1. Intro................................|refactoring-toolbox-intro|
+    2. Configuration........................|refactoring-toolbox-configuration|
+    3. Mappings.............................|refactoring-toolbox-mappings|
+    4. Examples.............................|refactoring-toolbox-examples|
+    5. Playground...........................|refactoring-toolbox-playground|
 
 ===============================================================================
-INTRO                                                             *refactoring-toolbox-intro*
+INTRO                                               *refactoring-toolbox-intro*
 
 Vim PHP Refactoring ToolBox.
 
 A set of commands which help you to refactor PHP code.
 
 ===============================================================================
-Default Mappings                                                         *refactoring-toolbox-mappings*
+CONFIGURATION                               *refactoring-toolbox-configuration*
 
-nnoremap <unique> <Leader>rlv :call PhpRenameLocalVariable()<Enter>
-nnoremap <unique> <Leader>rcv :call PhpRenameClassVariable()<Enter>
-nnoremap <unique> <Leader>rd :call PhpRenameDirectory()<Enter>
-nnoremap <unique> <Leader>rm :call PhpRenameMethod()<Enter>
+If you want to disable the default mapping just add this line in your `~/.vimrc` file
+
+```
+let g:vim_php_refactoring_use_default_mapping = 0
+```
+
+If you want to disable the user validation at the getter/setter creation, just add this line in your `~/.vimrc` file
+
+```
+let g:vim_php_refactoring_auto_validate_sg = 1
+```
+
+If you want to disable the user validation at getter only creation, just add this line in your `~/.vimrc` file
+
+```
+let g:vim_php_refactoring_auto_validate_g = 1
+```
+
+If you want to disable the user validation for all rename features, just add this line in your  `~/.vimrc` file
+
+```
+let g:vim_php_refactoring_auto_validate_rename = 1
+```
+
+If you want to disable the user validation for the visibility (private/public) add this line in your `~/.vimrc` file
+```
+let g:vim_php_refactoring_auto_validate_visibility = 1
+```
+
+To change the default visibility add one/both of those lines in your `~/.vimrc` file
+```
+let g:vim_php_refactoring_default_property_visibility = 'private'
+let g:vim_php_refactoring_default_method_visibility = 'private'
+```
+
+To enable fluent setters add either of these lines to your `~/.vimrc` file
+```
+" default is 0 -- disabled
+
+" to enable for all setters
+let g:vim_php_refactoring_make_setter_fluent = 1
+
+" to enable but be prompted when creating the setter
+let g:vim_php_refactoring_make_setter_fluent = 2
+```
+
+If you want to rename directory with mapping `rd` you need to install phpactor/phpactor
+
+===============================================================================
+Mappings                                         *refactoring-toolbox-mappings*
+
+Global
+
+vnoremap <unique> <Leader>em <Plug>php_refactoring_toolbox_ExtractMethod
+nnoremap <unique> <Leader>rm <Plug>php_refactoring_toolbox_RenameMethod
+vnoremap <unique> <Leader>ev <Plug>php_refactoring_toolbox_ExtractVariable
+nnoremap <unique> <Leader>rlv <Plug>php_refactoring_toolbox_RenameVariable
+nnoremap <unique> <Leader>iv <Plug>php_refactoring_toolbox_InlineVariable
+nnoremap <unique> <Leader>rcv <Plug>php_refactoring_toolbox_RenameProperty
+nnoremap <unique> <Leader>rd <Plug>php_refactoring_toolbox_RenameDirectory
+nnoremap <unique> <Leader>sg <Plug>php_refactoring_toolbox_CreateSettersAndGetters
+nnoremap <unique> <Leader>cog <Plug>php_refactoring_toolbox_CreateGetters
 nnoremap <unique> <Leader>eu :call PhpExtractUse()<Enter>
 vnoremap <unique> <Leader>ec :call PhpExtractConst()<Enter>
-vnoremap <unique> <Leader>ev :call PhpExtractVariable()<Enter>
 nnoremap <unique> <Leader>ep :call PhpExtractClassProperty()<Enter>
-vnoremap <unique> <Leader>em :call PhpExtractMethod()<Enter>
 nnoremap <unique> <Leader>np :call PhpCreateProperty()<Enter>
 nnoremap <unique> <Leader>du :call PhpDetectUnusedUseStatements()<Enter>
 vnoremap <unique> <Leader>== :call PhpAlignAssigns()<Enter>
-nnoremap <unique> <Leader>sg :call PhpCreateSettersAndGetters()<Enter>
 nnoremap <unique> <Leader>da :call PhpDocAll()<Enter>
 
+PHP filetype
+
+nnoremap <unique> <LocalLeader>rv <Plug>php_refactoring_toolbox_php_RenameVariable
+nnoremap <unique> <LocalLeader>rp <Plug>php_refactoring_toolbox_php_RenameProperty
+
 ===============================================================================
-Examples                                                         *refactoring-toolbox-examples*
+Examples                                         *refactoring-toolbox-examples*
 
 1. Rename Local Variable........................................|rename-local-variable|
 2. Rename Class Variable........................................|rename-class-variable|
