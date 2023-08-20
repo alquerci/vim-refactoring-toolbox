@@ -29,7 +29,7 @@ PHP Refactoring Toolbox for VIM
 
 ## Documentation
 
-See [](./doc/refactoring-toolbox.txt)
+See [./doc/refactoring-toolbox.txt](./doc/refactoring-toolbox.txt)
 
 
 ## Running tests
