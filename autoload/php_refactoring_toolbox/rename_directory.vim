@@ -1,3 +1,5 @@
+call php_refactoring_toolbox#vim#begin_script()
+
 function! php_refactoring_toolbox#rename_directory#execute(input)
     let s:input = a:input
 
@@ -25,3 +27,5 @@ endfunction
 function! s:askQuestion(question, default = '')
     return s:input.askQuestionWithProposedAnswerAndDirectoryCompletion(a:question, a:default)
 endfunction
+
+call php_refactoring_toolbox#vim#end_script()

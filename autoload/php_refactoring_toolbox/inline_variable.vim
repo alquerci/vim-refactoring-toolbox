@@ -1,3 +1,5 @@
+call php_refactoring_toolbox#vim#begin_script()
+
 let s:CURRENT_BUFFER = '%'
 
 function! php_refactoring_toolbox#inline_variable#execute()
@@ -33,3 +35,5 @@ endfunction
 function! s:getCurrentLine()
     return line('.')
 endfunction
+
+call php_refactoring_toolbox#vim#end_script()

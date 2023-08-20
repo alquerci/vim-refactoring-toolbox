@@ -1,3 +1,5 @@
+call php_refactoring_toolbox#vim#begin_script()
+
 let s:php_regex_func_line = php_refactoring_toolbox#regex#func_line
 let s:php_regex_const_line = php_refactoring_toolbox#regex#const_line
 let s:php_regex_member_line = php_refactoring_toolbox#regex#member_line
@@ -256,3 +258,5 @@ endfunction
 function! s:backwardOneLine()
     call cursor(line('.') - 1, 0)
 endfunction
+
+call php_refactoring_toolbox#vim#end_script()

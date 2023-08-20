@@ -1,3 +1,5 @@
+call php_refactoring_toolbox#vim#begin_script()
+
 let s:php_regex_class_line = php_refactoring_toolbox#regex#class_line
 let s:regex_after_word_boundary = php_refactoring_toolbox#regex#after_word_boudary
 let s:regex_case_sensitive = php_refactoring_toolbox#regex#case_sensitive
@@ -101,3 +103,5 @@ function! s:replaceInCurrentClass(search, replace)
 
     call setpos('.', l:backupPosition)
 endfunction
+
+call php_refactoring_toolbox#vim#end_script()

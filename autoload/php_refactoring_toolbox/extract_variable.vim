@@ -1,3 +1,5 @@
+call php_refactoring_toolbox#vim#begin_script()
+
 function php_refactoring_toolbox#extract_variable#execute(input)
     let s:input = a:input
 
@@ -103,3 +105,5 @@ endfunction
 function! s:getBaseIndentOfText(text)
     return substitute(a:text, '\S.*', '', '')
 endfunction
+
+call php_refactoring_toolbox#vim#end_script()

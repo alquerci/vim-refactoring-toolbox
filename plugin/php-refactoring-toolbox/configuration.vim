@@ -1,10 +1,8 @@
-if exists('g:loaded_php_refactoring_toolbox_configuration')
+try
+    call php_refactoring_toolbox#vim#begin_plugin('php_refactoring_toolbox_configuration')
+catch /plugin_loaded/
     finish
-endif
-let g:loaded_php_refactoring_toolbox_configuration = 1
-
-let s:save_cpoptions = &cpoptions
-set cpoptions&vim
+endtry
 
 function s:main()
     call s:configure()
@@ -46,5 +44,4 @@ endfunction
 
 call s:main()
 
-let &cpoptions = s:save_cpoptions
-unlet s:save_cpoptions
+call php_refactoring_toolbox#vim#end_plugin()

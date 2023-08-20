@@ -1,3 +1,5 @@
+call php_refactoring_toolbox#vim#begin_script()
+
 function php_refactoring_toolbox#input#make()
     return s:input
 endfunction
@@ -87,3 +89,5 @@ endfunction
 function s:makeTextOption(position, text)
     return a:position.'. '.a:text
 endfunction
+
+call php_refactoring_toolbox#vim#end_script()

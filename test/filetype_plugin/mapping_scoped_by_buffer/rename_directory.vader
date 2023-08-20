@@ -1,0 +1,8 @@
+Execute:
+  new
+  set filetype=php
+  call AssertNormalMappingTo('<Plug>php_refactoring_toolbox_RenameDirectory')
+  bdelete
+
+Then:
+  call AssertNormalMappingTo('<Plug>php_refactoring_toolbox_RenameDirectory')

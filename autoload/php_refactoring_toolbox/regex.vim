@@ -1,3 +1,5 @@
+call php_refactoring_toolbox#vim#begin_script()
+
 " +----------------------------------------------------------------+
 " |   VIM REGEXP REMINDER   |    Vim Regex        |   Perl Regex   |
 " |================================================================|
@@ -34,3 +36,5 @@ let php_refactoring_toolbox#regex#after_word_boudary = '\>'
 let php_refactoring_toolbox#regex#case_sensitive = '\C'
 let php_refactoring_toolbox#regex#case_ignore = '\c'
 let php_refactoring_toolbox#regex#lookbehind_positive = '\@<='
+
+call php_refactoring_toolbox#vim#end_script()

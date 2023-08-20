@@ -15,6 +15,8 @@ let maplocalleader = ";"
 let g:vim_php_refactoring_usage_logdir = './var/log'
 let g:test_tmpdir = './var/tmp'
 
+autocmd FileType * call TestSwitchFileTypeTo(expand("<amatch>"))
+
 function TestResetConfiguration()
     let g:vim_php_refactoring_auto_validate = 0
     let g:vim_php_refactoring_auto_validate_sg = g:vim_php_refactoring_auto_validate
@@ -40,7 +42,21 @@ function TestLoadFileTypeInIsolation(type)
     call TestLoadFileType(a:type)
 endfunction
 
+function TestSwitchFileTypeTo(newType)
+    if exists('b:undo_ftplugin')
+        execute b:undo_ftplugin
+
+        unlet b:undo_ftplugin
+    endif
+
+    call TestLoadFileType(a:newType)
+endfunction
+
 function TestLoadFileType(type)
+    if '' == a:type
+        return
+    endif
+
     execute 'runtime! ftplugin/'.a:type.'/*.vim'
 endfunction
 
@@ -51,4 +67,20 @@ endfunction
 function s:makeNewBufferWithLastCopy()
     new
     execute 'normal! pkdd'
+endfunction
+
+function AssertNormalMappingTo(expectedTarget)
+  AssertEqual 1, hasmapto(a:expectedTarget, 'n'), 'has normal mapping to "'.a:expectedTarget.'" on file type "'.&filetype.'".'
+endfunction
+
+function AssertNotNormalMappingTo(expectedTarget)
+  AssertEqual 0, hasmapto(a:expectedTarget, 'n'), 'does not have normal mapping to "'.a:expectedTarget.'" on file type "'.&filetype.'".'
+endfunction
+
+function AssertVisualMappingTo(expectedTarget)
+  AssertEqual 1, hasmapto(a:expectedTarget, 'v'), 'has visual mapping to "'.a:expectedTarget.'" on file type "'.&filetype.'".'
+endfunction
+
+function AssertNotVisualMappingTo(expectedTarget)
+  AssertEqual 0, hasmapto(a:expectedTarget, 'v'), 'does not have visual mapping to "'.a:expectedTarget.'" on file type "'.&filetype.'".'
 endfunction

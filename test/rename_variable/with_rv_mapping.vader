@@ -6,9 +6,6 @@ Given php:
       $aVariable;
   }
 
-Before:
-  call TestLoadFileTypeInIsolation('php')
-
 Do:
   /aVariable\<Enter>
   ;rv

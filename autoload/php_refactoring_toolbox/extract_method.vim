@@ -1,3 +1,5 @@
+call php_refactoring_toolbox#vim#begin_script()
+
 let s:php_regex_func_line = php_refactoring_toolbox#regex#func_line
 let s:php_regex_static_func = php_refactoring_toolbox#regex#static_func
 let s:php_regex_member_line = php_refactoring_toolbox#regex#member_line
@@ -393,3 +395,5 @@ endfunction
 function! s:isInVisualBlockMode()
     return visualmode() == ''
 endfunction
+
+call php_refactoring_toolbox#vim#end_script()
