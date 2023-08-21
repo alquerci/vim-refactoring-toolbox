@@ -1,0 +1,44 @@
+Given php:
+  <?php
+
+  function firstFunctionName()
+  {
+      $anArgumentVariable;
+  }
+
+  function currentFunctionName()
+  {
+      $anArgumentVariable;
+      $anArgumentVariable;
+  }
+
+  function thirdFunctionName()
+  {
+      $anArgumentVariable;
+  }
+
+Do:
+  /currentFunctionName\<Enter>
+  /anArgumentVariable\<Enter>
+  ;rlv
+  New\<Enter>
+  \<Enter>
+
+Expect:
+  <?php
+
+  function firstFunctionName()
+  {
+      $anArgumentVariable;
+  }
+
+  function currentFunctionName()
+  {
+      $anArgumentVariableNew;
+      $anArgumentVariableNew;
+  }
+
+  function thirdFunctionName()
+  {
+      $anArgumentVariable;
+  }
