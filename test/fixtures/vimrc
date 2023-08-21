@@ -12,20 +12,20 @@ syntax enable
 
 let mapleader = ";"
 let maplocalleader = ";"
-let g:vim_php_refactoring_usage_logdir = './var/log'
+let g:refactoring_toolbox_usage_logdir = './var/log'
 let g:test_tmpdir = './var/tmp'
 
 autocmd FileType * call TestSwitchFileTypeTo(expand("<amatch>"))
 
 function TestResetConfiguration()
-    let g:vim_php_refactoring_auto_validate = 0
-    let g:vim_php_refactoring_auto_validate_sg = g:vim_php_refactoring_auto_validate
-    let g:vim_php_refactoring_auto_validate_g = g:vim_php_refactoring_auto_validate
-    let g:vim_php_refactoring_auto_validate_rename = g:vim_php_refactoring_auto_validate
-    let g:vim_php_refactoring_auto_validate_visibility = g:vim_php_refactoring_auto_validate
-    let g:vim_php_refactoring_default_property_visibility = 'private'
-    let g:vim_php_refactoring_default_method_visibility = 'private'
-    let g:vim_php_refactoring_make_setter_fluent = 0
+    let g:refactoring_toolbox_auto_validate = 0
+    let g:refactoring_toolbox_auto_validate_sg = g:refactoring_toolbox_auto_validate
+    let g:refactoring_toolbox_auto_validate_g = g:refactoring_toolbox_auto_validate
+    let g:refactoring_toolbox_auto_validate_rename = g:refactoring_toolbox_auto_validate
+    let g:refactoring_toolbox_auto_validate_visibility = g:refactoring_toolbox_auto_validate
+    let g:refactoring_toolbox_default_property_visibility = 'private'
+    let g:refactoring_toolbox_default_method_visibility = 'private'
+    let g:refactoring_toolbox_make_setter_fluent = 0
 endfunction
 
 function TestDebug(name, value)

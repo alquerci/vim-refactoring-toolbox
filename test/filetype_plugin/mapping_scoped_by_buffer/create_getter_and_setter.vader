@@ -1,10 +1,10 @@
 Execute:
   new
   set filetype=php
-  call AssertNormalMappingTo('<Plug>php_refactoring_toolbox_php_SettersAndGetters')
-  call AssertNormalMappingTo('<Plug>php_refactoring_toolbox_php_OnlyGetters')
+  call AssertNormalMappingTo('<Plug>refactoring_toolbox_php_SettersAndGetters')
+  call AssertNormalMappingTo('<Plug>refactoring_toolbox_php_OnlyGetters')
   bdelete
 
 Then:
-  call AssertNotNormalMappingTo('<Plug>php_refactoring_toolbox_php_SettersAndGetters')
-  call AssertNotNormalMappingTo('<Plug>php_refactoring_toolbox_php_OnlyGetters')
+  call AssertNotNormalMappingTo('<Plug>refactoring_toolbox_php_SettersAndGetters')
+  call AssertNotNormalMappingTo('<Plug>refactoring_toolbox_php_OnlyGetters')

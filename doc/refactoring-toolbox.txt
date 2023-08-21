@@ -19,9 +19,16 @@ CONTENTS                                         *refactoring-toolbox-contents*
 ===============================================================================
 INTRO                                               *refactoring-toolbox-intro*
 
-Vim PHP Refactoring ToolBox.
+Fork of `adoy/vim-php-refactoring-toolbox`
+Big thanks to Pierrick Charron (github.com/adoy)
 
-A set of commands which help you to refactor PHP code.
+Refactoring ToolBox.
+
+A set of mappings which help you to refactor code in consistent way across languages.
+
+Supported languages:
+
+- PHP
 
 ===============================================================================
 CONFIGURATION                               *refactoring-toolbox-configuration*
@@ -29,36 +36,36 @@ CONFIGURATION                               *refactoring-toolbox-configuration*
 If you want to disable the default mapping just add this line in your `~/.vimrc` file
 
 ```
-let g:vim_php_refactoring_use_default_mapping = 0
+let g:refactoring_toolbox_use_default_mapping = 0
 ```
 
 If you want to disable the user validation at the getter/setter creation, just add this line in your `~/.vimrc` file
 
 ```
-let g:vim_php_refactoring_auto_validate_sg = 1
+let g:refactoring_toolbox_auto_validate_sg = 1
 ```
 
 If you want to disable the user validation at getter only creation, just add this line in your `~/.vimrc` file
 
 ```
-let g:vim_php_refactoring_auto_validate_g = 1
+let g:refactoring_toolbox_auto_validate_g = 1
 ```
 
 If you want to disable the user validation for all rename features, just add this line in your  `~/.vimrc` file
 
 ```
-let g:vim_php_refactoring_auto_validate_rename = 1
+let g:refactoring_toolbox_auto_validate_rename = 1
 ```
 
 If you want to disable the user validation for the visibility (private/public) add this line in your `~/.vimrc` file
 ```
-let g:vim_php_refactoring_auto_validate_visibility = 1
+let g:refactoring_toolbox_auto_validate_visibility = 1
 ```
 
 To change the default visibility add one/both of those lines in your `~/.vimrc` file
 ```
-let g:vim_php_refactoring_default_property_visibility = 'private'
-let g:vim_php_refactoring_default_method_visibility = 'private'
+let g:refactoring_toolbox_default_property_visibility = 'private'
+let g:refactoring_toolbox_default_method_visibility = 'private'
 ```
 
 To enable fluent setters add either of these lines to your `~/.vimrc` file
@@ -66,10 +73,10 @@ To enable fluent setters add either of these lines to your `~/.vimrc` file
 " default is 0 -- disabled
 
 " to enable for all setters
-let g:vim_php_refactoring_make_setter_fluent = 1
+let g:refactoring_toolbox_make_setter_fluent = 1
 
 " to enable but be prompted when creating the setter
-let g:vim_php_refactoring_make_setter_fluent = 2
+let g:refactoring_toolbox_make_setter_fluent = 2
 ```
 
 If you want to rename directory with mapping `rd` you need to install phpactor/phpactor
@@ -79,10 +86,10 @@ Mappings                                         *refactoring-toolbox-mappings*
 
 Global
 
-nmap <Leader>rd <Plug>php_refactoring_toolbox_RenameDirectory
-nmap <Leader>eu :call PhpExtractUse()<Enter>
+nmap <Leader>rd <Plug>refactoring_toolbox_RenameDirectory
 vmap <Leader>ec :call PhpExtractConst()<Enter>
 nmap <Leader>ep :call PhpExtractClassProperty()<Enter>
+nmap <Leader>eu :call PhpExtractUse()<Enter>
 nmap <Leader>np :call PhpCreateProperty()<Enter>
 nmap <Leader>du :call PhpDetectUnusedUseStatements()<Enter>
 vmap <Leader>== :call PhpAlignAssigns()<Enter>
@@ -90,16 +97,16 @@ nmap <Leader>da :call PhpDocAll()<Enter>
 
 PHP filetype
 
-vmap <LocalLeader>em <Plug>php_refactoring_toolbox_php_ExtractMethod
-nmap <LocalLeader>rm <Plug>php_refactoring_toolbox_php_RenameMethod
-vmap <LocalLeader>ev <Plug>php_refactoring_toolbox_php_ExtractVariable
-nmap <LocalLeader>rv <Plug>php_refactoring_toolbox_php_RenameVariable
-nmap <LocalLeader>rlv <Plug>php_refactoring_toolbox_php_RenameLocalVariable
-nmap <LocalLeader>iv <Plug>php_refactoring_toolbox_php_InlineVariable
-nmap <LocalLeader>rp <Plug>php_refactoring_toolbox_php_RenameProperty
-nmap <LocalLeader>rcv <Plug>php_refactoring_toolbox_php_RenameClassVariable
-nmap <LocalLeader>sg <Plug>php_refactoring_toolbox_php_SettersAndGetters
-nmap <LocalLeader>cog <Plug>php_refactoring_toolbox_php_OnlyGetters
+vmap <LocalLeader>em <Plug>refactoring_toolbox_php_ExtractMethod
+nmap <LocalLeader>rm <Plug>refactoring_toolbox_php_RenameMethod
+vmap <LocalLeader>ev <Plug>refactoring_toolbox_php_ExtractVariable
+nmap <LocalLeader>rv <Plug>refactoring_toolbox_php_RenameVariable
+nmap <LocalLeader>rlv <Plug>refactoring_toolbox_php_RenameLocalVariable
+nmap <LocalLeader>iv <Plug>refactoring_toolbox_php_InlineVariable
+nmap <LocalLeader>rp <Plug>refactoring_toolbox_php_RenameProperty
+nmap <LocalLeader>rcv <Plug>refactoring_toolbox_php_RenameClassVariable
+nmap <LocalLeader>sg <Plug>refactoring_toolbox_php_SettersAndGetters
+nmap <LocalLeader>cog <Plug>refactoring_toolbox_php_OnlyGetters
 
 ===============================================================================
 Examples                                         *refactoring-toolbox-examples*
@@ -461,5 +468,3 @@ class Playground
         $oneVar += 'Baz';
     }
 }
-
-

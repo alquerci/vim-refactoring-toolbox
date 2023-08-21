@@ -1,8 +1,8 @@
 Execute:
   new
   set filetype=php
-  call AssertVisualMappingTo('<Plug>php_refactoring_toolbox_php_ExtractVariable')
+  call AssertVisualMappingTo('<Plug>refactoring_toolbox_php_ExtractVariable')
   bdelete
 
 Then:
-  call AssertNotVisualMappingTo('<Plug>php_refactoring_toolbox_php_ExtractVariable')
+  call AssertNotVisualMappingTo('<Plug>refactoring_toolbox_php_ExtractVariable')

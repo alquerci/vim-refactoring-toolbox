@@ -7,7 +7,7 @@ Given php:
   }
 
 Do:
-  :let g:vim_php_refactoring_auto_validate_sg = 1\<Enter>
+  :let g:refactoring_toolbox_auto_validate_sg = 1\<Enter>
   ;sg
   :call TestResetConfiguration()\<Enter>
 

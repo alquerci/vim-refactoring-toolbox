@@ -7,7 +7,7 @@ Given php:
   }
 
 Do:
-  :let g:vim_php_refactoring_make_setter_fluent = 2\<Enter>
+  :let g:refactoring_toolbox_make_setter_fluent = 2\<Enter>
   ;sg
   2\<Enter>
   2\<Enter>

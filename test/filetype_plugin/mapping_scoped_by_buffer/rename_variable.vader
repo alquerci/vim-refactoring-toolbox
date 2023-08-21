@@ -1,10 +1,10 @@
 Execute:
   new
   set filetype=php
-  call AssertNormalMappingTo('<Plug>php_refactoring_toolbox_php_RenameVariable')
-  call AssertNormalMappingTo('<Plug>php_refactoring_toolbox_php_RenameLocalVariable')
+  call AssertNormalMappingTo('<Plug>refactoring_toolbox_php_RenameVariable')
+  call AssertNormalMappingTo('<Plug>refactoring_toolbox_php_RenameLocalVariable')
   bdelete
 
 Then:
-  call AssertNotNormalMappingTo('<Plug>php_refactoring_toolbox_php_RenameVariable')
-  call AssertNotNormalMappingTo('<Plug>php_refactoring_toolbox_php_RenameLocalVariable')
+  call AssertNotNormalMappingTo('<Plug>refactoring_toolbox_php_RenameVariable')
+  call AssertNotNormalMappingTo('<Plug>refactoring_toolbox_php_RenameLocalVariable')
