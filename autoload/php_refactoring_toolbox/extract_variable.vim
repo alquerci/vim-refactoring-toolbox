@@ -17,8 +17,7 @@ function php_refactoring_toolbox#extract_variable#execute(input)
 
         let l:codeToExtract = s:cutCodeToExtractAndMoveToInsertPosition()
 
-        " type variable name
-        call s:writeText('$'.l:name)
+        call s:insertVariable(l:name)
 
         " go to start on selection
         call setpos('.', l:backupPosition)
@@ -45,6 +44,10 @@ function! s:cutCodeToExtractAndMoveToInsertPosition()
     return @x
 endfunction
 
+function s:insertVariable(name)
+    call s:writeText('$'.a:name)
+endfunction
+
 function! s:writeText(text)
     if 1 == &l:paste
         let l:backuppaste = 'paste'
@@ -59,7 +62,7 @@ function! s:writeText(text)
 endfunction
 
 function s:writeDefinition(name, value)
-    call s:moveOnTopOfArray()
+    call s:moveOnTopOfExpression()
 
     call s:backwardOneLine()
     call s:addAndMoveOnNewLine()
@@ -72,31 +75,33 @@ function s:writeDefinition(name, value)
     call s:writeText(l:indent.'$'.a:name.' = '.a:value.';')
 endfunction
 
-function! s:backwardOneLine() " {{{
+function! s:backwardOneLine()
     call cursor(line('.') - 1, 0)
 endfunction
-" }}}
 
-function s:moveOnTopOfArray()
-    while s:currentLineEndsWith(',')
+function s:moveOnTopOfExpression()
+    while s:currentLineEndsWithCommaOrFunctionCall()
         call s:backwardOneLine()
     endwhile
 endfunction
 
-function! s:currentLineEndsWith(char) " {{{
+function s:currentLineEndsWithCommaOrFunctionCall()
+    return s:currentLineEndsWith(',')
+        \ || s:currentLineEndsWith(')')
+endfunction
+
+function! s:currentLineEndsWith(char)
     return a:char == trim(getline(line('.')))[-1:]
 endfunction
-" }}}
 
 function s:addAndMoveOnNewLine()
     call append(line('.'), '')
     call s:forwardOneLine()
 endfunction
 
-function! s:forwardOneLine() " {{{
+function! s:forwardOneLine()
     call cursor(line('.') + 1, 0)
 endfunction
-" }}}
 
 function s:getIndentOfNextNonBlankLine()
     return s:getBaseIndentOfText(getline(nextnonblank(line('.'))))
