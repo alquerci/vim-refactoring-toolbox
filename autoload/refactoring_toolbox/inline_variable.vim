@@ -1,6 +1,7 @@
 call refactoring_toolbox#vim#begin_script()
 
 let s:CURRENT_BUFFER = '%'
+let s:regex_after_word_boudary = refactoring_toolbox#regex#after_word_boudary
 
 function! refactoring_toolbox#inline_variable#execute()
     let l:variable = s:readVariableOnCurrentPosition()
@@ -23,9 +24,10 @@ function! s:readValueOnCurrentPosition()
 endfunction
 
 function! s:searchAndReplaceVariableWithValue(variable, value)
-    let [l:line, l:col] = searchpos(a:variable)
+    let l:variablePattern = a:variable.s:regex_after_word_boudary
+    let [l:line, l:col] = searchpos(l:variablePattern)
 
-    execute l:line.','.l:line.':s/'.a:variable.'/'.a:value.'/'
+    execute l:line.','.l:line.':s/'.l:variablePattern.'/'.a:value.'/'
 endfunction
 
 function! s:removeCurrentLine()

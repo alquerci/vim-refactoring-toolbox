@@ -1,0 +1,20 @@
+Given php:
+  <?php
+
+  function action()
+  {
+      $aVariable = 'value';
+      $prefixaVariable = $aVariable;
+  }
+
+Do:
+  /aVariable\<Enter>
+  ;iv
+
+Expect:
+  <?php
+
+  function action()
+  {
+      $prefixaVariable = 'value';
+  }
