@@ -1,10 +1,10 @@
-call refactoring_toolbox#vim#begin_script()
+call refactoring_toolbox#adaptor#vim#begin_script()
 
-let s:php_regex_class_line = refactoring_toolbox#regex#class_line
-let s:regex_after_word_boundary = refactoring_toolbox#regex#after_word_boudary
-let s:regex_case_sensitive = refactoring_toolbox#regex#case_sensitive
-let s:regex_property_declaration_or_usage = refactoring_toolbox#regex#member_declaration_or_usage
-let s:regex_lookbehind_positive = refactoring_toolbox#regex#lookbehind_positive
+let s:php_regex_class_line = refactoring_toolbox#adaptor#regex#class_line
+let s:regex_after_word_boundary = refactoring_toolbox#adaptor#regex#after_word_boudary
+let s:regex_case_sensitive = refactoring_toolbox#adaptor#regex#case_sensitive
+let s:regex_property_declaration_or_usage = refactoring_toolbox#adaptor#regex#member_declaration_or_usage
+let s:regex_lookbehind_positive = refactoring_toolbox#adaptor#regex#lookbehind_positive
 let s:SEARCH_NOT_FOUND = 0
 
 function! refactoring_toolbox#rename_property#execute(input)
@@ -104,4 +104,4 @@ function! s:replaceInCurrentClass(search, replace)
     call setpos('.', l:backupPosition)
 endfunction
 
-call refactoring_toolbox#vim#end_script()
+call refactoring_toolbox#adaptor#vim#end_script()

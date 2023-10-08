@@ -1,7 +1,7 @@
-call refactoring_toolbox#vim#begin_script()
+call refactoring_toolbox#adaptor#vim#begin_script()
 
 let s:CURRENT_BUFFER = '%'
-let s:regex_after_word_boudary = refactoring_toolbox#regex#after_word_boudary
+let s:regex_after_word_boudary = refactoring_toolbox#adaptor#regex#after_word_boudary
 
 function! refactoring_toolbox#inline_variable#execute()
     let l:variable = s:readVariableOnCurrentPosition()
@@ -38,4 +38,4 @@ function! s:getCurrentLine()
     return line('.')
 endfunction
 
-call refactoring_toolbox#vim#end_script()
+call refactoring_toolbox#adaptor#vim#end_script()

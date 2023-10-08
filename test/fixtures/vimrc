@@ -14,6 +14,8 @@ let mapleader = ";"
 let maplocalleader = ";"
 let g:refactoring_toolbox_usage_logdir = './var/log'
 let g:test_tmpdir = './var/tmp'
+let s:adaptor_phpactor_rpc_calls = []
+let g:refactoring_toolbox_adaptor_phpactor = 'spy'
 
 autocmd FileType * call TestSwitchFileTypeTo(expand("<amatch>"))
 

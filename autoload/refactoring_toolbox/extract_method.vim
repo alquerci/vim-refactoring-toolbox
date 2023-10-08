@@ -1,11 +1,11 @@
-call refactoring_toolbox#vim#begin_script()
+call refactoring_toolbox#adaptor#vim#begin_script()
 
-let s:php_regex_func_line = refactoring_toolbox#regex#func_line
-let s:php_regex_static_func = refactoring_toolbox#regex#static_func
-let s:php_regex_member_line = refactoring_toolbox#regex#member_line
-let s:php_regex_const_line = refactoring_toolbox#regex#const_line
-let s:php_regex_local_var = refactoring_toolbox#regex#local_var
-let s:php_regex_local_var_mutate = refactoring_toolbox#regex#local_var_mutate
+let s:php_regex_func_line = refactoring_toolbox#adaptor#regex#func_line
+let s:php_regex_static_func = refactoring_toolbox#adaptor#regex#static_func
+let s:php_regex_member_line = refactoring_toolbox#adaptor#regex#member_line
+let s:php_regex_const_line = refactoring_toolbox#adaptor#regex#const_line
+let s:php_regex_local_var = refactoring_toolbox#adaptor#regex#local_var
+let s:php_regex_local_var_mutate = refactoring_toolbox#adaptor#regex#local_var_mutate
 let s:NULL = 'NONE'
 let s:NO_MATCH = -1
 let s:EXPR_NOT_FOUND = -1
@@ -396,4 +396,4 @@ function! s:isInVisualBlockMode()
     return visualmode() == ''
 endfunction
 
-call refactoring_toolbox#vim#end_script()
+call refactoring_toolbox#adaptor#vim#end_script()

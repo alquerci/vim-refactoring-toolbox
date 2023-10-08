@@ -1,5 +1,5 @@
 try
-    call refactoring_toolbox#vim#begin_plugin('refactoring_toolbox_configuration')
+    call refactoring_toolbox#adaptor#vim#begin_plugin('refactoring_toolbox_configuration')
 catch /plugin_loaded/
     finish
 endtry
@@ -44,4 +44,4 @@ endfunction
 
 call s:main()
 
-call refactoring_toolbox#vim#end_plugin()
+call refactoring_toolbox#adaptor#vim#end_plugin()

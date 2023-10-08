@@ -1,4 +1,4 @@
-call refactoring_toolbox#vim#begin_script()
+call refactoring_toolbox#adaptor#vim#begin_script()
 
 function refactoring_toolbox#extract_variable#execute(input)
     let s:input = a:input
@@ -111,4 +111,4 @@ function! s:getBaseIndentOfText(text)
     return substitute(a:text, '\S.*', '', '')
 endfunction
 
-call refactoring_toolbox#vim#end_script()
+call refactoring_toolbox#adaptor#vim#end_script()

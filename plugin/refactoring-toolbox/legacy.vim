@@ -49,10 +49,10 @@ endf
 let s:php_regex_phptag_line = '<?\%(php\)\?'
 let s:php_regex_ns_line     = '^namespace\_s\+[\\_A-Za-z0-9]*\_s*[;{]'
 let s:php_regex_use_line    = '^use\_s\+[\\_A-Za-z0-9]\+\%(\_s\+as\_s\+[_A-Za-z0-9]\+\)\?\_s*\%(,\_s\+[\\_A-Za-z0-9]\+\%(\_s\+as\_s\+[_A-Za-z0-9]\+\)\?\_s*\)*;'
-let s:php_regex_class_line  = refactoring_toolbox#regex#class_line
-let s:php_regex_const_line = refactoring_toolbox#regex#const_line
-let s:php_regex_member_line = refactoring_toolbox#regex#member_line
-let s:php_regex_func_line = refactoring_toolbox#regex#func_line
+let s:php_regex_class_line  = refactoring_toolbox#adaptor#regex#class_line
+let s:php_regex_const_line = refactoring_toolbox#adaptor#regex#const_line
+let s:php_regex_member_line = refactoring_toolbox#adaptor#regex#member_line
+let s:php_regex_func_line = refactoring_toolbox#adaptor#regex#func_line
 
 let s:php_regex_assignment  = '+=\|-=\|*=\|/=\|=\~\|!=\|='
 let s:php_regex_fqcn        = '[\\_A-Za-z0-9]*'

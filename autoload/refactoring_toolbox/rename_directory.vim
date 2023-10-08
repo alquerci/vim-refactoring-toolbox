@@ -1,6 +1,7 @@
-call refactoring_toolbox#vim#begin_script()
+call refactoring_toolbox#adaptor#vim#begin_script()
 
-function! refactoring_toolbox#rename_directory#execute(input)
+function! refactoring_toolbox#rename_directory#execute(input, phpactor)
+    let s:phpactor = a:phpactor
     let s:input = a:input
 
     let l:oldDirectory = s:askQuestion("Old directory?")
@@ -21,11 +22,15 @@ function! s:searchPhpFilesInDirectory(directory)
 endfunction
 
 function! s:movePhpFile(oldPath, newPath)
-    call phpactor#rpc("move_class", { "source_path": a:oldPath, "dest_path": a:newPath, "confirmed": 'true' })
+    call s:phpactor.rpc("move_class", {
+        \ "source_path": a:oldPath,
+        \ "dest_path": a:newPath,
+        \ "confirmed": 'true'
+    \ })
 endfunction
 
 function! s:askQuestion(question, default = '')
     return s:input.askQuestionWithProposedAnswerAndDirectoryCompletion(a:question, a:default)
 endfunction
 
-call refactoring_toolbox#vim#end_script()
+call refactoring_toolbox#adaptor#vim#end_script()

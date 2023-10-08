@@ -1,10 +1,10 @@
-call refactoring_toolbox#vim#begin_script()
+call refactoring_toolbox#adaptor#vim#begin_script()
 
-let s:php_regex_func_line = refactoring_toolbox#regex#func_line
-let s:php_regex_const_line = refactoring_toolbox#regex#const_line
-let s:php_regex_member_line = refactoring_toolbox#regex#member_line
-let s:php_doc_var_type = refactoring_toolbox#regex#doc_var_type
-let s:php_regex_class_line  = refactoring_toolbox#regex#class_line
+let s:php_regex_func_line = refactoring_toolbox#adaptor#regex#func_line
+let s:php_regex_const_line = refactoring_toolbox#adaptor#regex#const_line
+let s:php_regex_member_line = refactoring_toolbox#adaptor#regex#member_line
+let s:php_doc_var_type = refactoring_toolbox#adaptor#regex#doc_var_type
+let s:php_regex_class_line  = refactoring_toolbox#adaptor#regex#class_line
 let s:NULL = 'NONE'
 
 function! refactoring_toolbox#create_getter_and_setter#execute(input)
@@ -259,4 +259,4 @@ function! s:backwardOneLine()
     call cursor(line('.') - 1, 0)
 endfunction
 
-call refactoring_toolbox#vim#end_script()
+call refactoring_toolbox#adaptor#vim#end_script()

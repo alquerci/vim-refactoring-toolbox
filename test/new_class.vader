@@ -1,10 +1,11 @@
 Given php:
   <?php
 
+  NewClass
+
 Do:
-  ;rd
-  test/fixtures/projectroot/OldDir\<Enter>
-  test/fixtures/projectroot/NewDir\<Enter>
+  /NewClass\<Enter>
+  ;nc
 
 Then:
   AssertEqual 1, refactoring_toolbox#adaptor#phpactor#make().getTotalCalls()

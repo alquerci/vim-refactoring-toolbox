@@ -1,8 +1,8 @@
-call refactoring_toolbox#vim#begin_script()
+call refactoring_toolbox#adaptor#vim#begin_script()
 
-let s:php_regex_class_line = refactoring_toolbox#regex#class_line
-let s:php_regex_func_line = refactoring_toolbox#regex#func_line
-let s:regex_after_word_boundary = refactoring_toolbox#regex#after_word_boudary
+let s:php_regex_class_line = refactoring_toolbox#adaptor#regex#class_line
+let s:php_regex_func_line = refactoring_toolbox#adaptor#regex#func_line
+let s:regex_after_word_boundary = refactoring_toolbox#adaptor#regex#after_word_boudary
 let s:php_regex_before_function = '\%(\%('.s:php_regex_func_line.'\)\|$this->\|self::\)\@<='
 let s:SEARCH_NO_MATCH = 0
 
@@ -101,4 +101,4 @@ function! s:replaceInCurrentClass(search, replace)
     call setpos('.', l:backupPosition)
 endfunction
 
-call refactoring_toolbox#vim#end_script()
+call refactoring_toolbox#adaptor#vim#end_script()

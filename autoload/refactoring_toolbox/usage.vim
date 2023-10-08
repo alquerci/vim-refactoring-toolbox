@@ -1,4 +1,4 @@
-call refactoring_toolbox#vim#begin_script()
+call refactoring_toolbox#adaptor#vim#begin_script()
 
 function refactoring_toolbox#usage#increment(name)
     let l:directory = g:refactoring_toolbox_usage_logdir
@@ -8,4 +8,4 @@ function refactoring_toolbox#usage#increment(name)
     call writefile([a:name], l:directory.'/usages.log', 'a')
 endfunction
 
-call refactoring_toolbox#vim#end_script()
+call refactoring_toolbox#adaptor#vim#end_script()

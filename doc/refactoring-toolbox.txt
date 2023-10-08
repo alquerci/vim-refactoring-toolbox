@@ -107,6 +107,7 @@ nmap <LocalLeader>rp <Plug>refactoring_toolbox_php_RenameProperty
 nmap <LocalLeader>rcv <Plug>refactoring_toolbox_php_RenameClassVariable
 nmap <LocalLeader>sg <Plug>refactoring_toolbox_php_SettersAndGetters
 nmap <LocalLeader>cog <Plug>refactoring_toolbox_php_OnlyGetters
+vmap <LocalLeader>nc <Plug>refactoring_toolbox_php_NewClass
 
 ===============================================================================
 Examples                                         *refactoring-toolbox-examples*
