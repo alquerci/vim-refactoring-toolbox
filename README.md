@@ -11,6 +11,8 @@ A set of mappings which help you to refactor code in consistent way across langu
 ## Supported languages
 
 - PHP
+- SH
+  - Extract Method
 
 
 ## Refactoring Techniques Highlights

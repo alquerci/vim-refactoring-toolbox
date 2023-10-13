@@ -23,26 +23,21 @@ let s:array_access = '\%(\[\_.*\]\)'
 let s:local_variable
     \ = '\%(\$\(this->\)\@!\)\@<='.s:variable_name
 
-let refactoring_toolbox#adaptor#regex#class_line  = '^\%(\%(final\s\+\|abstract\s\+\)\?class\>\|trait\>\)'
-let refactoring_toolbox#adaptor#regex#func_line = '^\s*\%(\%(private\|protected\|public\|static\|abstract\)\s*\)*function\_s\+'
-let refactoring_toolbox#adaptor#regex#static_func = 'static\s\+'.s:modifier_visibility.'\?\s*\(function\)\@='
+let refactoring_toolbox#adaptor#language#php#regex#class_line  = '^\%(\%(final\s\+\|abstract\s\+\)\?class\>\|trait\>\)'
+let refactoring_toolbox#adaptor#language#php#regex#func_line = '^\s*\%(\%(private\|protected\|public\|static\|abstract\)\s*\)*function\_s\+'
+let refactoring_toolbox#adaptor#language#php#regex#static_func = 'static\s\+'.s:modifier_visibility.'\?\s*\(function\)\@='
 
 let s:visibility_or_scope_property_modifiers = '\%(\%('.s:modifier_visibility.'\|'.s:modifier_scope.'\)\s\+\)\{1,2}'
 let s:member = '\s*\%('.s:visibility_or_scope_property_modifiers.'\%('.s:type_declaration.'\s\+\)\?\)\$'
-let refactoring_toolbox#adaptor#regex#member_line = '^'.s:member
+let refactoring_toolbox#adaptor#language#php#regex#member_line = '^'.s:member
 
-let refactoring_toolbox#adaptor#regex#member_declaration_or_usage = '\%('.s:member.'\|$this->\)'
+let refactoring_toolbox#adaptor#language#php#regex#member_declaration_or_usage = '\%('.s:member.'\|$this->\)'
 
-let refactoring_toolbox#adaptor#regex#const_line = '^\s*const\s\+[^;]\+;'
-let refactoring_toolbox#adaptor#regex#local_var = s:local_variable
-let refactoring_toolbox#adaptor#regex#local_var_mutate
+let refactoring_toolbox#adaptor#language#php#regex#const_line = '^\s*const\s\+[^;]\+;'
+let refactoring_toolbox#adaptor#language#php#regex#local_var = s:local_variable
+let refactoring_toolbox#adaptor#language#php#regex#local_var_mutate
     \ = s:local_variable.'\('.s:array_access.'\?'.'\_s*'.s:mutation_symbol.'\)\@='
 
-let refactoring_toolbox#adaptor#regex#doc_var_type = '@var '
-let refactoring_toolbox#adaptor#regex#before_word_boudary = '\<'
-let refactoring_toolbox#adaptor#regex#after_word_boudary = '\>'
-let refactoring_toolbox#adaptor#regex#case_sensitive = '\C'
-let refactoring_toolbox#adaptor#regex#case_ignore = '\c'
-let refactoring_toolbox#adaptor#regex#lookbehind_positive = '\@<='
+let refactoring_toolbox#adaptor#language#php#regex#doc_var_type = '@var '
 
 call refactoring_toolbox#adaptor#vim#end_script()

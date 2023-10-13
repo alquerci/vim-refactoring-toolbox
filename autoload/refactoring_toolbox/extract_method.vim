@@ -1,28 +1,31 @@
 call refactoring_toolbox#adaptor#vim#begin_script()
 
-let s:php_regex_func_line = refactoring_toolbox#adaptor#regex#func_line
-let s:php_regex_static_func = refactoring_toolbox#adaptor#regex#static_func
-let s:php_regex_member_line = refactoring_toolbox#adaptor#regex#member_line
-let s:php_regex_const_line = refactoring_toolbox#adaptor#regex#const_line
-let s:php_regex_local_var = refactoring_toolbox#adaptor#regex#local_var
-let s:php_regex_local_var_mutate = refactoring_toolbox#adaptor#regex#local_var_mutate
 let s:NULL = 'NONE'
 let s:NO_MATCH = -1
 let s:EXPR_NOT_FOUND = -1
 
-function! refactoring_toolbox#extract_method#execute(input)
+function! refactoring_toolbox#extract_method#execute(input, language)
     let s:input = a:input
+    let s:language = a:language
 
     try
         call s:validateMode()
 
-        let l:methodDefinition = #{name: s:NULL, visibility: s:NULL, arguments: [], returnVariables: [], isStatic: s:NULL}
+        let l:methodDefinition = #{
+            \ name: s:NULL,
+            \ visibility: s:NULL,
+            \ arguments: [],
+            \ returnVariables: [],
+            \ isStatic: s:NULL,
+            \ isInlineCall: s:NULL
+        \ }
 
         let l:methodDefinition.name = s:askForMethodName()
         let l:methodDefinition.visibility = s:getVisibility(g:refactoring_toolbox_default_method_visibility)
 
         let l:codeToExtract = s:cutCodeToExtractAndMoveToInsertPosition()
-        let l:methodDefinition.isStatic = s:insertPositionIsInStaticMethod()
+        let l:methodDefinition.isStatic = s:language.currentLineIsInStaticMethod()
+        let l:methodDefinition.isInlineCall = s:isInlineCode(l:codeToExtract)
 
         let l:methodDefinition.arguments = s:extractArguments(l:codeToExtract)
         let l:methodDefinition.returnVariables = s:extractReturnVariables(l:codeToExtract)
@@ -64,18 +67,6 @@ function! s:cutCodeToExtractAndMoveToInsertPosition()
     return @x
 endfunction
 
-function s:insertPositionIsInStaticMethod()
-    let l:definitionLine = search(s:php_regex_func_line, 'bnW')
-
-    return s:definitionAtLineIsStatic(l:definitionLine)
-endfunction
-
-function s:definitionAtLineIsStatic(line)
-    let l:content = getline(a:line)
-
-    return match(l:content, s:php_regex_static_func) != s:NO_MATCH
-endfunction
-
 function! s:extractArguments(codeToExtract)
     let l:methodCodeBefore = s:collectMethodCodeBeforeCurrentLine()
 
@@ -83,13 +74,28 @@ function! s:extractArguments(codeToExtract)
 endfunction
 
 function! s:extractReturnVariables(codeToExtract)
-    if s:codeHasReturn(a:codeToExtract)
+    if s:language.codeHasReturn(a:codeToExtract)
         return []
     endif
 
     let l:methodCodeAfter = s:collectMethodCodeAfterCurrentLine()
 
     return s:extractMutatedVariablesUsedAfter(a:codeToExtract, l:methodCodeAfter)
+endfunction
+
+function! s:extractMutatedVariablesUsedAfter(code, codeAfter)
+    let l:variables = []
+
+
+    let l:mutatedVariables = s:extractMutatedLocalVariables(a:code)
+
+    for l:variable in l:mutatedVariables
+        if s:language.variableExistsOnCode(l:variable, a:codeAfter)
+            call add(l:variables, l:variable)
+        endif
+    endfor
+
+    return l:variables
 endfunction
 
 function! s:insertMethodCall(codeToExtract, definition)
@@ -104,106 +110,72 @@ endfunction
 
 function! s:makeMethodCallStatement(codeToExtract, definition)
     let l:indent = s:getBaseIndentOfText(a:codeToExtract)
-    let l:methodCall = s:makeMethodCall(a:codeToExtract, a:definition)
 
-    if s:codeHasReturn(a:codeToExtract)
-        return l:indent.'return '.l:methodCall
-    else
-        let l:assigment = s:makeAssigment(a:definition.returnVariables)
+    let l:statement = s:language.makeMethodCallStatement(a:codeToExtract, a:definition)
 
-        return l:indent.l:assigment.l:methodCall
-    endif
-endfunction
-
-function! s:makeMethodCall(codeToExtract, definition)
-    let l:endExpression = s:isInlineCode(a:codeToExtract) ? '' : ';'
-    let l:arguments = join(a:definition.arguments, ', ')
-    let l:context = s:prepareMethodCallContext(a:definition)
-
-    return printf('%s%s(%s)%s', l:context, a:definition.name, l:arguments, l:endExpression)
-endfunction
-
-function s:prepareMethodCallContext(definition)
-    if a:definition.isStatic
-        return 'self::'
-    endif
-
-    return '$this->'
-endfunction
-
-function! s:makeAssigment(returnVariables)
-    if len(a:returnVariables) == 0
-        return ''
-    elseif len(a:returnVariables) == 1
-        return a:returnVariables[0].' = '
-    else
-        return printf('list(%s)', join(a:returnVariables, ', ')).' = '
-    endif
-endfunction
-
-function! s:codeHasReturn(code)
-    let l:returnKeywordPattern = '^\_s*return\_s'
-    let l:lines = split(a:code, "\n")
-
-    return match(l:lines, l:returnKeywordPattern) != s:NO_MATCH
+    return s:applyIndentOnText(l:indent, l:statement)
 endfunction
 
 function! s:addMethod(codeToExtract, definition)
     let l:backupPosition = getcurpos()
 
-    let l:methodBody = s:prepareMethodBody(a:codeToExtract, a:definition.returnVariables)
-    let l:methodModifiers = s:prepareMethodModifiers(a:definition)
+    let l:methodBody = s:prepareMethodBody(a:codeToExtract, a:definition)
 
-    call s:moveEndOfFunction()
+    call s:language.moveEndOfFunction()
 
-    call s:insertMethod(l:methodModifiers, a:definition.name, a:definition.arguments, l:methodBody)
+    call s:insertMethod(a:definition, l:methodBody)
 
     call setpos('.', l:backupPosition)
 endfunction
 
-function! s:prepareMethodBody(codeToExtract, returnVariables)
-    let l:returnIndent = s:computeReturnIntent()
-    let l:currentIndent = s:getBaseIndentOfText(a:codeToExtract)
-
-    let l:methodBody = substitute(a:codeToExtract, '^'.l:currentIndent, l:returnIndent, 'g')
-    let l:methodBody =  substitute(l:methodBody, '\n'.l:currentIndent, '\n'.l:returnIndent, 'g')
-    let l:methodBody =  substitute(l:methodBody, '\n$', '', 'g')
+function! s:prepareMethodBody(codeToExtract, definition)
+    let l:returnVariables = a:definition.returnVariables
+    let l:indent = s:getMethodBodyIndentation()
 
     if s:isInlineCode(a:codeToExtract)
-        let l:methodBody = ''
-    elseif len(a:returnVariables) > 0
-        let l:methodBody = l:methodBody."\<Enter>\<Enter>"
-    endif
+        let l:methodBody = s:language.makeInlineCodeToMethodBody(a:codeToExtract)
 
-    let l:return = s:prepareReturnStatement(a:codeToExtract, a:returnVariables, l:returnIndent)
-
-    return l:methodBody.l:return
-endfunction
-
-function! s:computeReturnIntent()
-    let l:baseIndent = s:detectIntentation()
-
-    return l:baseIndent.l:baseIndent
-endfunction
-
-function! s:prepareReturnStatement(codeToExtract, returnVariables, returnIndent)
-    if s:isInlineCode(a:codeToExtract)
-        return a:returnIndent.'return '.a:codeToExtract.';'
-    elseif len(a:returnVariables) == 0
-        return ''
-    elseif len(a:returnVariables) == 1
-        return a:returnIndent.'return ' . a:returnVariables[0] . ';'
+        return s:applyIndentOnText(l:indent, l:methodBody)
     else
-        return a:returnIndent.'return array(' . join(a:returnVariables, ', ') . ');'
+        let l:methodBody = s:language.prepareMethodBody(a:definition, a:codeToExtract)
+        let l:returnStatement = s:prepareReturnStatement(a:definition)
+
+        return s:joinTwoCodeBlock(
+            \ s:applyIndentOnText(l:indent, l:methodBody),
+            \ s:applyIndentOnText(l:indent, l:returnStatement)
+        \ )
     endif
 endfunction
 
-function s:prepareMethodModifiers(definition)
-    if a:definition.isStatic
-        return a:definition.visibility.' static'
+function s:prepareReturnStatement(definition)
+    if 0 < len(a:definition.returnVariables)
+        return s:language.makeReturnStatement(a:definition)
+    endif
+endfunction
+
+function s:applyIndentOnText(indent, text)
+    if '' == a:text
+        return ''
     endif
 
-    return a:definition.visibility
+    let l:currentIndent = s:getBaseIndentOfText(a:text)
+
+    let l:text = substitute(a:text, '^'.l:currentIndent, a:indent, 'g')
+    let l:text = substitute(l:text, '\n'.l:currentIndent, '\n'.a:indent, 'g')
+
+    return substitute(l:text, '\n$', '', 'g')
+endfunction
+
+function s:joinTwoCodeBlock(top, bottom)
+    if '' == a:bottom
+        return a:top
+    endif
+
+    if '' == a:top
+        return a:bottom
+    endif
+
+    return a:top."\<Enter>\<Enter>".a:bottom
 endfunction
 
 function! s:isInlineCode(codeToExtract)
@@ -232,7 +204,7 @@ endfunction
 function! s:getBottomLineOfCurrentMethod()
     let l:backupPosition = getcurpos()
 
-    call s:moveEndOfFunction()
+    call s:language.moveEndOfFunction()
     let l:bottomLine = s:getCurrentLine()
 
     call setpos('.', l:backupPosition)
@@ -250,7 +222,7 @@ endfunction
 function! s:getTopLineOfCurrentMethod()
     let l:backupPosition = getcurpos()
 
-    call s:moveToCurrentFunctionDefinition()
+    call s:language.moveToCurrentFunctionDefinition()
     let l:topLine = s:getCurrentLine()
 
     call setpos('.', l:backupPosition)
@@ -258,99 +230,92 @@ function! s:getTopLineOfCurrentMethod()
     return l:topLine
 endfunction
 
-function! s:extractMutatedVariablesUsedAfter(code, codeAfter)
-    let l:variables = []
-
-    for l:var in s:extractMutatedLocalVariables(a:code)
-        if s:variableExistsOnCode(l:var, a:codeAfter)
-            call add(l:variables, l:var)
-        endif
-    endfor
-
-    return l:variables
-endfunction
-
 function! s:extractVariablesPresentInBothCode(first, second)
     let l:variables = []
 
-    for l:var in s:extractAllLocalVariables(a:first)
-        if s:variableExistsOnCode(l:var, a:second)
-            call add(l:variables, l:var)
+    for l:variable in s:extractAllLocalVariables(a:first)
+        if s:language.variableExistsOnCode(l:variable, a:second)
+            call add(l:variables, l:variable)
         endif
     endfor
 
     return l:variables
 endfunction
 
-function! s:variableExistsOnCode(variable, code)
-    return match(a:code, a:variable . '\>') != s:NO_MATCH
-endfunction
-
 function! s:extractAllLocalVariables(haystack)
-    return s:extractStringListThatMatchPatternWithCondition(a:haystack, s:php_regex_local_var, s:php_regex_local_var)
+    return s:extractStringListThatMatchPatternWithCondition(
+        \ a:haystack,
+        \ s:language.getLocalVariablePattern()
+    \ )
 endfunction
 
 function! s:extractMutatedLocalVariables(haystack)
-    return s:extractStringListThatMatchPatternWithCondition(a:haystack, s:php_regex_local_var, s:php_regex_local_var_mutate)
+    return s:extractStringListThatMatchPatternWithCondition(
+        \ a:haystack,
+        \ s:language.getMutatedLocalVariablePattern()
+    \ )
 endfunction
 
-function! s:extractStringListThatMatchPatternWithCondition(haystack, stringPattern, conditionPattern)
+function! s:extractStringListThatMatchPatternWithCondition(haystack, conditionPattern)
     let l:strings = []
-    let l:matchPos = match(a:haystack, a:conditionPattern, 0)
+    let l:atOccurence = 0
+    let l:foundString = s:findTextMatchingPatternOnTextAtOccurence(a:conditionPattern, a:haystack, l:atOccurence)
 
-    while l:matchPos != s:NO_MATCH
-        let l:str = matchstr(a:haystack, a:stringPattern, l:matchPos)
+    while '' != l:foundString
+        call s:listAddOnce(l:strings, l:foundString)
 
-        if s:EXPR_NOT_FOUND == index(l:strings, l:str)
-            call add(l:strings, l:str)
-        endif
-
-        let l:matchPos = match(a:haystack, a:conditionPattern, l:matchPos + strlen(l:str))
+        let l:atOccurence += 1
+        let l:foundString = s:findTextMatchingPatternOnTextAtOccurence(a:conditionPattern, a:haystack, l:atOccurence)
     endwhile
 
     return l:strings
+endfunction
+
+function s:findTextMatchingPatternOnTextAtOccurence(pattern, text, occurence)
+    return matchstr(a:text, a:pattern, 0, a:occurence)
+endfunction
+
+function s:listAddOnce(list, value)
+    if s:EXPR_NOT_FOUND == index(a:list, a:value)
+        call add(a:list, a:value)
+    endif
 endfunction
 
 function! s:joinLinesBetween(topLine, bottomLine)
     return join(getline(a:topLine, a:bottomLine))
 endfunction
 
-function! s:moveEndOfFunction()
-    call s:moveToCurrentFunctionDefinition()
-
-    call s:moveToClosingBracket()
-endfunction
-
-function! s:moveToCurrentFunctionDefinition()
-    call search(s:php_regex_func_line, 'bW')
-endfunction
-
-function! s:moveToClosingBracket()
-    call search('{', 'W')
-    call searchpair('{', '', '}', 'W')
-endfunction
-
-function! s:insertMethod(modifiers, methodName, params, impl)
-    let l:indent = s:detectIntentation()
+function! s:insertMethod(definition, body)
+    let l:indent = s:getMethodIndentation()
 
     call s:writeLine('')
-    call s:writeLine(l:indent . a:modifiers . ' function ' . a:methodName . '(' . join(a:params, ', ') . ')')
-    call s:writeLine(l:indent . '{')
+    call s:writeLine(l:indent.s:language.makeMethodFirstLine(a:definition))
+    call s:writeLine(l:indent.'{')
     call s:writeLine('')
-    call s:writeText(a:impl)
-    call s:writeLine(l:indent . '}')
+    call s:writeText(a:body)
+    call s:writeLine(l:indent.'}')
+endfunction
+
+function! s:getMethodIndentation()
+    return s:getIndentForLevel(s:language.getMethodIndentationLevel())
+endfunction
+
+function! s:getMethodBodyIndentation()
+    return s:getIndentForLevel(s:language.getMethodIndentationLevel() + 1)
+endfunction
+
+function s:getIndentForLevel(level)
+    if 0 == a:level
+        return ''
+    endif
+
+    let l:baseIndent = s:detectIntentation()
+
+    return repeat(l:baseIndent, a:level)
 endfunction
 
 function! s:detectIntentation()
-    let l:line = getline(s:searchPreviousClassElement())
-
-    return substitute(l:line, '\S.*', '', '')
-endfunction
-
-function! s:searchPreviousClassElement()
-    let l:declarationPattern = '\%(' . join([s:php_regex_member_line, s:php_regex_const_line, s:php_regex_func_line], '\)\|\(') .'\)'
-
-    return search(l:declarationPattern, 'bn')
+    return repeat(' ', shiftwidth())
 endfunction
 
 function! s:writeLine(text)
@@ -360,7 +325,11 @@ function! s:writeLine(text)
 endfunction
 
 function! s:forwardOneLine()
-    call cursor(s:getCurrentLine() + 1, 0)
+    call s:moveToLine(s:getCurrentLine() + 1)
+endfunction
+
+function! s:moveToLine(line)
+    call cursor(a:line, 0)
 endfunction
 
 function! s:getCurrentLine()

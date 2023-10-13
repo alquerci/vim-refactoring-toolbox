@@ -4,6 +4,7 @@ filetype off
 
 set runtimepath=vendor/vader.vim
 set runtimepath+=.
+set tabstop=2 shiftwidth=4
 
 filetype plugin on
 filetype indent on
@@ -34,7 +35,7 @@ function TestDebug(name, value)
     call append(line('.'), '')
     call cursor(line('.') + 1, 0)
 
-    execute 'normal! i'.a:name.'='.a:value
+    execute 'normal! i'.a:name.'='.json_encode(a:value)
 endfunction
 
 function TestLoadFileTypeInIsolation(type)

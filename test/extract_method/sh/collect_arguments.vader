@@ -1,0 +1,37 @@
+Given sh:
+  #! /bin/sh
+
+  main ()
+  {
+      firstVariable='first variable value'
+      secondVariable='second variable value'
+
+      ${firstVariable}${secondVariable}
+  }
+
+  main
+
+Do:
+  /\${firstVariable}\<Enter>
+  V
+  ;em
+  eatTwoVariables\<Enter>
+  \<Enter>
+
+Expect:
+  #! /bin/sh
+
+  main ()
+  {
+      firstVariable='first variable value'
+      secondVariable='second variable value'
+
+      eatTwoVariables "${firstVariable}" "${secondVariable}"
+  }
+
+  eatTwoVariables ()
+  {
+      ${1}${2}
+  }
+
+  main
