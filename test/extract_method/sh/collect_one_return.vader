@@ -1,0 +1,38 @@
+Given sh:
+  #! /bin/sh
+
+  main ()
+  {
+      firstVariable='first variable value'
+
+      ${firstVariable}
+  }
+
+  main
+
+Do:
+  /firstVariable\<Enter>
+  V
+  ;em
+  returnFirstVariable\<Enter>
+  \<Enter>
+
+Expect:
+  #! /bin/sh
+
+  main ()
+  {
+      returnFirstVariable
+      firstVariable=${returnFirstVariable__return}
+
+      ${firstVariable}
+  }
+
+  returnFirstVariable ()
+  {
+      firstVariable='first variable value'
+
+      returnFirstVariable__return=${firstVariable}
+  }
+
+  main

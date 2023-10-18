@@ -1,0 +1,45 @@
+Given php:
+  <?php
+
+  class AClassName
+  {
+      public function aPublicFunction()
+      {
+          $firstVariable = 'first variable value';
+
+          $secondVariable = 'second variable value';
+          $firstVariable;
+
+          $secondVariable;
+      }
+  }
+
+Do:
+  /secondVariable\<Enter>
+  Vj
+  ;em
+  takeFirstVariablesAndReturnSecond\<Enter>
+  \<Enter>
+
+Expect:
+  <?php
+
+  class AClassName
+  {
+      public function aPublicFunction()
+      {
+          $firstVariable = 'first variable value';
+
+          $secondVariable = $this->takeFirstVariablesAndReturnSecond($firstVariable);
+
+          $secondVariable;
+      }
+
+      private function takeFirstVariablesAndReturnSecond($firstVariable)
+      {
+          $secondVariable = 'second variable value';
+          $firstVariable;
+
+          return $secondVariable;
+      }
+  }

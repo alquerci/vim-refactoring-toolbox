@@ -13,17 +13,31 @@ call refactoring_toolbox#adaptor#vim#begin_script()
 " | After word boundary     |   WORD\>            | \b             |
 " +----------------------------------------------------------------+
 
+let s:before_word_boundary = '\<'
+let s:after_word_boundary = '\>'
+
+let refactoring_toolbox#adaptor#regex#before_word_boudary = s:before_word_boundary
+let refactoring_toolbox#adaptor#regex#after_word_boudary = s:after_word_boundary
+let refactoring_toolbox#adaptor#regex#case_sensitive = '\C'
+let refactoring_toolbox#adaptor#regex#case_ignore = '\c'
+let refactoring_toolbox#adaptor#regex#lookbehind_positive = '\@<='
+
+"
+" PHP
+"
+
 let s:modifier_visibility = '\%(private\|protected\|public\)'
 let s:modifier_scope = '\%(static\|readonly\)'
 let s:type_declaration = '\%(?\?[\\|_A-Za-z0-9]\+\)'
-let s:variable_name = '\%([A-Za-z][A-Za-z0-9]*\)'
+let s:variable_name = s:before_word_boundary.'\%([A-Za-z][A-Za-z0-9]*\)'.s:after_word_boundary
 let s:mutation_symbol = '\%(\%([.+*%/&|^-]\|\*\*\|<<\|>>\|??\)\?=\)'
 let s:array_access = '\%(\[\_.*\]\)'
 
+let s:local_variable_prefix = '\$\(this->\)\@!'
 let s:local_variable
-    \ = '\%(\$\(this->\)\@!\)\@<='.s:variable_name
+    \ = '\%('.s:local_variable_prefix.'\)\@<='.s:variable_name
 
-let refactoring_toolbox#adaptor#regex#class_line  = '^\%(\%(final\s\+\|abstract\s\+\)\?class\>\|trait\>\)'
+let refactoring_toolbox#adaptor#regex#class_line  = '^\%(\%(final\s\+\|abstract\s\+\)\?class\|trait\)'.s:after_word_boundary
 let refactoring_toolbox#adaptor#regex#func_line = '^\s*\%(\%(private\|protected\|public\|static\|abstract\)\s*\)*function\_s\+'
 let refactoring_toolbox#adaptor#regex#static_func = 'static\s\+'.s:modifier_visibility.'\?\s*\(function\)\@='
 
@@ -34,15 +48,11 @@ let refactoring_toolbox#adaptor#regex#member_line = '^'.s:member
 let refactoring_toolbox#adaptor#regex#member_declaration_or_usage = '\%('.s:member.'\|$this->\)'
 
 let refactoring_toolbox#adaptor#regex#const_line = '^\s*const\s\+[^;]\+;'
+let refactoring_toolbox#adaptor#regex#local_var_prefix = s:local_variable_prefix
 let refactoring_toolbox#adaptor#regex#local_var = s:local_variable
 let refactoring_toolbox#adaptor#regex#local_var_mutate
     \ = s:local_variable.'\('.s:array_access.'\?'.'\_s*'.s:mutation_symbol.'\)\@='
 
 let refactoring_toolbox#adaptor#regex#doc_var_type = '@var '
-let refactoring_toolbox#adaptor#regex#before_word_boudary = '\<'
-let refactoring_toolbox#adaptor#regex#after_word_boudary = '\>'
-let refactoring_toolbox#adaptor#regex#case_sensitive = '\C'
-let refactoring_toolbox#adaptor#regex#case_ignore = '\c'
-let refactoring_toolbox#adaptor#regex#lookbehind_positive = '\@<='
 
 call refactoring_toolbox#adaptor#vim#end_script()

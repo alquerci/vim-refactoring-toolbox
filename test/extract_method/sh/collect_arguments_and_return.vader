@@ -1,0 +1,44 @@
+Given sh:
+  #! /bin/sh
+
+  main ()
+  {
+      firstVariable='first variable value'
+
+      secondVariable='second variable value'
+      ${firstVariable}
+
+      ${secondVariable}
+  }
+
+  main
+
+Do:
+  /secondVariable\<Enter>
+  Vj
+  ;em
+  takeFirstVariablesAndReturnSecond\<Enter>
+  \<Enter>
+
+Expect:
+  #! /bin/sh
+
+  main ()
+  {
+      firstVariable='first variable value'
+
+      takeFirstVariablesAndReturnSecond "${firstVariable}"
+      secondVariable=${takeFirstVariablesAndReturnSecond__return}
+
+      ${secondVariable}
+  }
+
+  takeFirstVariablesAndReturnSecond ()
+  {
+      secondVariable='second variable value'
+      ${1}
+
+      takeFirstVariablesAndReturnSecond__return=${secondVariable}
+  }
+
+  main

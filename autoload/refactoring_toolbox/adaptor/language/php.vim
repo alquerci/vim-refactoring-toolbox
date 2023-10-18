@@ -3,7 +3,9 @@ call refactoring_toolbox#adaptor#vim#begin_script()
 let s:regex_func_line = refactoring_toolbox#adaptor#regex#func_line
 let s:regex_static_func = refactoring_toolbox#adaptor#regex#static_func
 let s:regex_local_var = refactoring_toolbox#adaptor#regex#local_var
+let s:regex_local_var_prefix = refactoring_toolbox#adaptor#regex#local_var_prefix
 let s:regex_local_var_mutate = refactoring_toolbox#adaptor#regex#local_var_mutate
+let s:regex_before_word_boudary = refactoring_toolbox#adaptor#regex#before_word_boudary
 let s:regex_after_word_boudary = refactoring_toolbox#adaptor#regex#after_word_boudary
 let s:NO_MATCH = -1
 
@@ -49,7 +51,17 @@ function s:language.getMutatedLocalVariablePattern()
 endfunction
 
 function s:language.variableExistsOnCode(variable, code)
-    return match(a:code, a:variable.s:regex_after_word_boudary) != s:NO_MATCH
+    let l:pattern = s:makeLocalVariableNamePatternForName(a:variable)
+
+    return match(a:code, l:pattern) != s:NO_MATCH
+endfunction
+
+function s:makeLocalVariableNamePatternForName(name)
+    return '\%('.s:regex_local_var_prefix.'\)\@<='.s:makeVariableNamePatternForName(a:name)
+endfunction
+
+function s:makeVariableNamePatternForName(name)
+    return s:regex_before_word_boudary.a:name.s:regex_after_word_boudary
 endfunction
 
 function s:language.codeHasReturn(code)
