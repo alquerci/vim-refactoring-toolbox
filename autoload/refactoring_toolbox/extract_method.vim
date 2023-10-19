@@ -315,7 +315,11 @@ function s:getIndentForLevel(level)
 endfunction
 
 function! s:detectIntentation()
-    return repeat(' ', shiftwidth())
+    if &expandtab
+        return repeat(' ', shiftwidth())
+    else
+        return "\t"
+    fi
 endfunction
 
 function! s:writeLine(text)

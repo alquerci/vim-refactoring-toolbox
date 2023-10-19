@@ -4,23 +4,28 @@ filetype off
 
 set runtimepath=vendor/vader.vim
 set runtimepath+=.
-set tabstop=2 shiftwidth=4
 
 filetype plugin on
 filetype indent on
 
 syntax enable
 
-let mapleader = ";"
-let maplocalleader = ";"
 let g:refactoring_toolbox_usage_logdir = './var/log'
 let g:test_tmpdir = './var/tmp'
 let s:adaptor_phpactor_rpc_calls = []
 let g:refactoring_toolbox_adaptor_phpactor = 'spy'
 
-autocmd FileType * call TestSwitchFileTypeTo(expand("<amatch>"))
+set tabstop=4 shiftwidth=4 expandtab
+
+let mapleader = ";"
+let maplocalleader = ";"
 
 function TestResetConfiguration()
+    set tabstop=4 shiftwidth=4 expandtab
+
+    let mapleader = ";"
+    let maplocalleader = ";"
+
     let g:refactoring_toolbox_auto_validate = 0
     let g:refactoring_toolbox_auto_validate_sg = g:refactoring_toolbox_auto_validate
     let g:refactoring_toolbox_auto_validate_g = g:refactoring_toolbox_auto_validate
@@ -54,6 +59,8 @@ function TestSwitchFileTypeTo(newType)
 
     call TestLoadFileType(a:newType)
 endfunction
+
+autocmd FileType * call TestSwitchFileTypeTo(expand("<amatch>"))
 
 function TestLoadFileType(type)
     if '' == a:type

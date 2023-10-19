@@ -7,6 +7,7 @@ let s:regex_local_var_prefix = refactoring_toolbox#adaptor#regex#local_var_prefi
 let s:regex_local_var_mutate = refactoring_toolbox#adaptor#regex#local_var_mutate
 let s:regex_before_word_boudary = refactoring_toolbox#adaptor#regex#before_word_boudary
 let s:regex_after_word_boudary = refactoring_toolbox#adaptor#regex#after_word_boudary
+let s:regex_case_sensitive = refactoring_toolbox#adaptor#regex#case_sensitive
 let s:NO_MATCH = -1
 
 function refactoring_toolbox#adaptor#language#php#make()
@@ -51,7 +52,7 @@ function s:language.getMutatedLocalVariablePattern()
 endfunction
 
 function s:language.variableExistsOnCode(variable, code)
-    let l:pattern = s:makeLocalVariableNamePatternForName(a:variable)
+    let l:pattern = s:regex_case_sensitive.s:makeLocalVariableNamePatternForName(a:variable)
 
     return match(a:code, l:pattern) != s:NO_MATCH
 endfunction

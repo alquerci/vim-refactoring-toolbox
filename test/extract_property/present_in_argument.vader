@@ -1,0 +1,29 @@
+Given php:
+  <?php
+
+  class SomeClass
+  {
+      public function someMethod($someVariable)
+      {
+          $anotherVariable = $someVariable;
+      }
+  }
+
+Do:
+  /someVariable\<Enter>
+  ;ep
+
+Expect:
+  <?php
+
+  class SomeClass
+  {
+      private $someVariable;
+
+      public function someMethod($someVariable)
+      {
+          $this->someVariable = $someVariable;
+
+          $anotherVariable = $this->someVariable;
+      }
+  }

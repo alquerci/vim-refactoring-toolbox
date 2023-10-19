@@ -22,7 +22,6 @@ endif
 if g:refactoring_toolbox_use_default_mapping == 1
     nnoremap <unique> <Leader>eu :call PhpExtractUse()<Enter>
     vnoremap <unique> <Leader>ec :call PhpExtractConst()<Enter>
-    nnoremap <unique> <Leader>ep :call PhpExtractClassProperty()<Enter>
     nnoremap <unique> <Leader>np :call PhpCreateProperty()<Enter>
     nnoremap <unique> <Leader>du :call PhpDetectUnusedUseStatements()<Enter>
     vnoremap <unique> <Leader>== :call PhpAlignAssigns()<Enter>
@@ -115,39 +114,6 @@ function! PhpExtractConst() " {{{
     normal! mrgv"xy
     call s:PhpReplaceInCurrentClass(@x, 'self::' . l:name)
     call s:PhpInsertConst(l:name, @x)
-    normal! `r
-endfunction
-" }}}
-
-function! PhpExtractClassProperty() " {{{
-    call s:incrementUsage('PhpExtractClassProperty')
-
-    normal! mr
-    let l:name = substitute(expand('<cword>'), '^\$*', '', '')
-    call s:PhpReplaceInsideCurrentFunctionBody('$' . l:name . '\>', '$this->' . l:name)
-    if g:refactoring_toolbox_auto_validate_visibility == 0
-        let l:visibility = inputdialog("Visibility (default is " . g:refactoring_toolbox_default_property_visibility . "): ")
-        if empty(l:visibility)
-            let l:visibility =  g:refactoring_toolbox_default_property_visibility
-        endif
-    else
-        let l:visibility =  g:refactoring_toolbox_default_property_visibility
-    endif
-    call s:PhpInsertProperty(l:name, l:visibility)
-    normal! `r
-endfunction
-" }}}
-
-function! s:PhpReplaceInsideCurrentFunctionBody(search, replace) " {{{
-    normal! mr
-
-    call search(s:php_regex_func_line, 'bW')
-    call search('{', 'W')
-    let l:startLine = line('.')
-    call searchpair('{', '', '}', 'W')
-    let l:stopLine = line('.')
-
-    exec l:startLine . ',' . l:stopLine . ':s/' . a:search . '/'. a:replace .'/ge'
     normal! `r
 endfunction
 " }}}

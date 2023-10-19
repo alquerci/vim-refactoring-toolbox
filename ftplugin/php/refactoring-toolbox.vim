@@ -49,6 +49,12 @@ function s:registerMappings()
         \ )
 
         call s:addBufferNormalMapping(
+            \ '<LocalLeader>ep',
+            \ '<Plug>refactoring_toolbox_php_ExtractProperty',
+            \ 'refactoring_toolbox#extract_property#main#execute()'
+        \ )
+
+        call s:addBufferNormalMapping(
             \ '<LocalLeader>rp',
             \ '<Plug>refactoring_toolbox_php_RenameProperty',
             \ 'refactoring_toolbox#rename_property#main#execute()'

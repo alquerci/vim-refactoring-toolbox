@@ -1,0 +1,33 @@
+Before:
+  setlocal tabstop=2 shiftwidth=2 noexpandtab
+
+After:
+  call TestResetConfiguration()
+
+Given php:
+  <?php
+
+  class SomeClass
+  {
+      public function someMethod()
+      {
+          $someVariable = 'some variable value';
+      }
+  }
+
+Do:
+  /someVariable\<Enter>
+  ;ep
+
+Expect:
+  <?php
+
+  class SomeClass
+  {
+  	private $someVariable;
+
+      public function someMethod()
+      {
+          $this->someVariable = 'some variable value';
+      }
+  }
