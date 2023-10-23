@@ -16,10 +16,21 @@ endfunction
 
 let s:language = #{}
 
-function s:language.currentLineIsInStaticMethod()
-    let l:definitionLine = search(s:regex_func_line, 'bnW')
+function s:language.positionIsInStaticMethod(position)
+    let l:definitionLine = s:findDefinitionLineForFunctionWithPosition(a:position)
 
     return s:definitionAtLineIsStatic(l:definitionLine)
+endfunction
+
+function s:findDefinitionLineForFunctionWithPosition(position)
+    let l:backupPosition = getcurpos()
+    call setpos('.', a:position)
+
+    let l:definitionLine = search(s:regex_func_line, 'bnW')
+
+    call setpos('.', l:backupPosition)
+
+    return l:definitionLine
 endfunction
 
 function s:definitionAtLineIsStatic(line)

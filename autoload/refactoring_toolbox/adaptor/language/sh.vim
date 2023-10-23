@@ -12,7 +12,7 @@ endfunction
 
 let s:language = #{}
 
-function s:language.currentLineIsInStaticMethod()
+function s:language.positionIsInStaticMethod(position)
     return v:false
 endfunction
 

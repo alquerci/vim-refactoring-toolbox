@@ -4,7 +4,7 @@ let s:NULL = 'NONE'
 let s:NO_MATCH = -1
 let s:EXPR_NOT_FOUND = -1
 
-function! refactoring_toolbox#extract_method#execute(input, language)
+function refactoring_toolbox#extract_method#execute(input, language)
     let s:input = a:input
     let s:language = a:language
 
@@ -23,15 +23,19 @@ function! refactoring_toolbox#extract_method#execute(input, language)
         let l:methodDefinition.name = s:askForMethodName()
         let l:methodDefinition.visibility = s:getVisibility(g:refactoring_toolbox_default_method_visibility)
 
-        let l:codeToExtract = s:cutCodeToExtractAndMoveToInsertPosition()
-        let l:methodDefinition.isStatic = s:language.currentLineIsInStaticMethod()
-        let l:methodDefinition.isInlineCall = s:isInlineCode(l:codeToExtract)
+        let l:methodCallInsertPosition = s:determinePositionToInsertMethodCall()
+        let l:codeToExtract = s:getSelectedText()
 
-        let l:methodDefinition.arguments = s:extractArguments(l:codeToExtract)
-        let l:methodDefinition.returnVariables = s:extractReturnVariables(l:codeToExtract)
+        call s:deleteSelectedText()
 
-        call s:insertMethodCall(l:codeToExtract, l:methodDefinition)
-        call s:addMethod(l:codeToExtract, l:methodDefinition)
+        let l:methodDefinition.isStatic = s:language.positionIsInStaticMethod(l:methodCallInsertPosition)
+        let l:methodDefinition.isInlineCall = s:isInlineCode()
+
+        let l:methodDefinition.arguments = s:extractArguments(l:codeToExtract, l:methodCallInsertPosition)
+        let l:methodDefinition.returnVariables = s:extractReturnVariables(l:codeToExtract, l:methodCallInsertPosition)
+
+        call s:insertMethodCall(l:codeToExtract, l:methodDefinition, l:methodCallInsertPosition)
+        call s:addMethod(l:codeToExtract, l:methodDefinition, l:methodCallInsertPosition)
     catch /user_cancel/
         call s:echoWarning('You cancelled extract method.')
 
@@ -43,17 +47,17 @@ function! refactoring_toolbox#extract_method#execute(input, language)
     endtry
 endfunction
 
-function! s:validateMode()
+function s:validateMode()
     if s:isInVisualBlockMode()
         throw 'unexpected_mode'
     endif
 endfunction
 
-function! s:askForMethodName()
+function s:askForMethodName()
     return s:input.askQuestion('Name of new method?')
 endfunction
 
-function! s:getVisibility(default)
+function s:getVisibility(default)
     if g:refactoring_toolbox_auto_validate_visibility == 0
         return s:askForMethodVisibility(a:default)
     endif
@@ -61,29 +65,72 @@ function! s:getVisibility(default)
     return a:default
 endfunction
 
-function! s:cutCodeToExtractAndMoveToInsertPosition()
-    normal! gv"xs
+function s:getSelectedText()
+    let l:startPosition = s:getStartPositionOfSelection()
+    let l:endPosition = s:getEndPositionOfSelection()
 
-    return @x
+    let l:selectionLines = s:copyLinesBetweenCursorPositions(l:startPosition, l:endPosition)
+
+    return join(l:selectionLines, "\n")
 endfunction
 
-function! s:extractArguments(codeToExtract)
-    let l:methodCodeBefore = s:collectMethodCodeBeforeCurrentLine()
+function s:determinePositionToInsertMethodCall()
+    return s:getStartPositionOfSelection()
+endfunction
+
+function s:getStartPositionOfSelection()
+    normal! `<
+
+    return getcurpos()
+endfunction
+
+function s:getEndPositionOfSelection()
+    normal! `>
+
+    return getcurpos()
+endfunction
+
+function s:copyLinesBetweenCursorPositions(start, end)
+    let l:selectionLines = getline(a:start[1], a:end[1])
+
+    let l:startColumn = a:start[2]
+    let l:endColumn = a:end[2]
+
+    let l:totalLines = len(l:selectionLines)
+    let l:lastLineIndex = l:totalLines - 1
+    let l:lastLine = l:selectionLines[l:lastLineIndex]
+    let l:lastLineLength = len(l:lastLine)
+
+    let l:endColumnIndex = l:endColumn - l:lastLineLength - 1
+    let l:selectionLines[l:lastLineIndex] = l:lastLine[: l:endColumnIndex]
+
+    let l:startColumnIndex = l:startColumn - 1
+    let l:selectionLines[0] = l:selectionLines[0][l:startColumnIndex :]
+
+    return l:selectionLines
+endfunction
+
+function s:deleteSelectedText()
+    normal! gvs
+endfunction
+
+function s:extractArguments(codeToExtract, position)
+    let l:methodCodeBefore = s:collectMethodCodeBeforePosition(a:position)
 
     return s:extractVariablesPresentInBothCode(a:codeToExtract, l:methodCodeBefore)
 endfunction
 
-function! s:extractReturnVariables(codeToExtract)
+function s:extractReturnVariables(codeToExtract, position)
     if s:language.codeHasReturn(a:codeToExtract)
         return []
     endif
 
-    let l:methodCodeAfter = s:collectMethodCodeAfterCurrentLine()
+    let l:methodCodeAfter = s:collectMethodCodeAfterPosition(a:position)
 
     return s:extractMutatedVariablesUsedAfter(a:codeToExtract, l:methodCodeAfter)
 endfunction
 
-function! s:extractMutatedVariablesUsedAfter(code, codeAfter)
+function s:extractMutatedVariablesUsedAfter(code, codeAfter)
     let l:variables = []
 
 
@@ -98,8 +145,9 @@ function! s:extractMutatedVariablesUsedAfter(code, codeAfter)
     return l:variables
 endfunction
 
-function! s:insertMethodCall(codeToExtract, definition)
+function s:insertMethodCall(codeToExtract, definition, position)
     let l:backupPosition = getcurpos()
+    call setpos('.', a:position)
 
     let l:statement = s:makeMethodCallStatement(a:codeToExtract, a:definition)
 
@@ -108,7 +156,7 @@ function! s:insertMethodCall(codeToExtract, definition)
     call setpos('.', l:backupPosition)
 endfunction
 
-function! s:makeMethodCallStatement(codeToExtract, definition)
+function s:makeMethodCallStatement(codeToExtract, definition)
     let l:indent = s:getBaseIndentOfText(a:codeToExtract)
 
     let l:statement = s:language.makeMethodCallStatement(a:codeToExtract, a:definition)
@@ -116,8 +164,9 @@ function! s:makeMethodCallStatement(codeToExtract, definition)
     return s:applyIndentOnText(l:indent, l:statement)
 endfunction
 
-function! s:addMethod(codeToExtract, definition)
+function s:addMethod(codeToExtract, definition, position)
     let l:backupPosition = getcurpos()
+    call setpos('.', a:position)
 
     let l:methodBody = s:prepareMethodBody(a:codeToExtract, a:definition)
 
@@ -128,11 +177,11 @@ function! s:addMethod(codeToExtract, definition)
     call setpos('.', l:backupPosition)
 endfunction
 
-function! s:prepareMethodBody(codeToExtract, definition)
+function s:prepareMethodBody(codeToExtract, definition)
     let l:returnVariables = a:definition.returnVariables
     let l:indent = s:getMethodBodyIndentation()
 
-    if s:isInlineCode(a:codeToExtract)
+    if a:definition.isInlineCall
         let l:methodBody = s:language.makeInlineCodeToMethodBody(a:codeToExtract)
 
         return s:applyIndentOnText(l:indent, l:methodBody)
@@ -178,30 +227,30 @@ function s:joinTwoCodeBlock(top, bottom)
     return a:top."\<Enter>\<Enter>".a:bottom
 endfunction
 
-function! s:isInlineCode(codeToExtract)
-    return !s:isTextEndsWithNewLine(a:codeToExtract)
+function s:isInlineCode()
+    return s:isInVisualMode()
 endfunction
 
-function! s:isTextEndsWithNewLine(text)
-    return "\<NL>" == a:text[-1:]
+function s:isInVisualMode()
+    return visualmode() == 'v'
 endfunction
 
-function! s:getBaseIndentOfText(text)
+function s:getBaseIndentOfText(text)
     return substitute(a:text, '\S.*', '', '')
 endfunction
 
-function! s:askForMethodVisibility(default)
+function s:askForMethodVisibility(default)
     return s:input.askQuestion('Visibility?', a:default)
 endfunction
 
-function! s:collectMethodCodeAfterCurrentLine()
-    let l:topLine = s:getCurrentLine()
+function s:collectMethodCodeAfterPosition(position)
+    let l:topLine = a:position[1]
     let l:bottomLine = s:getBottomLineOfCurrentMethod()
 
     return s:joinLinesBetween(l:topLine, l:bottomLine)
 endfunction
 
-function! s:getBottomLineOfCurrentMethod()
+function s:getBottomLineOfCurrentMethod()
     let l:backupPosition = getcurpos()
 
     call s:language.moveEndOfFunction()
@@ -212,15 +261,16 @@ function! s:getBottomLineOfCurrentMethod()
     return l:bottomLine
 endfunction
 
-function! s:collectMethodCodeBeforeCurrentLine()
-    let l:topLine = s:getTopLineOfCurrentMethod()
-    let l:bottomLine = s:getCurrentLine() - 1
+function s:collectMethodCodeBeforePosition(position)
+    let l:topLine = s:getTopLineOfMethodWithPosition(a:position)
+    let l:bottomLine = a:position[1] - 1
 
     return s:joinLinesBetween(l:topLine, l:bottomLine)
 endfunction
 
-function! s:getTopLineOfCurrentMethod()
+function s:getTopLineOfMethodWithPosition(position)
     let l:backupPosition = getcurpos()
+    call setpos('.', a:position)
 
     call s:language.moveToCurrentFunctionDefinition()
     let l:topLine = s:getCurrentLine()
@@ -230,7 +280,7 @@ function! s:getTopLineOfCurrentMethod()
     return l:topLine
 endfunction
 
-function! s:extractVariablesPresentInBothCode(first, second)
+function s:extractVariablesPresentInBothCode(first, second)
     let l:variables = []
 
     for l:variable in s:extractAllLocalVariables(a:first)
@@ -242,21 +292,21 @@ function! s:extractVariablesPresentInBothCode(first, second)
     return l:variables
 endfunction
 
-function! s:extractAllLocalVariables(haystack)
+function s:extractAllLocalVariables(haystack)
     return s:extractStringListThatMatchPatternWithCondition(
         \ a:haystack,
         \ s:language.getLocalVariablePattern()
     \ )
 endfunction
 
-function! s:extractMutatedLocalVariables(haystack)
+function s:extractMutatedLocalVariables(haystack)
     return s:extractStringListThatMatchPatternWithCondition(
         \ a:haystack,
         \ s:language.getMutatedLocalVariablePattern()
     \ )
 endfunction
 
-function! s:extractStringListThatMatchPatternWithCondition(haystack, conditionPattern)
+function s:extractStringListThatMatchPatternWithCondition(haystack, conditionPattern)
     let l:strings = []
     let l:atOccurence = 0
     let l:foundString = s:findTextMatchingPatternOnTextAtOccurence(a:conditionPattern, a:haystack, l:atOccurence)
@@ -281,11 +331,11 @@ function s:listAddOnce(list, value)
     endif
 endfunction
 
-function! s:joinLinesBetween(topLine, bottomLine)
+function s:joinLinesBetween(topLine, bottomLine)
     return join(getline(a:topLine, a:bottomLine))
 endfunction
 
-function! s:insertMethod(definition, body)
+function s:insertMethod(definition, body)
     let l:indent = s:getMethodIndentation()
 
     call s:writeLine('')
@@ -296,11 +346,11 @@ function! s:insertMethod(definition, body)
     call s:writeLine(l:indent.'}')
 endfunction
 
-function! s:getMethodIndentation()
+function s:getMethodIndentation()
     return s:getIndentForLevel(s:language.getMethodIndentationLevel())
 endfunction
 
-function! s:getMethodBodyIndentation()
+function s:getMethodBodyIndentation()
     return s:getIndentForLevel(s:language.getMethodIndentationLevel() + 1)
 endfunction
 
@@ -314,7 +364,7 @@ function s:getIndentForLevel(level)
     return repeat(l:baseIndent, a:level)
 endfunction
 
-function! s:detectIntentation()
+function s:detectIntentation()
     if &expandtab
         return repeat(' ', shiftwidth())
     else
@@ -322,25 +372,25 @@ function! s:detectIntentation()
     fi
 endfunction
 
-function! s:writeLine(text)
+function s:writeLine(text)
     call append(s:getCurrentLine(), a:text)
 
     call s:forwardOneLine()
 endfunction
 
-function! s:forwardOneLine()
+function s:forwardOneLine()
     call s:moveToLine(s:getCurrentLine() + 1)
 endfunction
 
-function! s:moveToLine(line)
+function s:moveToLine(line)
     call cursor(a:line, 0)
 endfunction
 
-function! s:getCurrentLine()
+function s:getCurrentLine()
     return line('.')
 endfunction
 
-function! s:writeText(text)
+function s:writeText(text)
     if 1 == &l:paste
         let l:backuppaste = 'paste'
     else
@@ -348,24 +398,24 @@ function! s:writeText(text)
     endif
     setlocal paste
 
-    exec 'normal! a' . a:text
+    exec 'normal! i' . a:text
 
     exec 'setlocal '.l:backuppaste
 endfunction
 
-function! s:echoWarning(message)
+function s:echoWarning(message)
     echohl WarningMsg
     echomsg a:message
     echohl NONE
 endfunction
 
-function! s:echoError(message)
+function s:echoError(message)
     echohl ErrorMsg
     echomsg a:message
     echohl NONE
 endfunction
 
-function! s:isInVisualBlockMode()
+function s:isInVisualBlockMode()
     return visualmode() == ''
 endfunction
 
