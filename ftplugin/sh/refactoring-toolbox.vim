@@ -9,7 +9,7 @@ function s:registerMappings()
         call s:addBufferVisualMapping(
             \ '<LocalLeader>em',
             \ '<Plug>refactoring_toolbox_sh_ExtractMethod',
-            \ 'refactoring_toolbox#extract_method#main#sh()'
+            \ 'refactoring_toolbox#extract_method#main#extractMethodForSh()'
         \ )
     endif
 endfunction

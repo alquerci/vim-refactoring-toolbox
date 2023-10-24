@@ -4,9 +4,10 @@ let s:NULL = 'NONE'
 let s:NO_MATCH = -1
 let s:EXPR_NOT_FOUND = -1
 
-function refactoring_toolbox#extract_method#execute(input, language)
+function refactoring_toolbox#extract_method#method_extractor#extractSelectedBlock(input, language, texteditor)
     let s:input = a:input
     let s:language = a:language
+    let s:texteditor = a:texteditor
 
     try
         call s:validateMode()
@@ -26,7 +27,7 @@ function refactoring_toolbox#extract_method#execute(input, language)
         let l:methodCallInsertPosition = s:determinePositionToInsertMethodCall()
         let l:codeToExtract = s:getSelectedText()
 
-        call s:deleteSelectedText()
+        call s:texteditor.deleteSelectedText()
 
         let l:methodDefinition.isStatic = s:language.positionIsInStaticMethod(l:methodCallInsertPosition)
         let l:methodDefinition.isInlineCall = s:isInlineCode()
@@ -48,7 +49,7 @@ function refactoring_toolbox#extract_method#execute(input, language)
 endfunction
 
 function s:validateMode()
-    if s:isInVisualBlockMode()
+    if s:texteditor.isInVisualBlockMode()
         throw 'unexpected_mode'
     endif
 endfunction
@@ -66,52 +67,16 @@ function s:getVisibility(default)
 endfunction
 
 function s:getSelectedText()
-    let l:startPosition = s:getStartPositionOfSelection()
-    let l:endPosition = s:getEndPositionOfSelection()
+    let l:startPosition = s:texteditor.getStartPositionOfSelection()
+    let l:endPosition = s:texteditor.getEndPositionOfSelection()
 
-    let l:selectionLines = s:copyLinesBetweenCursorPositions(l:startPosition, l:endPosition)
+    let l:selectionLines = s:texteditor.copyLinesBetweenCursorPositions(l:startPosition, l:endPosition)
 
     return join(l:selectionLines, "\n")
 endfunction
 
 function s:determinePositionToInsertMethodCall()
-    return s:getStartPositionOfSelection()
-endfunction
-
-function s:getStartPositionOfSelection()
-    normal! `<
-
-    return getcurpos()
-endfunction
-
-function s:getEndPositionOfSelection()
-    normal! `>
-
-    return getcurpos()
-endfunction
-
-function s:copyLinesBetweenCursorPositions(start, end)
-    let l:selectionLines = getline(a:start[1], a:end[1])
-
-    let l:startColumn = a:start[2]
-    let l:endColumn = a:end[2]
-
-    let l:totalLines = len(l:selectionLines)
-    let l:lastLineIndex = l:totalLines - 1
-    let l:lastLine = l:selectionLines[l:lastLineIndex]
-    let l:lastLineLength = len(l:lastLine)
-
-    let l:endColumnIndex = l:endColumn - l:lastLineLength - 1
-    let l:selectionLines[l:lastLineIndex] = l:lastLine[: l:endColumnIndex]
-
-    let l:startColumnIndex = l:startColumn - 1
-    let l:selectionLines[0] = l:selectionLines[0][l:startColumnIndex :]
-
-    return l:selectionLines
-endfunction
-
-function s:deleteSelectedText()
-    normal! gvs
+    return s:texteditor.getStartPositionOfSelection()
 endfunction
 
 function s:extractArguments(codeToExtract, position)
@@ -245,39 +210,20 @@ endfunction
 
 function s:collectMethodCodeAfterPosition(position)
     let l:topLine = a:position[1]
-    let l:bottomLine = s:getBottomLineOfCurrentMethod()
+    let l:bottomLine = s:language.getBottomLineOfMethodWithPosition(a:position)
 
     return s:joinLinesBetween(l:topLine, l:bottomLine)
 endfunction
 
-function s:getBottomLineOfCurrentMethod()
-    let l:backupPosition = getcurpos()
-
-    call s:language.moveEndOfFunction()
-    let l:bottomLine = s:getCurrentLine()
-
-    call setpos('.', l:backupPosition)
-
-    return l:bottomLine
+function s:joinLinesBetween(topLine, bottomLine)
+    return join(getline(a:topLine, a:bottomLine))
 endfunction
 
 function s:collectMethodCodeBeforePosition(position)
-    let l:topLine = s:getTopLineOfMethodWithPosition(a:position)
+    let l:topLine = s:language.getTopLineOfMethodWithPosition(a:position)
     let l:bottomLine = a:position[1] - 1
 
     return s:joinLinesBetween(l:topLine, l:bottomLine)
-endfunction
-
-function s:getTopLineOfMethodWithPosition(position)
-    let l:backupPosition = getcurpos()
-    call setpos('.', a:position)
-
-    call s:language.moveToCurrentFunctionDefinition()
-    let l:topLine = s:getCurrentLine()
-
-    call setpos('.', l:backupPosition)
-
-    return l:topLine
 endfunction
 
 function s:extractVariablesPresentInBothCode(first, second)
@@ -329,10 +275,6 @@ function s:listAddOnce(list, value)
     if s:EXPR_NOT_FOUND == index(a:list, a:value)
         call add(a:list, a:value)
     endif
-endfunction
-
-function s:joinLinesBetween(topLine, bottomLine)
-    return join(getline(a:topLine, a:bottomLine))
 endfunction
 
 function s:insertMethod(definition, body)
@@ -413,10 +355,6 @@ function s:echoError(message)
     echohl ErrorMsg
     echomsg a:message
     echohl NONE
-endfunction
-
-function s:isInVisualBlockMode()
-    return visualmode() == ''
 endfunction
 
 call refactoring_toolbox#adaptor#vim#end_script()

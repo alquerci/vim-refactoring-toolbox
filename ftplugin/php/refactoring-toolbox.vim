@@ -15,7 +15,7 @@ function s:registerMappings()
         call s:addBufferVisualMapping(
             \ '<LocalLeader>em',
             \ '<Plug>refactoring_toolbox_php_ExtractMethod',
-            \ 'refactoring_toolbox#extract_method#main#execute()'
+            \ 'refactoring_toolbox#extract_method#main#extractMethodForPhp()'
         \ )
 
         call s:addBufferNormalMapping(

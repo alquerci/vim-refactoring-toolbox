@@ -10,13 +10,13 @@ let s:regex_after_word_boudary = refactoring_toolbox#adaptor#regex#after_word_bo
 let s:regex_case_sensitive = refactoring_toolbox#adaptor#regex#case_sensitive
 let s:NO_MATCH = -1
 
-function refactoring_toolbox#adaptor#language#php#make()
-    return s:language
+function refactoring_toolbox#extract_method#adaptor#php_language#make()
+    return s:self
 endfunction
 
-let s:language = #{}
+let s:self = #{}
 
-function s:language.positionIsInStaticMethod(position)
+function s:self.positionIsInStaticMethod(position)
     let l:definitionLine = s:findDefinitionLineForFunctionWithPosition(a:position)
 
     return s:definitionAtLineIsStatic(l:definitionLine)
@@ -39,30 +39,53 @@ function s:definitionAtLineIsStatic(line)
     return match(l:content, s:regex_static_func) != s:NO_MATCH
 endfunction
 
-function! s:language.moveEndOfFunction()
-    call s:language.moveToCurrentFunctionDefinition()
+function s:self.getTopLineOfMethodWithPosition(position)
+    let l:backupPosition = getcurpos()
+    call setpos('.', a:position)
+
+    call s:moveToCurrentFunctionDefinition()
+    let l:topLine = s:getCurrentLine()
+
+    call setpos('.', l:backupPosition)
+
+    return l:topLine
+endfunction
+
+function s:self.getBottomLineOfMethodWithPosition(position)
+    let l:backupPosition = getcurpos()
+
+    call s:self.moveEndOfFunction()
+    let l:bottomLine = s:getCurrentLine()
+
+    call setpos('.', l:backupPosition)
+
+    return l:bottomLine
+endfunction
+
+function s:self.moveEndOfFunction()
+    call s:moveToCurrentFunctionDefinition()
 
     call s:moveToClosingBracket()
 endfunction
 
-function! s:moveToClosingBracket()
+function s:moveToClosingBracket()
     call search('{', 'W')
     call searchpair('{', '', '}', 'W')
 endfunction
 
-function s:language.moveToCurrentFunctionDefinition()
+function s:moveToCurrentFunctionDefinition()
     call search(s:regex_func_line, 'bW')
 endfunction
 
-function s:language.getLocalVariablePattern()
+function s:self.getLocalVariablePattern()
     return s:regex_local_var
 endfunction
 
-function s:language.getMutatedLocalVariablePattern()
+function s:self.getMutatedLocalVariablePattern()
     return s:regex_local_var_mutate
 endfunction
 
-function s:language.variableExistsOnCode(variable, code)
+function s:self.variableExistsOnCode(variable, code)
     let l:pattern = s:regex_case_sensitive.s:makeLocalVariableNamePatternForName(a:variable)
 
     return match(a:code, l:pattern) != s:NO_MATCH
@@ -76,7 +99,7 @@ function s:makeVariableNamePatternForName(name)
     return s:regex_before_word_boudary.a:name.s:regex_after_word_boudary
 endfunction
 
-function s:language.codeHasReturn(code)
+function s:self.codeHasReturn(code)
     let l:returnKeywordPattern = '^\_s*return\_s'
     let l:lines = split(a:code, "\n")
 
@@ -102,23 +125,23 @@ function s:prepareMethodCallContext(definition)
     return '$this->'
 endfunction
 
-function! s:language.makeMethodCallStatement(codeToExtract, definition)
+function! s:self.makeMethodCallStatement(codeToExtract, definition)
     let l:methodCall = s:makeMethodCall(a:definition)
 
-    if s:language.codeHasReturn(a:codeToExtract)
-        return s:language.makeReturnCode(l:methodCall)
+    if s:self.codeHasReturn(a:codeToExtract)
+        return s:self.makeReturnCode(l:methodCall)
     else
-        let l:assigment = s:language.makeAssigment(a:definition)
+        let l:assigment = s:self.makeAssigment(a:definition)
 
         return l:assigment.l:methodCall
     endif
 endfunction
 
-function s:language.makeReturnCode(code)
+function s:self.makeReturnCode(code)
     return 'return '.a:code
 endfunction
 
-function! s:language.makeAssigment(definition)
+function! s:self.makeAssigment(definition)
     let l:returnVariables = a:definition.returnVariables
 
     if len(l:returnVariables) == 0
@@ -132,11 +155,11 @@ function! s:language.makeAssigment(definition)
     endif
 endfunction
 
-function s:language.makeInlineCodeToMethodBody(code)
+function s:self.makeInlineCodeToMethodBody(code)
     return 'return '.a:code.';'
 endfunction
 
-function s:language.makeReturnStatement(definition)
+function s:self.makeReturnStatement(definition)
     let l:returnVariables = a:definition.returnVariables
 
     if len(l:returnVariables) == 1
@@ -148,18 +171,18 @@ function s:language.makeReturnStatement(definition)
     endif
 endfunction
 
-function s:language.getMethodIndentationLevel()
+function s:self.getMethodIndentationLevel()
     return 1
 endfunction
 
-function s:language.makeMethodFirstLine(definition)
+function s:self.makeMethodFirstLine(definition)
     let l:modifiers = s:prepareMethodModifiers(a:definition)
     let l:arguments = s:makeVariableList(a:definition.arguments)
 
     return l:modifiers.' function '.a:definition.name.'('.join(l:arguments, ', ').')'
 endfunction
 
-function s:language.prepareMethodBody(definition, codeToExtract)
+function s:self.prepareMethodBody(definition, codeToExtract)
     return a:codeToExtract
 endfunction
 
@@ -179,6 +202,10 @@ function s:prepareMethodModifiers(definition)
     endif
 
     return a:definition.visibility
+endfunction
+
+function s:getCurrentLine()
+    return line('.')
 endfunction
 
 call refactoring_toolbox#adaptor#vim#end_script()
