@@ -1,0 +1,34 @@
+Given php:
+  <?php
+
+  class AClassName
+  {
+      public function aPublicFunction()
+      {
+          $firstVariable = 'first variable value'; $firstVariable = 'new value '.$firstVariable;
+      }
+  }
+
+Do:
+  /firstVariable\<Enter>
+  /firstVariable\<Enter>
+  hvt;
+  ;em
+  eatFirstVariable\<Enter>
+  \<Enter>
+
+Expect:
+  <?php
+
+  class AClassName
+  {
+      public function aPublicFunction()
+      {
+          $firstVariable = 'first variable value'; $this->eatFirstVariable($firstVariable);
+      }
+
+      private function eatFirstVariable($firstVariable)
+      {
+          return $firstVariable = 'new value '.$firstVariable;
+      }
+  }

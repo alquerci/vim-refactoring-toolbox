@@ -4,10 +4,16 @@ let s:NULL = 'NONE'
 let s:NO_MATCH = -1
 let s:EXPR_NOT_FOUND = -1
 
-function refactoring_toolbox#extract_method#method_extractor#extractSelectedBlock(input, language, texteditor)
+function refactoring_toolbox#extract_method#method_extractor#extractSelectedBlock(
+    \ input,
+    \ language,
+    \ texteditor,
+    \ output
+\ )
     let s:input = a:input
     let s:language = a:language
     let s:texteditor = a:texteditor
+    let s:output = a:output
 
     try
         call s:validateMode()
@@ -38,11 +44,11 @@ function refactoring_toolbox#extract_method#method_extractor#extractSelectedBloc
         call s:insertMethodCall(l:codeToExtract, l:methodDefinition, l:methodCallInsertPosition)
         call s:addMethod(l:codeToExtract, l:methodDefinition, l:methodCallInsertPosition)
     catch /user_cancel/
-        call s:echoWarning('You cancelled extract method.')
+        call s:output.echoWarning('You cancelled extract method.')
 
         return
     catch /unexpected_mode/
-        call s:echoError('Extract method doesn''t works in Visual Block mode. Use Visual line or Visual mode.')
+        call s:output.echoError('Extract method doesn''t works in Visual Block mode. Use Visual line or Visual mode.')
 
         return
     endtry
@@ -70,7 +76,7 @@ function s:getSelectedText()
     let l:startPosition = s:texteditor.getStartPositionOfSelection()
     let l:endPosition = s:texteditor.getEndPositionOfSelection()
 
-    let l:selectionLines = s:texteditor.copyLinesBetweenCursorPositions(l:startPosition, l:endPosition)
+    let l:selectionLines = s:texteditor.getLinesBetweenCursorPositions(l:startPosition, l:endPosition)
 
     return join(l:selectionLines, "\n")
 endfunction
@@ -111,14 +117,14 @@ function s:extractMutatedVariablesUsedAfter(code, codeAfter)
 endfunction
 
 function s:insertMethodCall(codeToExtract, definition, position)
-    let l:backupPosition = getcurpos()
-    call setpos('.', a:position)
+    let l:backupPosition = s:texteditor.getCurrentPosition()
+    call s:texteditor.moveToPosition(a:position)
 
     let l:statement = s:makeMethodCallStatement(a:codeToExtract, a:definition)
 
-    call s:writeText(l:statement)
+    call s:texteditor.writeText(l:statement)
 
-    call setpos('.', l:backupPosition)
+    call s:texteditor.moveToPosition(l:backupPosition)
 endfunction
 
 function s:makeMethodCallStatement(codeToExtract, definition)
@@ -130,8 +136,9 @@ function s:makeMethodCallStatement(codeToExtract, definition)
 endfunction
 
 function s:addMethod(codeToExtract, definition, position)
-    let l:backupPosition = getcurpos()
-    call setpos('.', a:position)
+    let l:backupPosition = s:texteditor.getCurrentPosition()
+
+    call s:texteditor.moveToPosition(a:position)
 
     let l:methodBody = s:prepareMethodBody(a:codeToExtract, a:definition)
 
@@ -139,7 +146,7 @@ function s:addMethod(codeToExtract, definition, position)
 
     call s:insertMethod(a:definition, l:methodBody)
 
-    call setpos('.', l:backupPosition)
+    call s:texteditor.moveToPosition(l:backupPosition)
 endfunction
 
 function s:prepareMethodBody(codeToExtract, definition)
@@ -193,11 +200,7 @@ function s:joinTwoCodeBlock(top, bottom)
 endfunction
 
 function s:isInlineCode()
-    return s:isInVisualMode()
-endfunction
-
-function s:isInVisualMode()
-    return visualmode() == 'v'
+    return s:texteditor.isInVisualMode()
 endfunction
 
 function s:getBaseIndentOfText(text)
@@ -209,21 +212,15 @@ function s:askForMethodVisibility(default)
 endfunction
 
 function s:collectMethodCodeAfterPosition(position)
-    let l:topLine = a:position[1]
     let l:bottomLine = s:language.getBottomLineOfMethodWithPosition(a:position)
 
-    return s:joinLinesBetween(l:topLine, l:bottomLine)
-endfunction
-
-function s:joinLinesBetween(topLine, bottomLine)
-    return join(getline(a:topLine, a:bottomLine))
+    return join(s:texteditor.getLinesBetweenPositionAndLine(a:position, l:bottomLine))
 endfunction
 
 function s:collectMethodCodeBeforePosition(position)
     let l:topLine = s:language.getTopLineOfMethodWithPosition(a:position)
-    let l:bottomLine = a:position[1] - 1
 
-    return s:joinLinesBetween(l:topLine, l:bottomLine)
+    return join(s:texteditor.getLinesBetweenCursorPositions(l:topLine, a:position))
 endfunction
 
 function s:extractVariablesPresentInBothCode(first, second)
@@ -280,81 +277,20 @@ endfunction
 function s:insertMethod(definition, body)
     let l:indent = s:getMethodIndentation()
 
-    call s:writeLine('')
-    call s:writeLine(l:indent.s:language.makeMethodFirstLine(a:definition))
-    call s:writeLine(l:indent.'{')
-    call s:writeLine('')
-    call s:writeText(a:body)
-    call s:writeLine(l:indent.'}')
+    call s:texteditor.writeLine('')
+    call s:texteditor.writeLine(l:indent.s:language.makeMethodFirstLine(a:definition))
+    call s:texteditor.writeLine(l:indent.'{')
+    call s:texteditor.writeLine('')
+    call s:texteditor.writeText(a:body)
+    call s:texteditor.writeLine(l:indent.'}')
 endfunction
 
 function s:getMethodIndentation()
-    return s:getIndentForLevel(s:language.getMethodIndentationLevel())
+    return s:texteditor.getIndentForLevel(s:language.getMethodIndentationLevel())
 endfunction
 
 function s:getMethodBodyIndentation()
-    return s:getIndentForLevel(s:language.getMethodIndentationLevel() + 1)
-endfunction
-
-function s:getIndentForLevel(level)
-    if 0 == a:level
-        return ''
-    endif
-
-    let l:baseIndent = s:detectIntentation()
-
-    return repeat(l:baseIndent, a:level)
-endfunction
-
-function s:detectIntentation()
-    if &expandtab
-        return repeat(' ', shiftwidth())
-    else
-        return "\t"
-    fi
-endfunction
-
-function s:writeLine(text)
-    call append(s:getCurrentLine(), a:text)
-
-    call s:forwardOneLine()
-endfunction
-
-function s:forwardOneLine()
-    call s:moveToLine(s:getCurrentLine() + 1)
-endfunction
-
-function s:moveToLine(line)
-    call cursor(a:line, 0)
-endfunction
-
-function s:getCurrentLine()
-    return line('.')
-endfunction
-
-function s:writeText(text)
-    if 1 == &l:paste
-        let l:backuppaste = 'paste'
-    else
-        let l:backuppaste = 'nopaste'
-    endif
-    setlocal paste
-
-    exec 'normal! i' . a:text
-
-    exec 'setlocal '.l:backuppaste
-endfunction
-
-function s:echoWarning(message)
-    echohl WarningMsg
-    echomsg a:message
-    echohl NONE
-endfunction
-
-function s:echoError(message)
-    echohl ErrorMsg
-    echomsg a:message
-    echohl NONE
+    return s:texteditor.getIndentForLevel(s:language.getMethodIndentationLevel() + 1)
 endfunction
 
 call refactoring_toolbox#adaptor#vim#end_script()
