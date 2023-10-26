@@ -4,7 +4,9 @@ function refactoring_toolbox#extract_method#adaptor#vim_texteditor#make()
     return s:self
 endfunction
 
-let s:self = #{}
+let s:self = #{
+    \ positionHistory: [],
+\ }
 
 function s:self.deleteSelectedText()
     normal! gvs
@@ -19,11 +21,11 @@ function s:self.isInVisualMode()
 endfunction
 
 function s:self.getStartPositionOfSelection()
-    let l:backupPosition = s:self.getCurrentPosition()
+    let l:backupPosition = s:getCurrentPosition()
 
     normal! `<
 
-    let l:startPosition = s:self.getCurrentPosition()
+    let l:startPosition = s:getCurrentPosition()
 
     call s:self.moveToPosition(l:backupPosition)
 
@@ -31,11 +33,11 @@ function s:self.getStartPositionOfSelection()
 endfunction
 
 function s:self.getEndPositionOfSelection()
-    let l:backupPosition = s:self.getCurrentPosition()
+    let l:backupPosition = s:getCurrentPosition()
 
     normal! `>
 
-    let l:endPosition = s:self.getCurrentPosition()
+    let l:endPosition = s:getCurrentPosition()
 
     call s:self.moveToPosition(l:backupPosition)
 
@@ -92,11 +94,19 @@ function s:self.getLinesBetweenCursorPositions(start, end)
 endfunction
 
 function s:self.moveToPosition(position)
+    call add(s:self.positionHistory, s:getCurrentPosition())
+
     call setpos('.', a:position)
 endfunction
 
-function s:self.getCurrentPosition()
+function s:getCurrentPosition()
     return getcurpos()
+endfunction
+
+function s:self.backToPreviousPosition()
+    call setpos('.', s:self.positionHistory[-1])
+
+    let s:self.positionHistory = s:self.positionHistory[:-2]
 endfunction
 
 function s:self.getIndentForLevel(level)

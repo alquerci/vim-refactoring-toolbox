@@ -117,14 +117,13 @@ function s:extractMutatedVariablesUsedAfter(code, codeAfter)
 endfunction
 
 function s:insertMethodCall(codeToExtract, definition, position)
-    let l:backupPosition = s:texteditor.getCurrentPosition()
     call s:texteditor.moveToPosition(a:position)
 
     let l:statement = s:makeMethodCallStatement(a:codeToExtract, a:definition)
 
     call s:texteditor.writeText(l:statement)
 
-    call s:texteditor.moveToPosition(l:backupPosition)
+    call s:texteditor.backToPreviousPosition()
 endfunction
 
 function s:makeMethodCallStatement(codeToExtract, definition)
@@ -136,17 +135,14 @@ function s:makeMethodCallStatement(codeToExtract, definition)
 endfunction
 
 function s:addMethod(codeToExtract, definition, position)
-    let l:backupPosition = s:texteditor.getCurrentPosition()
-
     call s:texteditor.moveToPosition(a:position)
-
-    let l:methodBody = s:prepareMethodBody(a:codeToExtract, a:definition)
 
     call s:language.moveEndOfFunction()
 
+    let l:methodBody = s:prepareMethodBody(a:codeToExtract, a:definition)
     call s:insertMethod(a:definition, l:methodBody)
 
-    call s:texteditor.moveToPosition(l:backupPosition)
+    call s:texteditor.backToPreviousPosition()
 endfunction
 
 function s:prepareMethodBody(codeToExtract, definition)
