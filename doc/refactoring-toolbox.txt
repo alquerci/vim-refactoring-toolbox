@@ -31,6 +31,8 @@ Supported languages:
 - PHP
 - SH
   - Extract Method
+- JS
+  - Extract Method
 
 ===============================================================================
 CONFIGURATION                               *refactoring-toolbox-configuration*

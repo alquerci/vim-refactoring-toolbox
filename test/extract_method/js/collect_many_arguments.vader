@@ -1,0 +1,26 @@
+Given javascript:
+  const arrowFunction = () => {
+      const variable = 'value'
+      const anotherVariable = 'another value'
+
+      variable + anotherVariable
+  }
+
+Do:
+  /  variable\<Enter>
+  V
+  ;em
+  extractedMethod\<Enter>
+  \<Enter>
+
+Expect:
+  const arrowFunction = () => {
+      const variable = 'value'
+      const anotherVariable = 'another value'
+
+      extractedMethod(variable, anotherVariable)
+  }
+
+  const extractedMethod = (variable, anotherVariable) => {
+      variable + anotherVariable
+  }

@@ -16,11 +16,6 @@ function s:self.positionIsInStaticMethod(position)
     return v:false
 endfunction
 
-function! s:moveToClosingBracket()
-    call search('{', 'W')
-    call searchpair('{', '', '}', 'W')
-endfunction
-
 function s:self.getTopLineOfMethodWithPosition(position)
     let l:backupPosition = getcurpos()
     call setpos('.', a:position)
@@ -52,6 +47,11 @@ function s:self.moveEndOfFunction()
     call s:moveToCurrentFunctionDefinition()
 
     call s:moveToClosingBracket()
+endfunction
+
+function s:moveToClosingBracket()
+    call search('{', 'W')
+    call searchpair('{', '', '}', 'W')
 endfunction
 
 function s:self.getLocalVariablePattern()
@@ -98,7 +98,7 @@ function! s:self.makeMethodCallStatement(codeToExtract, definition)
     let l:methodCall = s:makeMethodCall(a:definition)
 
     if s:self.codeHasReturn(a:codeToExtract)
-        return s:self.makeReturnCode(l:methodCall)
+        return s:makeReturnCode(l:methodCall)
     else
         let l:assigment = s:makeAssigment(a:definition)
 
@@ -118,7 +118,7 @@ function! s:makeMethodCall(definition)
     return a:definition.name.l:arguments
 endfunction
 
-function s:self.makeReturnCode(code)
+function s:makeReturnCode(code)
     return 'return '.a:code
 endfunction
 
@@ -181,8 +181,17 @@ function s:self.getMethodIndentationLevel()
     return 0
 endfunction
 
-function s:self.makeMethodFirstLine(definition)
-    return a:definition.name.' ()'
+function s:self.makeMethodHeaderLines(definition)
+    return [
+        \ a:definition.name.' ()',
+        \ '{',
+    \ ]
+endfunction
+
+function s:self.makeMethodFooterLines(definition)
+    return [
+        \ '}',
+    \ ]
 endfunction
 
 function s:makeVariableList(names)

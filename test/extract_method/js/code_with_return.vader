@@ -1,0 +1,32 @@
+Given javascript:
+  const arrowFunction = () => {
+      const variable = 'value'
+
+      if (variable) {
+          return statement
+      }
+
+      return variable
+  }
+
+Do:
+  /statement\<Enter>
+  V
+  ;em
+  extractedMethod\<Enter>
+  \<Enter>
+
+Expect:
+  const arrowFunction = () => {
+      const variable = 'value'
+
+      if (variable) {
+          return extractedMethod()
+      }
+
+      return variable
+  }
+
+  const extractedMethod = () => {
+      return statement
+  }

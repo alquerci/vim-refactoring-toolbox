@@ -1,8 +1,8 @@
 call refactoring_toolbox#adaptor#vim#begin_script()
 
 let s:NULL = 'NONE'
-let s:NO_MATCH = -1
 let s:EXPR_NOT_FOUND = -1
+let s:NO_MATCH = -1
 
 function refactoring_toolbox#extract_method#method_extractor#extractSelectedBlock(
     \ input,
@@ -103,7 +103,6 @@ endfunction
 
 function s:extractMutatedVariablesUsedAfter(code, codeAfter)
     let l:variables = []
-
 
     let l:mutatedVariables = s:extractMutatedLocalVariables(a:code)
 
@@ -271,14 +270,18 @@ function s:listAddOnce(list, value)
 endfunction
 
 function s:insertMethod(definition, body)
+    call s:texteditor.writeLine('')
+
     let l:indent = s:getMethodIndentation()
 
-    call s:texteditor.writeLine('')
-    call s:texteditor.writeLine(l:indent.s:language.makeMethodFirstLine(a:definition))
-    call s:texteditor.writeLine(l:indent.'{')
+    let l:headerLines = s:language.makeMethodHeaderLines(a:definition)
+    call s:writeLinesWithIndent(l:headerLines, l:indent)
+
     call s:texteditor.writeLine('')
     call s:texteditor.writeText(a:body)
-    call s:texteditor.writeLine(l:indent.'}')
+
+    let l:footerLines = s:language.makeMethodFooterLines(a:definition)
+    call s:writeLinesWithIndent(l:footerLines, l:indent)
 endfunction
 
 function s:getMethodIndentation()
@@ -287,6 +290,16 @@ endfunction
 
 function s:getMethodBodyIndentation()
     return s:texteditor.getIndentForLevel(s:language.getMethodIndentationLevel() + 1)
+endfunction
+
+function s:writeLinesWithIndent(lines, indent)
+    for l:line in a:lines
+        if ('' != l:line)
+            let l:line = a:indent.l:line
+        endif
+
+        call s:texteditor.writeLine(l:line)
+    endfor
 endfunction
 
 call refactoring_toolbox#adaptor#vim#end_script()

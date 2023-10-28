@@ -1,0 +1,24 @@
+Given javascript:
+  const arrowFunction = () => {
+      const variable = 'value'
+
+      variable
+  }
+
+Do:
+  /  variable\<Enter>
+  V
+  ;em
+  extractedMethod\<Enter>
+  \<Enter>
+
+Expect:
+  const arrowFunction = () => {
+      const variable = 'value'
+
+      extractedMethod(variable)
+  }
+
+  const extractedMethod = (variable) => {
+      variable
+  }

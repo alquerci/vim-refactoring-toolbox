@@ -13,6 +13,8 @@ A set of mappings which help you to refactor code in consistent way across langu
 - PHP
 - SH
   - Extract Method
+- JS
+  - Extract Method
 
 
 ## Refactoring Techniques Highlights

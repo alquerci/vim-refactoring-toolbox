@@ -1,0 +1,22 @@
+Given javascript:
+
+  const functionName = () => {
+      statement
+  }
+
+Do:
+  /statement\<Enter>
+  V
+  ;em
+  extractedMethod\<Enter>
+  \<Enter>
+
+Expect:
+
+  const functionName = () => {
+      extractedMethod()
+  }
+
+  const extractedMethod = () => {
+      statement
+  }

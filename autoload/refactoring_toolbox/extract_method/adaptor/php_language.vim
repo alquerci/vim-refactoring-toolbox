@@ -129,7 +129,7 @@ function! s:self.makeMethodCallStatement(codeToExtract, definition)
     let l:methodCall = s:makeMethodCall(a:definition)
 
     if s:self.codeHasReturn(a:codeToExtract)
-        return s:self.makeReturnCode(l:methodCall)
+        return s:makeReturnCode(l:methodCall)
     else
         let l:assigment = s:self.makeAssigment(a:definition)
 
@@ -137,7 +137,7 @@ function! s:self.makeMethodCallStatement(codeToExtract, definition)
     endif
 endfunction
 
-function s:self.makeReturnCode(code)
+function s:makeReturnCode(code)
     return 'return '.a:code
 endfunction
 
@@ -175,11 +175,18 @@ function s:self.getMethodIndentationLevel()
     return 1
 endfunction
 
-function s:self.makeMethodFirstLine(definition)
+function s:self.makeMethodHeaderLines(definition)
     let l:modifiers = s:prepareMethodModifiers(a:definition)
     let l:arguments = s:makeVariableList(a:definition.arguments)
 
-    return l:modifiers.' function '.a:definition.name.'('.join(l:arguments, ', ').')'
+    return [
+        \ l:modifiers.' function '.a:definition.name.'('.join(l:arguments, ', ').')',
+        \ '{',
+    \ ]
+endfunction
+
+function s:self.makeMethodFooterLines(definition)
+    return ['}']
 endfunction
 
 function s:self.prepareMethodBody(definition, codeToExtract)
