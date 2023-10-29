@@ -15,6 +15,7 @@ A set of mappings which help you to refactor code in consistent way across langu
   - Extract Method
 - JS
   - Extract Method
+  - Extract Variable
 
 
 ## Refactoring Techniques Highlights
