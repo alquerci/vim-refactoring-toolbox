@@ -41,8 +41,8 @@ function refactoring_toolbox#extract_method#method_extractor#extractSelectedBloc
         let l:methodDefinition.arguments = s:extractArguments(l:codeToExtract, l:methodCallInsertPosition)
         let l:methodDefinition.returnVariables = s:extractReturnVariables(l:codeToExtract, l:methodCallInsertPosition)
 
-        call s:insertMethodCall(l:codeToExtract, l:methodDefinition, l:methodCallInsertPosition)
-        call s:addMethod(l:codeToExtract, l:methodDefinition, l:methodCallInsertPosition)
+        call s:insertMethodCall(l:methodDefinition, l:codeToExtract, l:methodCallInsertPosition)
+        call s:addMethod(l:methodDefinition, l:codeToExtract, l:methodCallInsertPosition)
     catch /user_cancel/
         call s:output.echoWarning('You cancelled extract method.')
 
@@ -115,37 +115,36 @@ function s:extractMutatedVariablesUsedAfter(code, codeAfter)
     return l:variables
 endfunction
 
-function s:insertMethodCall(codeToExtract, definition, position)
+function s:insertMethodCall(definition, codeToExtract, position)
     call s:texteditor.moveToPosition(a:position)
 
-    let l:statement = s:makeMethodCallStatement(a:codeToExtract, a:definition)
+    let l:statement = s:makeMethodCallStatement(a:definition, a:codeToExtract)
 
     call s:texteditor.writeText(l:statement)
 
     call s:texteditor.backToPreviousPosition()
 endfunction
 
-function s:makeMethodCallStatement(codeToExtract, definition)
+function s:makeMethodCallStatement(definition, codeToExtract)
     let l:indent = s:getBaseIndentOfText(a:codeToExtract)
 
-    let l:statement = s:language.makeMethodCallStatement(a:codeToExtract, a:definition)
+    let l:statement = s:language.makeMethodCallStatement(a:definition, a:codeToExtract)
 
     return s:applyIndentOnText(l:indent, l:statement)
 endfunction
 
-function s:addMethod(codeToExtract, definition, position)
+function s:addMethod(definition, codeToExtract, position)
     call s:texteditor.moveToPosition(a:position)
 
     call s:language.moveEndOfFunction()
 
-    let l:methodBody = s:prepareMethodBody(a:codeToExtract, a:definition)
+    let l:methodBody = s:prepareMethodBody(a:definition, a:codeToExtract)
     call s:insertMethod(a:definition, l:methodBody)
 
     call s:texteditor.backToPreviousPosition()
 endfunction
 
-function s:prepareMethodBody(codeToExtract, definition)
-    let l:returnVariables = a:definition.returnVariables
+function s:prepareMethodBody(definition, codeToExtract)
     let l:indent = s:getMethodBodyIndentation()
 
     if a:definition.isInlineCall
@@ -154,18 +153,12 @@ function s:prepareMethodBody(codeToExtract, definition)
         return s:applyIndentOnText(l:indent, l:methodBody)
     else
         let l:methodBody = s:language.prepareMethodBody(a:definition, a:codeToExtract)
-        let l:returnStatement = s:prepareReturnStatement(a:definition)
+        let l:returnStatement = s:language.makeReturnStatement(a:definition)
 
         return s:joinTwoCodeBlock(
             \ s:applyIndentOnText(l:indent, l:methodBody),
             \ s:applyIndentOnText(l:indent, l:returnStatement)
         \ )
-    endif
-endfunction
-
-function s:prepareReturnStatement(definition)
-    if 0 < len(a:definition.returnVariables)
-        return s:language.makeReturnStatement(a:definition)
     endif
 endfunction
 

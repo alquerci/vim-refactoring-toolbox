@@ -11,6 +11,12 @@ function s:registerMappings()
             \ '<Plug>refactoring_toolbox_js_ExtractMethod',
             \ 'refactoring_toolbox#extract_method#main#extractMethodForJs()'
         \ )
+
+        call s:addBufferVisualMapping(
+            \ '<LOcalLeader>ev',
+            \ '<Plug>refactoring_toolbox_js_ExtractVariable',
+            \ 'refactoring_toolbox#extract_variable#main#extractVariableForJs()'
+        \ )
     endif
 endfunction
 

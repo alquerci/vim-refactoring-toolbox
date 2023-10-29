@@ -95,7 +95,7 @@ function s:self.codeHasReturn(code)
     return match(l:lines, l:returnKeywordPattern) != s:NO_MATCH
 endfunction
 
-function! s:self.makeMethodCallStatement(codeToExtract, definition)
+function s:self.makeMethodCallStatement(definition, codeToExtract)
     let l:methodCall = s:makeMethodCall(a:definition)
 
     if s:self.codeHasReturn(a:codeToExtract)
@@ -107,7 +107,7 @@ function! s:self.makeMethodCallStatement(codeToExtract, definition)
     endif
 endfunction
 
-function! s:makeMethodCall(definition)
+function s:makeMethodCall(definition)
     let l:arguments = s:makeVariableList(a:definition.arguments)
 
     if 0 < len(l:arguments)
@@ -123,7 +123,7 @@ function s:makeReturnCode(code)
     return 'return '.a:code
 endfunction
 
-function! s:makeAssigment(definition)
+function s:makeAssigment(definition)
     let l:returnVariables = a:definition.returnVariables
 
     if len(l:returnVariables) == 0
@@ -162,6 +162,10 @@ endfunction
 
 function s:self.makeReturnStatement(definition)
     let l:returnVariables = a:definition.returnVariables
+
+    if 0 == len(a:definition.returnVariables)
+        return ''
+    endif
 
     if len(l:returnVariables) == 1
         return a:definition.name.'__return=${'.l:returnVariables[0].'}'

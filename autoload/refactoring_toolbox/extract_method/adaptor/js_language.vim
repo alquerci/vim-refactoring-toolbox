@@ -67,19 +67,11 @@ function s:self.prepareMethodBody(definition, codeToExtract)
     return a:codeToExtract
 endfunction
 
-function s:self.makeReturnStatement(definition)
-    if 0 < len(a:definition.returnVariables)
-        return 'return '.s:makeReturnVariables(a:definition)
-    else
-        return ''
-    endif
-endfunction
-
 function s:self.getMethodIndentationLevel()
     return 0
 endfunction
 
-function s:self.makeMethodCallStatement(codeToExtract, definition)
+function s:self.makeMethodCallStatement(definition, codeToExtract)
     let l:assignment = s:makeAssignment(a:definition)
     let l:arguments = s:makeArguments(a:definition)
 
@@ -96,6 +88,14 @@ function s:self.makeMethodHeaderLines(definition)
     return [
         \ 'const '.a:definition.name.' = ('.l:arguments.') => {',
     \ ]
+endfunction
+
+function s:self.makeReturnStatement(definition)
+    if 0 < len(a:definition.returnVariables)
+        return 'return '.s:makeReturnVariables(a:definition)
+    else
+        return ''
+    endif
 endfunction
 
 function s:self.makeMethodFooterLines(definition)

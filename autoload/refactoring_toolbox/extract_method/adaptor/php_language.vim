@@ -106,7 +106,19 @@ function s:self.codeHasReturn(code)
     return match(l:lines, l:returnKeywordPattern) != s:NO_MATCH
 endfunction
 
-function! s:makeMethodCall(definition)
+function s:self.makeMethodCallStatement(definition, codeToExtract)
+    let l:methodCall = s:makeMethodCall(a:definition)
+
+    if s:self.codeHasReturn(a:codeToExtract)
+        return s:makeReturnCode(l:methodCall)
+    else
+        let l:assigment = s:makeAssigment(a:definition)
+
+        return l:assigment.l:methodCall
+    endif
+endfunction
+
+function s:makeMethodCall(definition)
     let l:context = s:prepareMethodCallContext(a:definition)
 
     let l:arguments = s:makeVariableList(a:definition.arguments)
@@ -125,54 +137,28 @@ function s:prepareMethodCallContext(definition)
     return '$this->'
 endfunction
 
-function! s:self.makeMethodCallStatement(codeToExtract, definition)
-    let l:methodCall = s:makeMethodCall(a:definition)
-
-    if s:self.codeHasReturn(a:codeToExtract)
-        return s:makeReturnCode(l:methodCall)
-    else
-        let l:assigment = s:self.makeAssigment(a:definition)
-
-        return l:assigment.l:methodCall
-    endif
-endfunction
-
 function s:makeReturnCode(code)
     return 'return '.a:code
 endfunction
 
-function! s:self.makeAssigment(definition)
-    let l:returnVariables = a:definition.returnVariables
+function s:makeAssigment(definition)
+    if 0 < len(a:definition.returnVariables)
+        let l:returnVariables = s:makeExpressionForAssigningVariables(a:definition.returnVariables)
 
-    if len(l:returnVariables) == 0
+        return l:returnVariables.' = '
+    else
         return ''
-    elseif len(l:returnVariables) == 1
-        return '$'.l:returnVariables[0].' = '
-    else
-        let l:returnVariables = s:makeVariableList(l:returnVariables)
-
-        return printf('list(%s)', join(l:returnVariables, ', ')).' = '
     endif
 endfunction
 
-function s:self.makeInlineCodeToMethodBody(code)
-    return 'return '.a:code.';'
-endfunction
+function s:makeExpressionForAssigningVariables(variableNames)
+    let l:variables = s:makeVariableList(a:variableNames)
 
-function s:self.makeReturnStatement(definition)
-    let l:returnVariables = a:definition.returnVariables
-
-    if len(l:returnVariables) == 1
-        return 'return $'.l:returnVariables[0].';'
+    if 1 == len(l:variables)
+        return join(l:variables, '')
     else
-        let l:returnVariables = s:makeVariableList(l:returnVariables)
-
-        return 'return array('.join(l:returnVariables, ', ').');'
+        return 'list('.join(l:variables, ', ').')'
     endif
-endfunction
-
-function s:self.getMethodIndentationLevel()
-    return 1
 endfunction
 
 function s:self.makeMethodHeaderLines(definition)
@@ -185,12 +171,48 @@ function s:self.makeMethodHeaderLines(definition)
     \ ]
 endfunction
 
-function s:self.makeMethodFooterLines(definition)
-    return ['}']
+function s:prepareMethodModifiers(definition)
+    if a:definition.isStatic
+        return a:definition.visibility.' static'
+    endif
+
+    return a:definition.visibility
 endfunction
 
 function s:self.prepareMethodBody(definition, codeToExtract)
     return a:codeToExtract
+endfunction
+
+function s:self.makeInlineCodeToMethodBody(code)
+    return 'return '.a:code.';'
+endfunction
+
+function s:self.makeReturnStatement(definition)
+    if 0 < len(a:definition.returnVariables)
+        let l:returnVariables = s:makeExpressionForReturningVariables(a:definition.returnVariables)
+
+        return 'return '.l:returnVariables.';'
+    else
+        return ''
+    endif
+endfunction
+
+function s:makeExpressionForReturningVariables(variableNames)
+    let l:variables = s:makeVariableList(a:variableNames)
+
+    if 1 == len(l:variables)
+        return join(l:variables, '')
+    else
+        return 'array('.join(l:variables, ', ').')'
+    endif
+endfunction
+
+function s:self.makeMethodFooterLines(definition)
+    return ['}']
+endfunction
+
+function s:self.getMethodIndentationLevel()
+    return 1
 endfunction
 
 function s:makeVariableList(names)
@@ -201,14 +223,6 @@ function s:makeVariableList(names)
     endfor
 
     return l:variables
-endfunction
-
-function s:prepareMethodModifiers(definition)
-    if a:definition.isStatic
-        return a:definition.visibility.' static'
-    endif
-
-    return a:definition.visibility
 endfunction
 
 call refactoring_toolbox#adaptor#vim#end_script()
