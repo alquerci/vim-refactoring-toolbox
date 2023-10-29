@@ -80,17 +80,21 @@ function s:makeNewBufferWithLastCopy()
 endfunction
 
 function AssertNormalMappingTo(expectedTarget)
-  AssertEqual 1, hasmapto(a:expectedTarget, 'n'), 'has normal mapping to "'.a:expectedTarget.'" on file type "'.&filetype.'".'
+    AssertEqual 1, hasmapto(a:expectedTarget, 'n'), 'has normal mapping to "'.a:expectedTarget.'" on file type "'.&filetype.'".'
 endfunction
 
 function AssertNotNormalMappingTo(expectedTarget)
-  AssertEqual 0, hasmapto(a:expectedTarget, 'n'), 'does not have normal mapping to "'.a:expectedTarget.'" on file type "'.&filetype.'".'
+    AssertEqual 0, hasmapto(a:expectedTarget, 'n'), 'does not have normal mapping to "'.a:expectedTarget.'" on file type "'.&filetype.'".'
 endfunction
 
 function AssertVisualMappingTo(expectedTarget)
-  AssertEqual 1, hasmapto(a:expectedTarget, 'v'), 'has visual mapping to "'.a:expectedTarget.'" on file type "'.&filetype.'".'
+    AssertEqual 1, hasmapto(a:expectedTarget, 'v'), 'has visual mapping to "'.a:expectedTarget.'" on file type "'.&filetype.'".'
 endfunction
 
 function AssertNotVisualMappingTo(expectedTarget)
-  AssertEqual 0, hasmapto(a:expectedTarget, 'v'), 'does not have visual mapping to "'.a:expectedTarget.'" on file type "'.&filetype.'".'
+    AssertEqual 0, hasmapto(a:expectedTarget, 'v'), 'does not have visual mapping to "'.a:expectedTarget.'" on file type "'.&filetype.'".'
+endfunction
+
+function AssertCursorOnLine(line)
+    AssertEqual getcurpos()[1], a:line, 'cursor is on line '.a:line.', but got '.getcurpos()[1]
 endfunction

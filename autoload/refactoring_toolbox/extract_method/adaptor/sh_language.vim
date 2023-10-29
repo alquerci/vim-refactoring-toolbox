@@ -6,7 +6,9 @@ let s:regex_before_word_boudary = refactoring_toolbox#adaptor#regex#before_word_
 let s:regex_after_word_boudary = refactoring_toolbox#adaptor#regex#after_word_boudary
 let s:NO_MATCH = -1
 
-function refactoring_toolbox#extract_method#adaptor#sh_language#make()
+function refactoring_toolbox#extract_method#adaptor#sh_language#make(position)
+    let s:position = a:position
+
     return s:self
 endfunction
 
@@ -17,13 +19,12 @@ function s:self.positionIsInStaticMethod(position)
 endfunction
 
 function s:self.getTopLineOfMethodWithPosition(position)
-    let l:backupPosition = getcurpos()
-    call setpos('.', a:position)
+    call s:position.moveToPosition(a:position)
 
     call s:moveToCurrentFunctionDefinition()
-    let l:topLine = s:getCurrentLine()
+    let l:topLine = s:position.getCurrentLine()
 
-    call setpos('.', l:backupPosition)
+    call s:position.backToPreviousPosition()
 
     return l:topLine
 endfunction
@@ -33,12 +34,12 @@ function s:moveToCurrentFunctionDefinition()
 endfunction
 
 function s:self.getBottomLineOfMethodWithPosition(position)
-    let l:backupPosition = getcurpos()
+    call s:position.moveToPosition(a:position)
 
     call s:self.moveEndOfFunction()
-    let l:bottomLine = s:getCurrentLine()
+    let l:bottomLine = s:position.getCurrentLine()
 
-    call setpos('.', l:backupPosition)
+    call s:position.backToPreviousPosition()
 
     return l:bottomLine
 endfunction
@@ -202,10 +203,6 @@ function s:makeVariableList(names)
     endfor
 
     return l:variables
-endfunction
-
-function s:getCurrentLine()
-    return line('.')
 endfunction
 
 call refactoring_toolbox#adaptor#vim#end_script()

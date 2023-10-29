@@ -7,7 +7,9 @@ let s:regex_func_line = '=>'
 let s:regex_var_name = '\w\+'
 let s:NO_MATCH = -1
 
-function refactoring_toolbox#extract_method#adaptor#js_language#make()
+function refactoring_toolbox#extract_method#adaptor#js_language#make(position)
+    let s:position = a:position
+
     return s:self
 endfunction
 
@@ -24,15 +26,15 @@ endfunction
 function s:self.getBottomLineOfMethodWithPosition(position)
     let l:topLine = s:self.getTopLineOfMethodWithPosition(a:position)
 
-    return s:getLineOfClosingBracketFromLine(l:topLine)
+    return s:getLineOfClosingBracketFromLine(l:topLine, a:position)
 endfunction
 
 function s:self.moveEndOfFunction()
-    let l:position = getcurpos()
+    let l:position = s:position.getCurrentPosition()
 
     let l:line = s:self.getBottomLineOfMethodWithPosition(l:position)
 
-    call s:moveToLineFromPosition(l:line, l:position)
+    call s:position.moveToLineAndColumnFromPosition(l:line, 0, l:position)
 endfunction
 
 function s:self.getLocalVariablePattern()
@@ -120,35 +122,24 @@ function s:makeReturnVariables(definition)
     return join(a:definition.returnVariables, '')
 endfunction
 
-function s:getLineOfClosingBracketFromLine(line)
-    let l:backupPosition = getcurpos()
-
-    call s:moveToLineFromPosition(a:line, l:backupPosition)
+function s:getLineOfClosingBracketFromLine(line, position)
+    call s:position.moveToLineAndColumnFromPosition(a:line, 0, a:position)
 
     call search('{', 'W')
 
     let l:line = searchpair('{', '', '}', 'Wn')
 
-    call setpos('.', l:backupPosition)
+    call s:position.backToPreviousPosition()
 
     return l:line
 endfunction
 
-function s:moveToLineFromPosition(line, position)
-    let l:position = a:position
-    let l:position[1] = a:line
-    let l:position[2] = 0
-
-    call setpos('.', l:position)
-endfunction
-
 function s:searchLineBackwardWithPatternFromPosition(pattern, position)
-    let l:backupPosition = getcurpos()
+    call s:position.moveToPosition(a:position)
 
-    call setpos('.', a:position)
     let l:line = search(a:pattern, 'Wnb')
 
-    call setpos('.', l:backupPosition)
+    call s:position.backToPreviousPosition()
 
     return l:line
 endfunction

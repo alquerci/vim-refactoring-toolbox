@@ -1,6 +1,5 @@
 Given javascript:
-
-  const functionName = () => {
+  const arrowFunction = () => {
       statement
   }
 
@@ -11,9 +10,11 @@ Do:
   extractedMethod\<Enter>
   \<Enter>
 
-Expect:
+Then:
+  call AssertCursorOnLine(2)
 
-  const functionName = () => {
+Expect:
+  const arrowFunction = () => {
       extractedMethod()
   }
 

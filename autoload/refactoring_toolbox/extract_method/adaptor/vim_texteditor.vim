@@ -1,12 +1,12 @@
 call refactoring_toolbox#adaptor#vim#begin_script()
 
-function refactoring_toolbox#extract_method#adaptor#vim_texteditor#make()
+function refactoring_toolbox#extract_method#adaptor#vim_texteditor#make(position)
+    let s:position = a:position
+
     return s:self
 endfunction
 
-let s:self = #{
-    \ positionHistory: [],
-\ }
+let s:self = #{}
 
 function s:self.deleteSelectedText()
     normal! gvs
@@ -21,31 +21,15 @@ function s:self.isInVisualMode()
 endfunction
 
 function s:self.getStartPositionOfSelection()
-    let l:backupPosition = s:getCurrentPosition()
-
-    normal! `<
-
-    let l:startPosition = s:getCurrentPosition()
-
-    call s:self.moveToPosition(l:backupPosition)
-
-    return l:startPosition
+    return s:position.getStartPositionOfSelection()
 endfunction
 
 function s:self.getEndPositionOfSelection()
-    let l:backupPosition = s:getCurrentPosition()
-
-    normal! `>
-
-    let l:endPosition = s:getCurrentPosition()
-
-    call s:self.moveToPosition(l:backupPosition)
-
-    return l:endPosition
+    return s:position.getEndPositionOfSelection()
 endfunction
 
 function s:self.getLinesBetweenLineAndPosition(line, position)
-    let l:start = s:makePositionbasedOnPositionWithLineAndColumn(
+    let l:start = s:position.makePositionBasedOnPositionWithLineAndColumn(
         \ a:position,
         \ a:line,
         \ 1,
@@ -55,7 +39,7 @@ function s:self.getLinesBetweenLineAndPosition(line, position)
 endfunction
 
 function s:self.getLinesBetweenPositionAndLine(position, line)
-    let l:end = s:makePositionbasedOnPositionWithLineAndColumn(
+    let l:end = s:position.makePositionBasedOnPositionWithLineAndColumn(
         \ a:position,
         \ a:line,
         \ len(getline(a:line)),
@@ -64,14 +48,6 @@ function s:self.getLinesBetweenPositionAndLine(position, line)
     return s:self.getLinesBetweenCursorPositions(a:position, l:end)
 endfunction
 
-function s:makePositionbasedOnPositionWithLineAndColumn(position, line, column)
-    let l:newPosition = a:position[:]
-
-    let l:newPosition[1] = a:line
-    let l:newPosition[2] = a:column
-
-    return l:newPosition
-endfunction
 
 function s:self.getLinesBetweenCursorPositions(start, end)
     let l:selectionLines = getline(a:start[1], a:end[1])
@@ -94,19 +70,11 @@ function s:self.getLinesBetweenCursorPositions(start, end)
 endfunction
 
 function s:self.moveToPosition(position)
-    call add(s:self.positionHistory, s:getCurrentPosition())
-
-    call setpos('.', a:position)
-endfunction
-
-function s:getCurrentPosition()
-    return getcurpos()
+    call s:position.moveToPosition(a:position)
 endfunction
 
 function s:self.backToPreviousPosition()
-    call setpos('.', s:self.positionHistory[-1])
-
-    let s:self.positionHistory = s:self.positionHistory[:-2]
+    call s:position.backToPreviousPosition()
 endfunction
 
 function s:self.getIndentForLevel(level)
@@ -128,21 +96,17 @@ function s:detectIntentation()
 endfunction
 
 function s:self.writeLine(text)
-    call append(s:getCurrentLine(), a:text)
+    call append(s:position.getCurrentLine(), a:text)
 
     call s:forwardOneLine()
 endfunction
 
 function s:forwardOneLine()
-    call s:moveToLine(s:getCurrentLine() + 1)
+    call s:moveToLine(s:position.getCurrentLine() + 1)
 endfunction
 
 function s:moveToLine(line)
     call cursor(a:line, 0)
-endfunction
-
-function s:getCurrentLine()
-    return line('.')
 endfunction
 
 function s:self.writeText(text)

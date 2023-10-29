@@ -1,0 +1,36 @@
+Given php:
+  <?php
+
+  class AClassName
+  {
+      public function aPublicFunction()
+      {
+          $someVariable;
+      }
+  }
+
+Do:
+  /someVariable\<Enter>
+  V
+  ;em
+  extractedMethod\<Enter>
+  \<Enter>
+
+Then:
+  call AssertCursorOnLine(7)
+
+Expect:
+  <?php
+
+  class AClassName
+  {
+      public function aPublicFunction()
+      {
+          $this->extractedMethod();
+      }
+
+      private function extractedMethod()
+      {
+          $someVariable;
+      }
+  }

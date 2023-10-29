@@ -1,0 +1,34 @@
+Given sh:
+  #! /bin/sh
+
+  main ()
+  {
+      echo 1
+  }
+
+  main
+
+Do:
+  /echo\<Enter>
+  V
+  ;em
+  methodName\<Enter>
+  \<Enter>
+
+Then:
+  call AssertCursorOnLine(5)
+
+Expect:
+  #! /bin/sh
+
+  main ()
+  {
+      methodName
+  }
+
+  methodName ()
+  {
+      echo 1
+  }
+
+  main
