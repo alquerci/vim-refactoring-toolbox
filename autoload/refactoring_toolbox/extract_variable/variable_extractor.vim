@@ -62,17 +62,21 @@ function s:writeText(text)
 endfunction
 
 function s:writeDefinition(name, value)
+    call s:backwardOneLine()
     call s:moveOnTopOfExpression()
 
-    call s:backwardOneLine()
-    call s:addAndMoveOnNewLine()
-
-    call s:backwardOneLine()
-    call s:addAndMoveOnNewLine()
+    call s:writeEmptyNewLine()
 
     let l:indent = s:getIndentOfNextNonBlankLine()
 
     call s:writeText(l:indent.s:language.makeAssignation(a:name, a:value))
+
+    call s:writeEmptyNewLine()
+endfunction
+
+function s:writeEmptyNewLine()
+    call append(line('.'), '')
+    call s:forwardOneLine()
 endfunction
 
 function s:backwardOneLine()
@@ -80,23 +84,20 @@ function s:backwardOneLine()
 endfunction
 
 function s:moveOnTopOfExpression()
-    while s:currentLineEndsWithCommaOrFunctionCall()
+    while s:currentLineEndsWithCommaOrFunctionCallOrBracket()
         call s:backwardOneLine()
     endwhile
 endfunction
 
-function s:currentLineEndsWithCommaOrFunctionCall()
+function s:currentLineEndsWithCommaOrFunctionCallOrBracket()
     return s:currentLineEndsWith(',')
         \ || s:currentLineEndsWith(')')
+        \ || s:currentLineEndsWith('[')
+        \ || s:currentLineEndsWith(']')
 endfunction
 
 function s:currentLineEndsWith(char)
     return a:char == trim(getline(line('.')))[-1:]
-endfunction
-
-function s:addAndMoveOnNewLine()
-    call append(line('.'), '')
-    call s:forwardOneLine()
 endfunction
 
 function s:forwardOneLine()

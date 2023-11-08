@@ -1,0 +1,29 @@
+Given php:
+  <?php
+
+  while (true) {
+      $anArray = [
+          [
+              'first_array_value',
+          ],
+      ];
+  }
+
+Do:
+  /first_array_value\<Enter>
+  hvf'
+  ;ev
+  extractedVariable\<Enter>
+
+Expect:
+  <?php
+
+  while (true) {
+      $extractedVariable = 'first_array_value';
+
+      $anArray = [
+          [
+              $extractedVariable,
+          ],
+      ];
+  }
