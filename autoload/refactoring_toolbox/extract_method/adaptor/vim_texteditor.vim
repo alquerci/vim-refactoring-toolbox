@@ -122,4 +122,24 @@ function s:self.writeText(text)
     exec 'setlocal '.l:backuppaste
 endfunction
 
+function s:self.getIndentationLevelOfLine(line)
+    let l:lineIndentation = s:getLineIndentation(a:line)
+
+    return s:determineIndentationLevelForIndentation(l:lineIndentation)
+endfunction
+
+function s:determineIndentationLevelForIndentation(indentation)
+    return float2nr(ceil(len(a:indentation) / len(s:detectIntentation())))
+endfunction
+
+function s:getLineIndentation(line)
+    let l:text = getline(a:line)
+
+    return s:getBaseIndentOfText(l:text)
+endfunction
+
+function s:getBaseIndentOfText(text)
+    return substitute(a:text, '\S.*', '', '')
+endfunction
+
 call refactoring_toolbox#adaptor#vim#end_script()

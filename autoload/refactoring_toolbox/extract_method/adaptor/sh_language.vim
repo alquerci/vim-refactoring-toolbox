@@ -182,10 +182,6 @@ function s:self.makeReturnStatement(definition)
     endif
 endfunction
 
-function s:self.getMethodIndentationLevel()
-    return 0
-endfunction
-
 function s:self.makeMethodHeaderLines(definition)
     return [
         \ a:definition.name.' ()',

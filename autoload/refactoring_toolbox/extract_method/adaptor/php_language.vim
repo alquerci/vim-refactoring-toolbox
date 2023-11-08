@@ -211,10 +211,6 @@ function s:self.makeMethodFooterLines(definition)
     return ['}']
 endfunction
 
-function s:self.getMethodIndentationLevel()
-    return 1
-endfunction
-
 function s:makeVariableList(names)
     let l:variables = []
 

@@ -24,7 +24,8 @@ function refactoring_toolbox#extract_method#method_extractor#extractSelectedBloc
             \ arguments: [],
             \ returnVariables: [],
             \ isStatic: s:NULL,
-            \ isInlineCall: s:NULL
+            \ isInlineCall: s:NULL,
+            \ indentationLevel: s:NULL,
         \ }
 
         let l:methodDefinition.name = s:askForMethodName()
@@ -37,6 +38,7 @@ function refactoring_toolbox#extract_method#method_extractor#extractSelectedBloc
 
         let l:methodDefinition.isStatic = s:language.positionIsInStaticMethod(l:methodCallInsertPosition)
         let l:methodDefinition.isInlineCall = s:isInlineCode()
+        let l:methodDefinition.indentationLevel = s:texteditor.getIndentationLevelOfLine(s:language.getTopLineOfMethodWithPosition(l:methodCallInsertPosition))
 
         let l:methodDefinition.arguments = s:extractArguments(l:codeToExtract, l:methodCallInsertPosition)
         let l:methodDefinition.returnVariables = s:extractReturnVariables(l:codeToExtract, l:methodCallInsertPosition)
@@ -145,7 +147,7 @@ function s:addMethod(definition, codeToExtract, position)
 endfunction
 
 function s:prepareMethodBody(definition, codeToExtract)
-    let l:indent = s:getMethodBodyIndentation()
+    let l:indent = s:getMethodBodyIndentation(a:definition)
 
     if a:definition.isInlineCall
         let l:methodBody = s:language.makeInlineCodeToMethodBody(a:codeToExtract)
@@ -265,7 +267,7 @@ endfunction
 function s:insertMethod(definition, body)
     call s:texteditor.writeLine('')
 
-    let l:indent = s:getMethodIndentation()
+    let l:indent = s:getMethodIndentation(a:definition)
 
     let l:headerLines = s:language.makeMethodHeaderLines(a:definition)
     call s:writeLinesWithIndent(l:headerLines, l:indent)
@@ -277,12 +279,12 @@ function s:insertMethod(definition, body)
     call s:writeLinesWithIndent(l:footerLines, l:indent)
 endfunction
 
-function s:getMethodIndentation()
-    return s:texteditor.getIndentForLevel(s:language.getMethodIndentationLevel())
+function s:getMethodIndentation(definition)
+    return s:texteditor.getIndentForLevel(a:definition.indentationLevel)
 endfunction
 
-function s:getMethodBodyIndentation()
-    return s:texteditor.getIndentForLevel(s:language.getMethodIndentationLevel() + 1)
+function s:getMethodBodyIndentation(definition)
+    return s:texteditor.getIndentForLevel(a:definition.indentationLevel + 1)
 endfunction
 
 function s:writeLinesWithIndent(lines, indent)

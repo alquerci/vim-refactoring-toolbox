@@ -1,0 +1,30 @@
+Given javascript:
+  export class SomeClass {
+      someMethod(argument) {
+          const someObject = {
+          }
+
+          statement
+      }
+  }
+
+Do:
+  /statement\<Enter>
+  V
+  ;em
+  extractedMethod\<Enter>
+  \<Enter>
+
+Expect:
+  export class SomeClass {
+      someMethod(argument) {
+          const someObject = {
+          }
+
+          this._extractedMethod()
+      }
+
+      _extractedMethod() {
+          statement
+      }
+  }
