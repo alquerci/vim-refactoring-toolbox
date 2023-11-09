@@ -33,6 +33,10 @@ Supported languages:
   - Extract Method
 - JS
   - Extract Method
+  - Extract Variable
+- TypeScript
+  - Extract Method
+  - Extract Variable
 
 ===============================================================================
 CONFIGURATION                               *refactoring-toolbox-configuration*

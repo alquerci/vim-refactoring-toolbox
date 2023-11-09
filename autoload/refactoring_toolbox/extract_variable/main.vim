@@ -9,8 +9,17 @@ function refactoring_toolbox#extract_variable#main#execute() range
     \ )
 endfunction
 
-function refactoring_toolbox#extract_variable#main#extractVariableForJs() range
+function refactoring_toolbox#extract_variable#main#extractVariableForJavaScript() range
     call refactoring_toolbox#usage#increment('JsExtractVariable')
+
+    call refactoring_toolbox#extract_variable#variable_extractor#execute(
+        \ refactoring_toolbox#adaptor#input#make(),
+        \ refactoring_toolbox#extract_variable#adaptor#js_language#make(),
+    \ )
+endfunction
+
+function refactoring_toolbox#extract_variable#main#extractVariableForTypeScript() range
+    call refactoring_toolbox#usage#increment('TsExtractVariable')
 
     call refactoring_toolbox#extract_variable#variable_extractor#execute(
         \ refactoring_toolbox#adaptor#input#make(),

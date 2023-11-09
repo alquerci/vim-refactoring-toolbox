@@ -1,0 +1,19 @@
+Given typescript:
+
+  if ('value' === variable) {
+      doSomething()
+  }
+
+Do:
+  /===\<Enter>
+  vi(
+  ;ev
+  condition\<Enter>
+
+Expect:
+
+  const condition = 'value' === variable
+
+  if (condition) {
+      doSomething()
+  }

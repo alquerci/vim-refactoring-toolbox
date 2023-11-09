@@ -25,7 +25,7 @@ function s:registerMappings()
         \ )
 
         call s:addBufferVisualMapping(
-            \ '<LOcalLeader>ev',
+            \ '<LocalLeader>ev',
             \ '<Plug>refactoring_toolbox_php_ExtractVariable',
             \ 'refactoring_toolbox#extract_variable#main#execute()'
         \ )

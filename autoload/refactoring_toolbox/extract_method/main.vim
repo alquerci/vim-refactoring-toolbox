@@ -30,12 +30,27 @@ function refactoring_toolbox#extract_method#main#extractMethodForSh() range
     \ )
 endfunction
 
-function refactoring_toolbox#extract_method#main#extractMethodForJs() range
+function refactoring_toolbox#extract_method#main#extractMethodForJavaScript() range
     call refactoring_toolbox#usage#increment('JsExtractMethod')
 
     call refactoring_toolbox#extract_method#method_extractor#extractSelectedBlock(
         \ refactoring_toolbox#adaptor#input#make(),
         \ refactoring_toolbox#extract_method#adaptor#js_language#make(
+            \ refactoring_toolbox#extract_method#adaptor#vim_position#make()
+        \ ),
+        \ refactoring_toolbox#extract_method#adaptor#vim_texteditor#make(
+            \ refactoring_toolbox#extract_method#adaptor#vim_position#make()
+        \ ),
+        \ refactoring_toolbox#extract_method#adaptor#output#make()
+    \ )
+endfunction
+
+function refactoring_toolbox#extract_method#main#extractMethodForTypeScript() range
+    call refactoring_toolbox#usage#increment('TsExtractMethod')
+
+    call refactoring_toolbox#extract_method#method_extractor#extractSelectedBlock(
+        \ refactoring_toolbox#adaptor#input#make(),
+        \ refactoring_toolbox#extract_method#adaptor#ts_language#make(
             \ refactoring_toolbox#extract_method#adaptor#vim_position#make()
         \ ),
         \ refactoring_toolbox#extract_method#adaptor#vim_texteditor#make(

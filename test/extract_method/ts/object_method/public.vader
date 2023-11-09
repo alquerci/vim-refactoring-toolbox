@@ -1,0 +1,30 @@
+Given typescript:
+  export class SomeClass {
+      someMethod(argument) {
+          const someObject = {
+          }
+
+          statement
+      }
+  }
+
+Do:
+  /statement\<Enter>
+  V
+  ;em
+  extractedMethod\<Enter>
+  public\<Enter>
+
+Expect:
+  export class SomeClass {
+      someMethod(argument) {
+          const someObject = {
+          }
+
+          this.extractedMethod()
+      }
+
+      public extractedMethod() {
+          statement
+      }
+  }

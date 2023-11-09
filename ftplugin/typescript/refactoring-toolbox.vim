@@ -8,20 +8,20 @@ function s:registerMappings()
     if s:mappingIsEnabled()
         call s:addBufferVisualMapping(
             \ '<LocalLeader>em',
-            \ '<Plug>refactoring_toolbox_javascript_ExtractMethod',
-            \ 'refactoring_toolbox#extract_method#main#extractMethodForJavaScript()'
+            \ '<Plug>refactoring_toolbox_typescript_ExtractMethod',
+            \ 'refactoring_toolbox#extract_method#main#extractMethodForTypeScript()'
         \ )
 
         call s:addBufferVisualMapping(
             \ '<LocalLeader>ev',
-            \ '<Plug>refactoring_toolbox_javascript_ExtractVariable',
-            \ 'refactoring_toolbox#extract_variable#main#extractVariableForJavaScript()'
+            \ '<Plug>refactoring_toolbox_typescript_ExtractVariable',
+            \ 'refactoring_toolbox#extract_variable#main#extractVariableForTypeScript()'
         \ )
     endif
 endfunction
 
 function s:mappingIsEnabled()
-    return !exists('no_plugin_maps') && !exists('no_javascript_maps')
+    return !exists('no_plugin_maps') && !exists('no_typescript_maps')
 endfunction
 
 function s:addBufferNormalMapping(keys, name, executeFunction)
