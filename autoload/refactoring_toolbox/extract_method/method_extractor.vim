@@ -241,7 +241,7 @@ endfunction
 
 function s:extractStringListThatMatchPatternWithCondition(haystack, conditionPattern)
     let l:strings = []
-    let l:atOccurence = 0
+    let l:atOccurence = 1
     let l:foundString = s:findTextMatchingPatternOnTextAtOccurence(a:conditionPattern, a:haystack, l:atOccurence)
 
     while '' != l:foundString

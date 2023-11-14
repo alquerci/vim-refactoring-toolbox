@@ -3,8 +3,8 @@ Given php:
 
 Do:
   ;rd
-  test/fixtures/projectroot/OldDir\<Enter>
-  test/fixtures/projectroot/NewDir\<Enter>
+  tests/fixtures/projectroot/OldDir\<Enter>
+  tests/fixtures/projectroot/NewDir\<Enter>
 
 Then:
   AssertEqual 1, refactoring_toolbox#adaptor#phpactor#make().getTotalCalls()

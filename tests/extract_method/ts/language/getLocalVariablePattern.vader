@@ -1,0 +1,98 @@
+Before:
+    let language = refactoring_toolbox#extract_method#adaptor#ts_language#make(#{})
+    let NOT_MATCH = -1
+    let var_pattern = language.getLocalVariablePattern()
+
+Execute (a match):
+    AssertEqual 0, match('a', var_pattern)
+
+Execute (b match):
+    AssertEqual 0, match('b', var_pattern)
+
+Execute (z match):
+    AssertEqual 0, match('z', var_pattern)
+
+Execute (A match):
+    AssertEqual 0, match('A', var_pattern)
+
+Execute (Z match):
+    AssertEqual 0, match('Z', var_pattern)
+
+Execute (_ match):
+    AssertEqual 0, match('_', var_pattern)
+
+Execute ($ match):
+    AssertEqual 0, match('$', var_pattern)
+
+Execute (aa match string aa):
+    AssertEqual 'aa', matchstr('aa', var_pattern)
+
+Execute (az match string az):
+    AssertEqual 'az', matchstr('az', var_pattern)
+
+Execute (AZ match string AZ):
+    AssertEqual 'AZ', matchstr('AZ', var_pattern)
+
+Execute (a_ match string a_):
+    AssertEqual 'a_', matchstr('a_', var_pattern)
+
+Execute (a$ match string a$):
+    AssertEqual 'a$', matchstr('a$', var_pattern)
+
+Execute (a0 match string a0):
+    AssertEqual 'a0', matchstr('a0', var_pattern)
+
+Execute (a9 match string a9):
+    AssertEqual 'a9', matchstr('a9', var_pattern)
+
+Execute (aaa match string aaa):
+    AssertEqual 'aaa', matchstr('aaa', var_pattern)
+
+Execute (<space>aaa match string aaa):
+    AssertEqual 'aaa', matchstr(' aaa', var_pattern)
+
+Execute ($name_withDigit123_andDollar match string $name_withDigit123_andDollar):
+    AssertEqual '$name_withDigit123_andDollar', matchstr('$name_withDigit123_andDollar', var_pattern)
+
+Execute (. not match):
+    AssertEqual NOT_MATCH, match('.', var_pattern)
+
+Execute (a. match):
+    AssertEqual 0, match('a.', var_pattern)
+
+Execute (this. not match):
+    AssertEqual NOT_MATCH, match('this.', var_pattern)
+
+Execute (this.property not match):
+    AssertEqual NOT_MATCH, match('this.property', var_pattern)
+
+Execute (.a not match):
+    AssertEqual NOT_MATCH, match('.a', var_pattern)
+
+Execute (.<space>a not match):
+    AssertEqual NOT_MATCH, match('. a', var_pattern)
+
+Execute (.<space>a not match):
+    AssertEqual NOT_MATCH, match('.  a', var_pattern)
+
+Execute (.<tab>a not match):
+    AssertEqual NOT_MATCH, match(".\ta", var_pattern)
+
+Execute (.<newline>a not match):
+    AssertEqual NOT_MATCH, match(".\na", var_pattern)
+
+Execute (match string with 0 occurrence):
+    AssertEqual 'aaa', matchstr('aaa bbb ccc', var_pattern, 0, 1)
+
+Execute (match string with 1 occurrence):
+    AssertEqual 'bbb', matchstr('aaa bbb ccc', var_pattern, 0, 2)
+
+Execute (match string with 2 occurrence):
+    AssertEqual 'ccc', matchstr('aaa bbb ccc', var_pattern, 0, 3)
+
+Execute (exemple with simple code):
+    let code = 'this.method(argument, objectArgument.property); action()'
+
+    AssertEqual 'argument', matchstr(code, var_pattern, 0, 1)
+    AssertEqual 'objectArgument', matchstr(code, var_pattern, 0, 2)
+    AssertEqual 'action', matchstr(code, var_pattern, 0, 3)

@@ -1,0 +1,46 @@
+Before:
+    let language = refactoring_toolbox#extract_method#adaptor#ts_language#make(#{})
+    let NOT_MATCH = ''
+    let var_pattern = language.getMutatedLocalVariablePattern()
+
+Execute (a= not match):
+    AssertEqual NOT_MATCH, matchstr('a=', var_pattern)
+
+Execute (a=<space> match):
+    AssertEqual 'a', matchstr('a= ', var_pattern)
+
+Execute (a=<tab> match):
+    AssertEqual 'a', matchstr("a=\t", var_pattern)
+
+Execute (a=<newline> match):
+    AssertEqual 'a', matchstr("a=\n", var_pattern)
+
+Execute (a not match):
+    AssertEqual NOT_MATCH, matchstr('a', var_pattern)
+
+Execute (a<space>= match):
+    AssertEqual 'a', matchstr('a = ', var_pattern)
+
+Execute (a<tab>= match):
+    AssertEqual 'a', matchstr("a\t= ", var_pattern)
+
+Execute (a<newline>= match):
+    AssertEqual 'a', matchstr("a\n= ", var_pattern)
+
+Execute (addition assignment):
+    AssertEqual 'a', matchstr('a += 1', var_pattern)
+
+Execute (subtraction assignment):
+    AssertEqual 'a', matchstr('a -= 1', var_pattern)
+
+Execute (multiplication assignment):
+    AssertEqual 'a', matchstr('a *= 1', var_pattern)
+
+Execute (division assignment):
+    AssertEqual 'a', matchstr('a /= 1', var_pattern)
+
+Execute (reminder assignment):
+    AssertEqual 'a', matchstr('a %= 1', var_pattern)
+
+Execute (Exponentiation assignment):
+    AssertEqual 'a', matchstr('a **= 1', var_pattern)
