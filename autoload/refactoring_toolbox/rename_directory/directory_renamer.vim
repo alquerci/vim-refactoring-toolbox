@@ -1,10 +1,15 @@
+let s:texteditor = refactoring_toolbox#rename_directory#adaptors#texteditor#make()
+
 call refactoring_toolbox#adaptor#vim#begin_script()
 
-function! refactoring_toolbox#rename_directory#execute(input, phpactor)
+function refactoring_toolbox#rename_directory#directory_renamer#execute(
+    \ input,
+    \ phpactor,
+\ )
     let s:phpactor = a:phpactor
     let s:input = a:input
 
-    let l:oldDirectory = s:askQuestion("Old directory?")
+    let l:oldDirectory = s:askQuestion("Old directory?", s:texteditor.getCurrentDirectory())
     let l:newDirectory = s:askQuestion("New directory?", l:oldDirectory)
 
     let l:files = s:searchPhpFilesInDirectory(l:oldDirectory)
@@ -17,11 +22,15 @@ function! refactoring_toolbox#rename_directory#execute(input, phpactor)
     endfor
 endfunction
 
-function! s:searchPhpFilesInDirectory(directory)
+function refactoring_toolbox#rename_directory#directory_renamer#setTextEditor(texteditor)
+    let s:texteditor = a:texteditor
+endfunction
+
+function s:searchPhpFilesInDirectory(directory)
     return globpath(a:directory, "**/*.php", 1, 1)
 endfunction
 
-function! s:movePhpFile(oldPath, newPath)
+function s:movePhpFile(oldPath, newPath)
     call s:phpactor.rpc("move_class", {
         \ "source_path": a:oldPath,
         \ "dest_path": a:newPath,
@@ -29,7 +38,7 @@ function! s:movePhpFile(oldPath, newPath)
     \ })
 endfunction
 
-function! s:askQuestion(question, default = '')
+function s:askQuestion(question, default = '')
     return s:input.askQuestionWithProposedAnswerAndDirectoryCompletion(a:question, a:default)
 endfunction
 
