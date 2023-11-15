@@ -1,0 +1,8 @@
+Before:
+    let language = refactoring_toolbox#extract_method#adaptor#js_language#make(#{})
+
+Execute:
+    Assert language.variableExistsOnCode('variable', 'code(variable)')
+
+Execute (part of variable not match):
+    Assert ! language.variableExistsOnCode('var', 'code(variable)')

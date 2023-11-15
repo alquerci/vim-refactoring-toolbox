@@ -6,8 +6,8 @@ let s:regex_after_word_boudary = refactoring_toolbox#adaptor#regex#after_word_bo
 let s:regex_method_line = '\w([^)]*)\_s*{$'
 let s:regex_arrow_func_line = '=>'
 let s:regex_func_line = '\%('.s:regex_arrow_func_line.'\|'.s:regex_method_line.'\)'
-let s:regex_mutation_symbols = '='
-let s:regex_var_name = '\w\+'
+let s:regex_mutation_symbols = '\%(=\|+=\|-=\|\*=\|/=\|%=\|\*\*=\)'
+let s:regex_var_name = '\%(this\)\@!\&\%(\.[ \t\n]*\|[a-zA-Z_$]\)\@<!\([a-zA-Z_$][a-zA-Z0-9_$]*\)'
 let s:NO_MATCH = -1
 
 function refactoring_toolbox#extract_method#adaptor#js_language#make(position)
@@ -45,7 +45,7 @@ function s:self.getLocalVariablePattern()
 endfunction
 
 function s:self.getMutatedLocalVariablePattern()
-    return '\%('.s:regex_var_name.'\)\(\_s*'.s:regex_mutation_symbols.'\)\@='
+    return '\%('.s:regex_var_name.'\)\([ \t\n]*'.s:regex_mutation_symbols.'[ \t\n]\)\@='
 endfunction
 
 function s:self.variableExistsOnCode(variable, code)
