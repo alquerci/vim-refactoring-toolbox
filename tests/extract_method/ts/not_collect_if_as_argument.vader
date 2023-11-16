@@ -1,0 +1,32 @@
+Given typescript:
+  const arrowFunction = () => {
+      const variable = 'value'
+
+      if (true) {
+          if (false) {
+              variable
+          }
+      }
+  }
+
+Do:
+  /  variable\<Enter>
+  kV2j
+  ;em
+  extractedMethod\<Enter>
+  \<Enter>
+
+Expect:
+  const arrowFunction = () => {
+      const variable = 'value'
+
+      if (true) {
+          extractedMethod(variable)
+      }
+  }
+
+  const extractedMethod = (variable) => {
+      if (false) {
+          variable
+      }
+  }

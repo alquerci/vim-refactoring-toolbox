@@ -1,3 +1,5 @@
+let s:regex_keyword = refactoring_toolbox#adaptor#js_regex#reserved_variable
+
 call refactoring_toolbox#adaptor#vim#begin_script()
 
 let s:regex_before_word_boudary = refactoring_toolbox#adaptor#regex#before_word_boudary
@@ -7,7 +9,7 @@ let s:regex_method_line = '\w([^)]*)\_s*{$'
 let s:regex_arrow_func_line = '=>'
 let s:regex_func_line = '\%('.s:regex_arrow_func_line.'\|'.s:regex_method_line.'\)'
 let s:regex_mutation_symbols = '\%(=\|+=\|-=\|\*=\|/=\|%=\|\*\*=\)'
-let s:regex_var_name = '\%(this\)\@!\&\%(\.[ \t\n]*\|[a-zA-Z_$]\)\@<!\([a-zA-Z_$][a-zA-Z0-9_$]*\)'
+let s:regex_var_name = '\%('.s:regex_keyword.'\)\@!\&\%(\.[ \t\n]*\|[a-zA-Z_$]\)\@<!\([a-zA-Z_$][a-zA-Z0-9_$]*\)'
 let s:NO_MATCH = -1
 
 function refactoring_toolbox#extract_method#adaptor#js_language#make(position)
