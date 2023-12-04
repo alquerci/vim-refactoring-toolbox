@@ -43,8 +43,9 @@ function s:replaceInCurrentFunction(search, replace)
     let l:backupPosition = getcurpos()
 
     let [l:startLine, l:stopLine] = s:findCurrentFunctionLineRange()
+    let l:replace = escape(a:replace, '/')
 
-    exec l:startLine . ',' . l:stopLine . ':s/' . a:search . '/'. a:replace .'/ge'
+    exec l:startLine . ',' . l:stopLine . ':s/' . a:search . '/'. l:replace .'/ge'
 
     call setpos('.', l:backupPosition)
 endfunction

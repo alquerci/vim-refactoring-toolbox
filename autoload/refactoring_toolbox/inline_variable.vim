@@ -26,8 +26,9 @@ endfunction
 function! s:searchAndReplaceVariableWithValue(variable, value)
     let l:variablePattern = a:variable.s:regex_after_word_boudary
     let [l:line, l:col] = searchpos(l:variablePattern)
+    let l:value = escape(a:value, '/')
 
-    execute l:line.','.l:line.':s/'.l:variablePattern.'/'.a:value.'/'
+    execute l:line.','.l:line.':s/'.l:variablePattern.'/'.l:value.'/'
 endfunction
 
 function! s:removeCurrentLine()
