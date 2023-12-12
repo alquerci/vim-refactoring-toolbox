@@ -5,23 +5,34 @@ let s:regex_after_word_boundary = refactoring_toolbox#adaptor#regex#after_word_b
 let s:regex_case_sensitive = refactoring_toolbox#adaptor#regex#case_sensitive
 let s:SEARCH_NOT_FOUND = 0
 
-function! refactoring_toolbox#rename_variable#execute(input)
+function refactoring_toolbox#rename_variable#variable_renamer#execute(input, output)
     let s:input = a:input
+    let s:output = a:output
 
-    let l:oldName = s:readNameOnCurrentPosition()
-    let l:newName = s:askForNewName(l:oldName)
+    try
+        let l:oldName = s:readNameOnCurrentPosition()
+        let l:newName = s:askForNewName(l:oldName)
 
-    if s:canRenameVariableTo(l:newName)
-        call s:renameVariableName(l:oldName, l:newName)
-    endif
+        if s:canRenameVariableTo(l:newName)
+            call s:renameVariableName(l:oldName, l:newName)
+        endif
+    catch /user_cancel/
+        call s:output.echoWarning('You cancelled rename variable.')
+    endtry
 endfunction
 
-function! s:readNameOnCurrentPosition()
+function s:readNameOnCurrentPosition()
     return substitute(expand('<cword>'), '^\$*', '', '')
 endfunction
 
-function! s:askForNewName(oldName)
-    return s:input.askQuestionWithProposedAnswer('Rename '.a:oldName.' to:', a:oldName)
+function s:askForNewName(oldName)
+    let l:answer = s:input.askQuestionWithProposedAnswer('Rename '.a:oldName.' to:', a:oldName)
+
+    if '' == l:answer
+        throw 'user_cancel'
+    endif
+
+    return l:answer
 endfunction
 
 function s:canRenameVariableTo(newName)
@@ -32,7 +43,7 @@ function s:canRenameVariableTo(newName)
     return v:true
 endfunction
 
-function! s:shouldAskUserToValidateRename(newName)
+function s:shouldAskUserToValidateRename(newName)
     if s:autoValidateRenameIsEnabled()
         return v:false
     endif
@@ -44,23 +55,23 @@ function s:autoValidateRenameIsEnabled()
     return g:refactoring_toolbox_auto_validate_rename == 1
 endfunction
 
-function! s:newNameAlreadyExists(newName)
+function s:newNameAlreadyExists(newName)
     let l:variablePattern = s:makeVariablePattern(a:newName)
 
     return s:searchInCurrentFunction(l:variablePattern) != s:SEARCH_NOT_FOUND
 endfunction
 
-function! s:makeVariablePattern(variableName)
+function s:makeVariablePattern(variableName)
     return s:regex_case_sensitive.'$'.a:variableName.s:regex_after_word_boundary
 endfunction
 
-function! s:searchInCurrentFunction(pattern)
+function s:searchInCurrentFunction(pattern)
     let [l:startLine, l:stopLine] = s:findCurrentFunctionLineRange()
 
     return s:searchInRange(a:pattern, l:startLine, l:stopLine)
 endfunction
 
-function! s:findCurrentFunctionLineRange()
+function s:findCurrentFunctionLineRange()
     let l:backupPosition = getcurpos()
 
     call search(s:php_regex_func_line, 'beW')
@@ -75,7 +86,7 @@ function! s:findCurrentFunctionLineRange()
     return [l:startLine, l:stopLine]
 endfunction
 
-function! s:searchInRange(pattern, startLine, endLine)
+function s:searchInRange(pattern, startLine, endLine)
     return search('\%>'.a:startLine.'l\%<'.a:endLine.'l'.a:pattern, 'n')
 endfunction
 
@@ -85,13 +96,13 @@ function s:userConfirmRename(newName)
     return s:input.askConfirmation(l:question)
 endfunction
 
-function! s:renameVariableName(oldName, newName)
+function s:renameVariableName(oldName, newName)
     let l:variablePattern = s:makeVariablePattern(a:oldName)
 
     call s:replaceInCurrentFunction(l:variablePattern, '$'.a:newName)
 endfunction
 
-function! s:replaceInCurrentFunction(search, replace)
+function s:replaceInCurrentFunction(search, replace)
     let l:backupPosition = getcurpos()
 
     let [l:startLine, l:stopLine] = s:findCurrentFunctionLineRange()

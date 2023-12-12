@@ -1,0 +1,20 @@
+Given php:
+  <?php
+
+  function action()
+  {
+      $a;
+  }
+
+Do:
+  /a;\<Enter>
+  ;rv
+  \<BS>\<Enter>
+
+Expect:
+  <?php
+
+  function action()
+  {
+      $a;
+  }

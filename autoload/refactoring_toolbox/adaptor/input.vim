@@ -1,38 +1,38 @@
 call refactoring_toolbox#adaptor#vim#begin_script()
 
 function refactoring_toolbox#adaptor#input#make()
-    return s:input
+    return s:self
 endfunction
 
-let s:input = #{}
+let s:self = #{}
 
-function! s:input.askQuestion(question, default = '')
+function s:self.askQuestion(question, default = '')
     let l:prompt = s:makeQuestionPromptWithDefault(a:question, a:default)
 
     return s:askQuestionAndCollectAnswer(l:prompt, a:default)
 endfunction
 
-function s:input.askQuestionWithProposedAnswer(question, prefilledAnswer)
+function s:self.askQuestionWithProposedAnswer(question, prefilledAnswer)
     let l:prompt = s:makeQuestionPrompt(a:question)
 
     return input(l:prompt, a:prefilledAnswer)
 endfunction
 
-function s:input.askQuestionWithProposedAnswerAndDirectoryCompletion(question, prefilledAnswer)
+function s:self.askQuestionWithProposedAnswerAndDirectoryCompletion(question, prefilledAnswer)
     let l:prompt = s:makeQuestionPrompt(a:question)
 
     return input(l:prompt, a:prefilledAnswer, 'dir')
 endfunction
 
-function! s:makeQuestionPromptWithDefault(question, default)
+function s:makeQuestionPromptWithDefault(question, default)
     return s:makeQuestionPrompt(a:question.' ["'.a:default.'"]')
 endfunction
 
-function! s:makeQuestionPrompt(question)
+function s:makeQuestionPrompt(question)
     return a:question.' '
 endfunction
 
-function! s:askQuestionAndCollectAnswer(prompt, default)
+function s:askQuestionAndCollectAnswer(prompt, default)
     let l:cancelMarker = "//<Esc>"
     let l:defaultMarker = ''
 
@@ -45,7 +45,7 @@ function! s:askQuestionAndCollectAnswer(prompt, default)
     return l:defaultMarker == l:answer ? a:default : l:answer
 endfunction
 
-function s:input.askConfirmation(question)
+function s:self.askConfirmation(question)
     try
         return s:askUserConfirmation(a:question)
     catch /user_cancel/

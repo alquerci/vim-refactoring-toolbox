@@ -47,12 +47,8 @@ function refactoring_toolbox#extract_method#method_extractor#extractSelectedBloc
         call s:addMethod(l:methodDefinition, l:codeToExtract, l:methodCallInsertPosition)
     catch /user_cancel/
         call s:output.echoWarning('You cancelled extract method.')
-
-        return
     catch /unexpected_mode/
         call s:output.echoError('Extract method doesn''t works in Visual Block mode. Use Visual line or Visual mode.')
-
-        return
     endtry
 endfunction
 
