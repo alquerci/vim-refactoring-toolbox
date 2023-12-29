@@ -5,7 +5,7 @@ function refactoring_toolbox#rename_variable#main#execute()
 
     call refactoring_toolbox#rename_variable#variable_renamer#execute(
         \ refactoring_toolbox#adaptor#input#make(),
-        \ refactoring_toolbox#rename_variable#adaptor#output#make()
+        \ refactoring_toolbox#adaptor#output#make()
     \ )
 endfunction
 
@@ -14,7 +14,7 @@ function refactoring_toolbox#rename_variable#main#renameLocalVariable()
 
     call refactoring_toolbox#rename_variable#variable_renamer#execute(
         \ refactoring_toolbox#adaptor#input#make(),
-        \ refactoring_toolbox#rename_variable#adaptor#output#make()
+        \ refactoring_toolbox#adaptor#output#make()
     \ )
 endfunction
 

@@ -1,6 +1,6 @@
 call refactoring_toolbox#adaptor#vim#begin_script()
 
-function refactoring_toolbox#rename_variable#adaptor#output#make()
+function refactoring_toolbox#adaptor#output#make()
     return s:self
 endfunction
 

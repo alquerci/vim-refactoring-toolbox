@@ -1,0 +1,30 @@
+Given php:
+  <?php
+
+  class AClassName
+  {
+      private $aPropertyName;
+
+      public function aFunctionName()
+      {
+          $this->aPropertyName = 'property value';
+      }
+  }
+
+Do:
+  /aPropertyName;\<Enter>
+  ;rp
+  \<c-u>\<Enter>
+
+Expect:
+  <?php
+
+  class AClassName
+  {
+      private $aPropertyName;
+
+      public function aFunctionName()
+      {
+          $this->aPropertyName = 'property value';
+      }
+  }

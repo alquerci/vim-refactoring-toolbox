@@ -7,23 +7,34 @@ let s:regex_property_declaration_or_usage = refactoring_toolbox#adaptor#regex#me
 let s:regex_lookbehind_positive = refactoring_toolbox#adaptor#regex#lookbehind_positive
 let s:SEARCH_NOT_FOUND = 0
 
-function! refactoring_toolbox#rename_property#execute(input)
+function refactoring_toolbox#rename_property#property_renamer#execute(input, output)
     let s:input = a:input
+    let s:output = a:output
 
-    let l:oldName = s:readNameOnCurrentPosition()
-    let l:newName = s:askForNewName(l:oldName)
+    try
+        let l:oldName = s:readNameOnCurrentPosition()
+        let l:newName = s:askForNewName(l:oldName)
 
-    if s:canRenamePropertyTo(l:newName)
-        call s:replacePropertyName(l:oldName, l:newName)
-    endif
+        if s:canRenamePropertyTo(l:newName)
+            call s:replacePropertyName(l:oldName, l:newName)
+        endif
+    catch /user_cancel/
+        call s:output.echoWarning('You cancelled rename property.')
+    endtry
 endfunction
 
-function! s:readNameOnCurrentPosition()
+function s:readNameOnCurrentPosition()
     return substitute(expand('<cword>'), '^\$*', '', '')
 endfunction
 
-function! s:askForNewName(oldName)
-    return s:input.askQuestionWithProposedAnswer('Rename '.a:oldName.' to:', a:oldName)
+function s:askForNewName(oldName)
+    let l:answer = s:input.askQuestionWithProposedAnswer('Rename '.a:oldName.' to:', a:oldName)
+
+    if '' == l:answer
+        throw 'user_cancel'
+    endif
+
+    return l:answer
 endfunction
 
 function s:canRenamePropertyTo(newName)
@@ -38,11 +49,11 @@ function s:canRenamePropertyTo(newName)
     return v:true
 endfunction
 
-function! s:shouldAskUserToValidateRename()
+function s:shouldAskUserToValidateRename()
     return g:refactoring_toolbox_auto_validate_rename == 0
 endfunction
 
-function! s:askForConfirmationWhenNewNameAlreadyExists(newName)
+function s:askForConfirmationWhenNewNameAlreadyExists(newName)
     if s:newNameAlreadyExists(a:newName)
         if s:input.askConfirmation('Property named '.a:newName.' seems to already exist in the current class. Rename anyway ?')
             return
@@ -52,19 +63,19 @@ function! s:askForConfirmationWhenNewNameAlreadyExists(newName)
     endif
 endfunction
 
-function! s:newNameAlreadyExists(newName)
+function s:newNameAlreadyExists(newName)
     let l:propertyPattern = s:makePropertyPattern(a:newName)
 
     return s:searchInCurrentClass(l:propertyPattern) != s:SEARCH_NOT_FOUND
 endfunction
 
-function! s:searchInCurrentClass(pattern)
+function s:searchInCurrentClass(pattern)
     let [l:startLine, l:stopLine] = s:findCurrentClassLineRange()
 
     return s:searchInRange(a:pattern, l:startLine, l:stopLine)
 endfunction
 
-function! s:findCurrentClassLineRange()
+function s:findCurrentClassLineRange()
     let l:backupPosition = getcurpos()
 
     call search(s:php_regex_class_line, 'beW')
@@ -78,23 +89,23 @@ function! s:findCurrentClassLineRange()
     return [l:startLine, l:stopLine]
 endfunction
 
-function! s:searchInRange(pattern, startLine, endLine)
+function s:searchInRange(pattern, startLine, endLine)
     return search('\%>' . a:startLine . 'l\%<' . a:endLine . 'l' . a:pattern, 'n')
 endfunction
 
-function! s:replacePropertyName(oldName, newName)
+function s:replacePropertyName(oldName, newName)
     let l:propertyPattern = s:makePropertyPattern(a:oldName)
 
     call s:replaceInCurrentClass(l:propertyPattern, a:newName)
 endfunction
 
-function! s:makePropertyPattern(propertyName)
+function s:makePropertyPattern(propertyName)
     let l:is_prefixed_with_property_marker = s:regex_case_sensitive.s:regex_property_declaration_or_usage.s:regex_lookbehind_positive
 
     return l:is_prefixed_with_property_marker.a:propertyName.s:regex_after_word_boundary
 endfunction
 
-function! s:replaceInCurrentClass(search, replace)
+function s:replaceInCurrentClass(search, replace)
     let l:backupPosition = getcurpos()
 
     let [l:startLine, l:stopLine] = s:findCurrentClassLineRange()
