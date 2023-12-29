@@ -3,18 +3,18 @@ Given php:
 
   function action()
   {
-      $a;
+      $aVariable;
   }
 
 Do:
-  /a;\<Enter>
+  /aVariable;\<Enter>
   ;rv
-  \<BS>\<Enter>
+  \<c-u>\<Enter>
 
 Expect:
   <?php
 
   function action()
   {
-      $a;
+      $aVariable;
   }

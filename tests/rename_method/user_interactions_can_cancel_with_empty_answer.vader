@@ -1,0 +1,34 @@
+Given php:
+  <?php
+
+  class AClassName
+  {
+      private function usageFunctionName()
+      {
+          $this->functionToRename()
+      }
+
+      private function functionToRename()
+      {
+      }
+  }
+
+Do:
+  /functionToRename\<Enter>
+  ;rm
+  \<c-u>\<Enter>
+
+Expect:
+  <?php
+
+  class AClassName
+  {
+      private function usageFunctionName()
+      {
+          $this->functionToRename()
+      }
+
+      private function functionToRename()
+      {
+      }
+  }
