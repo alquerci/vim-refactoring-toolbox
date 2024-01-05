@@ -1,0 +1,50 @@
+Given php:
+  <?php
+
+  class AClassName
+  {
+      public function firstPublicFunction()
+      {
+          $firstVariable = '';
+      }
+
+      public function secondPublicFunction()
+      {
+          $firstVariable = 'first variable value';
+
+          return $firstVariable;
+      }
+  }
+
+Do:
+  /secondPublicFunction\<Enter>
+  /firstVariable\<Enter>
+  V
+  ;em
+  getElement\<Enter>
+  \<Enter>
+
+Expect:
+  <?php
+
+  class AClassName
+  {
+      public function firstPublicFunction()
+      {
+          $firstVariable = '';
+      }
+
+      public function secondPublicFunction()
+      {
+          $firstVariable = $this->getElement();
+
+          return $firstVariable;
+      }
+
+      private function getElement()
+      {
+          $firstVariable = 'first variable value';
+
+          return $firstVariable;
+      }
+  }

@@ -51,8 +51,18 @@ let s:identifiers_spectial_meaning = [
     \ 'set',
 \ ]
 
-let refactoring_toolbox#adaptor#js_regex#reserved_variable = '\<\%('
+let s:reserved_variable = '\<\%('
     \ .join(s:keyword_reserved, '\|').'\|'.join(s:identifiers_spectial_meaning, '\|')
     \ .'\)\>'
+
+let refactoring_toolbox#adaptor#js_regex#reserved_variable = s:reserved_variable
+
+let refactoring_toolbox#adaptor#js_regex#mutation_symbols = '\%(=\|+=\|-=\|\*=\|/=\|%=\|\*\*=\)'
+
+let refactoring_toolbox#adaptor#js_regex#var_name = '\%('.s:reserved_variable.'\)\@!\&\%(\.[ \t\n]*\|[a-zA-Z_$]\)\@<!\([a-zA-Z_$][a-zA-Z0-9_$]*\)'
+
+let s:regex_method_line = '\w([^)]*)\_s*{$'
+let s:regex_arrow_func_line = '=>'
+let refactoring_toolbox#adaptor#js_regex#func_line = '\%('.s:regex_arrow_func_line.'\|'.s:regex_method_line.'\)'
 
 call refactoring_toolbox#adaptor#vim#end_script()

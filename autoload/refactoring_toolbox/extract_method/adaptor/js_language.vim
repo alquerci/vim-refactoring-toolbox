@@ -1,19 +1,15 @@
 let s:regex_keyword = refactoring_toolbox#adaptor#js_regex#reserved_variable
+let s:regex_mutation_symbols = refactoring_toolbox#adaptor#js_regex#mutation_symbols
+let s:regex_var_name = refactoring_toolbox#adaptor#js_regex#var_name
+let s:regex_func_line = refactoring_toolbox#adaptor#js_regex#func_line
 
 call refactoring_toolbox#adaptor#vim#begin_script()
 
-let s:regex_before_word_boudary = refactoring_toolbox#adaptor#regex#before_word_boudary
-let s:regex_after_word_boudary = refactoring_toolbox#adaptor#regex#after_word_boudary
-
-let s:regex_method_line = '\w([^)]*)\_s*{$'
-let s:regex_arrow_func_line = '=>'
-let s:regex_func_line = '\%('.s:regex_arrow_func_line.'\|'.s:regex_method_line.'\)'
-let s:regex_mutation_symbols = '\%(=\|+=\|-=\|\*=\|/=\|%=\|\*\*=\)'
-let s:regex_var_name = '\%('.s:regex_keyword.'\)\@!\&\%(\.[ \t\n]*\|[a-zA-Z_$]\)\@<!\([a-zA-Z_$][a-zA-Z0-9_$]*\)'
 let s:NO_MATCH = -1
 
 function refactoring_toolbox#extract_method#adaptor#js_language#make(position)
     let s:position = a:position
+    let s:js_language_common = refactoring_toolbox#extract_method#adaptor#js_language_common#make(s:position)
 
     return s:self
 endfunction
@@ -24,22 +20,28 @@ function s:self.positionIsInStaticMethod(position)
     return v:false
 endfunction
 
+function s:self.getTopPositionOfMethodWithPosition(position)
+    return s:js_language_common.searchPositionBackwardWithPatternFromPosition(s:regex_func_line, a:position)
+endfunction
+
 function s:self.getTopLineOfMethodWithPosition(position)
-    return s:searchLineBackwardWithPatternFromPosition(s:regex_func_line, a:position)
+    let l:topPosition = s:self.getTopPositionOfMethodWithPosition(a:position)
+
+    return s:position.getLineOfPosition(l:topPosition)
 endfunction
 
 function s:self.getBottomLineOfMethodWithPosition(position)
-    let l:topLine = s:self.getTopLineOfMethodWithPosition(a:position)
+    let l:bottomPosition = s:js_language_common.getBottomPositionOfMethodWithPosition(s:self, a:position)
 
-    return s:getLineOfClosingBracketFromLine(l:topLine, a:position)
+    return s:position.getLineOfPosition(l:bottomPosition)
 endfunction
 
 function s:self.moveEndOfFunction()
     let l:position = s:position.getCurrentPosition()
 
-    let l:line = s:self.getBottomLineOfMethodWithPosition(l:position)
+    let l:bottomPosition = s:js_language_common.getBottomPositionOfMethodWithPosition(s:self, l:position)
 
-    call s:position.moveToLineAndColumnFromPosition(l:line, 0, l:position)
+    call s:position.moveToPosition(l:bottomPosition)
 endfunction
 
 function s:self.getLocalVariablePattern()
@@ -47,17 +49,13 @@ function s:self.getLocalVariablePattern()
 endfunction
 
 function s:self.getMutatedLocalVariablePattern()
-    return '\%('.s:regex_var_name.'\)\([ \t\n]*'.s:regex_mutation_symbols.'[ \t\n]\)\@='
+    return '\%('.s:regex_var_name.'\)\([ \n\t]*'.s:regex_mutation_symbols.'[ \t\n]\)\@='
 endfunction
 
 function s:self.variableExistsOnCode(variable, code)
-    let l:pattern = s:makePatternForVariableName(a:variable)
+    let l:pattern = s:js_language_common.makePatternForVariableName(a:variable)
 
     return match(a:code, l:pattern) != s:NO_MATCH
-endfunction
-
-function s:makePatternForVariableName(name)
-    return s:regex_before_word_boudary.a:name.s:regex_after_word_boudary
 endfunction
 
 function s:self.codeHasReturn(code)
@@ -162,28 +160,6 @@ function s:makeReturnVariables(definition)
     endif
 
     return join(a:definition.returnVariables, '')
-endfunction
-
-function s:getLineOfClosingBracketFromLine(line, position)
-    call s:position.moveToLineAndColumnFromPosition(a:line, 0, a:position)
-
-    call search('{', 'W')
-
-    let l:line = searchpair('{', '', '}', 'Wn')
-
-    call s:position.backToPreviousPosition()
-
-    return l:line
-endfunction
-
-function s:searchLineBackwardWithPatternFromPosition(pattern, position)
-    call s:position.moveToPosition(a:position)
-
-    let l:line = search(a:pattern, 'Wnb')
-
-    call s:position.backToPreviousPosition()
-
-    return l:line
 endfunction
 
 call refactoring_toolbox#adaptor#vim#end_script()

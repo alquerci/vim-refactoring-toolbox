@@ -1,5 +1,8 @@
 call refactoring_toolbox#adaptor#vim#begin_script()
 
+let s:posistion_index_line = 1
+let s:posistion_index_column = 2
+
 function refactoring_toolbox#extract_method#adaptor#vim_position#make()
     return s:self
 endfunction
@@ -17,10 +20,18 @@ endfunction
 function s:self.makePositionBasedOnPositionWithLineAndColumn(position, line, column)
     let l:newPosition = a:position[:]
 
-    let l:newPosition[1] = a:line
-    let l:newPosition[2] = a:column
+    let l:newPosition[s:posistion_index_line] = a:line
+    let l:newPosition[s:posistion_index_column] = a:column
 
     return l:newPosition
+endfunction
+
+function s:self.getLineOfPosition(position)
+    return a:position[s:posistion_index_line]
+endfunction
+
+function s:self.getColumnOfPosition(position)
+    return a:position[s:posistion_index_column]
 endfunction
 
 function s:self.getCurrentPosition()

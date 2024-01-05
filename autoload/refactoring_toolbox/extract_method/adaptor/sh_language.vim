@@ -19,14 +19,20 @@ function s:self.positionIsInStaticMethod(position)
 endfunction
 
 function s:self.getTopLineOfMethodWithPosition(position)
+    let l:topPosition = s:self.getTopPositionOfMethodWithPosition(a:position)
+
+    return s:position.getLineOfPosition(l:topPosition)
+endfunction
+
+function s:self.getTopPositionOfMethodWithPosition(position)
     call s:position.moveToPosition(a:position)
 
     call s:moveToCurrentFunctionDefinition()
-    let l:topLine = s:position.getCurrentLine()
+    let l:topPosition = s:position.getCurrentPosition()
 
     call s:position.backToPreviousPosition()
 
-    return l:topLine
+    return l:topPosition
 endfunction
 
 function s:moveToCurrentFunctionDefinition()

@@ -38,7 +38,7 @@ function refactoring_toolbox#extract_method#method_extractor#extractSelectedBloc
 
         let l:methodDefinition.isStatic = s:language.positionIsInStaticMethod(l:methodCallInsertPosition)
         let l:methodDefinition.isInlineCall = s:isInlineCode()
-        let l:methodDefinition.indentationLevel = s:texteditor.getIndentationLevelOfLine(s:language.getTopLineOfMethodWithPosition(l:methodCallInsertPosition))
+        let l:methodDefinition.indentationLevel = s:determineIndentationLevelOfMethodBodyPosition(l:methodCallInsertPosition)
 
         let l:methodDefinition.arguments = s:extractArguments(l:codeToExtract, l:methodCallInsertPosition)
         let l:methodDefinition.returnVariables = s:extractReturnVariables(l:codeToExtract, l:methodCallInsertPosition)
@@ -189,6 +189,12 @@ function s:isInlineCode()
     return s:texteditor.isInVisualMode()
 endfunction
 
+function s:determineIndentationLevelOfMethodBodyPosition(position)
+    let l:topLine = s:language.getTopLineOfMethodWithPosition(a:position)
+
+    return s:texteditor.getIndentationLevelOfLine(l:topLine)
+endfunction
+
 function s:getBaseIndentOfText(text)
     return substitute(a:text, '\S.*', '', '')
 endfunction
@@ -204,9 +210,9 @@ function s:collectMethodCodeAfterPosition(position)
 endfunction
 
 function s:collectMethodCodeBeforePosition(position)
-    let l:topLine = s:language.getTopLineOfMethodWithPosition(a:position)
+    let l:topPosition = s:language.getTopPositionOfMethodWithPosition(a:position)
 
-    return join(s:texteditor.getLinesBetweenCursorPositions(l:topLine, a:position))
+    return join(s:texteditor.getLinesBetweenCursorPositions(l:topPosition, a:position))
 endfunction
 
 function s:extractVariablesPresentInBothCode(first, second)
