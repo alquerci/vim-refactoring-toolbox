@@ -1,0 +1,22 @@
+Given php:
+  <?php
+
+  function action()
+  {
+      $aVariable = 'first line'
+          .'second line';
+      $aVariable;
+  }
+
+Do:
+  /aVariable\<Enter>
+  ;iv
+
+Expect:
+  <?php
+
+  function action()
+  {
+      'first line'
+          .'second line';
+  }
