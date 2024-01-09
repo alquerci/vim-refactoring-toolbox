@@ -1,0 +1,55 @@
+Given php:
+  <?php
+
+  class SomeClass
+  {
+      public function someMethod()
+      {
+          'some constant value';
+      }
+
+      public function anotherMethod()
+      {
+          'some constant value';
+      }
+  }
+
+  class AnotherClass
+  {
+      public function someMethod()
+      {
+          'some constant value';
+      }
+  }
+
+Do:
+  /some constant\<Enter>
+  hvt;
+  ;ec
+  NEW_CONSTANT_NAME\<Enter>
+
+Expect:
+  <?php
+
+  class SomeClass
+  {
+      const NEW_CONSTANT_NAME = 'some constant value';
+
+      public function someMethod()
+      {
+          self::NEW_CONSTANT_NAME;
+      }
+
+      public function anotherMethod()
+      {
+          self::NEW_CONSTANT_NAME;
+      }
+  }
+
+  class AnotherClass
+  {
+      public function someMethod()
+      {
+          'some constant value';
+      }
+  }

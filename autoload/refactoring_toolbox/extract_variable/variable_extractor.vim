@@ -4,7 +4,6 @@ function refactoring_toolbox#extract_variable#variable_extractor#execute(input, 
     let s:input = a:input
     let s:language = a:language
 
-    " input
     try
         if visualmode() != 'v'
             call s:echoError('Extract variable only works in Visual mode, not in Visual Line or Visual block')

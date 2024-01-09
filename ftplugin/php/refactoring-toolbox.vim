@@ -60,6 +60,12 @@ function s:registerMappings()
             \ 'refactoring_toolbox#rename_property#main#execute()'
         \ )
 
+        call s:addBufferVisualMapping(
+            \ '<LocalLeader>ec',
+            \ '<Plug>refactoring_toolbox_php_ExtractConstant',
+            \ 'refactoring_toolbox#extract_constant#main#extractConstantForPhp()'
+        \ )
+
         call s:addBufferNormalMapping(
             \ '<LocalLeader>rcv',
             \ '<Plug>refactoring_toolbox_php_RenameClassVariable',

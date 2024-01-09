@@ -1,0 +1,27 @@
+Given php:
+  <?php
+
+  class SomeClass
+  {
+      public function someMethod()
+      {
+          'some constant value';
+      }
+  }
+
+Do:
+  /some constant\<Enter>
+  V
+  ;ec
+  /some constant\<Enter>
+
+Expect:
+  <?php
+
+  class SomeClass
+  {
+      public function someMethod()
+      {
+          'some constant value';
+      }
+  }

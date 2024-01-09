@@ -21,7 +21,6 @@ endif
 " Refactoring mapping {{{
 if g:refactoring_toolbox_use_default_mapping == 1
     nnoremap <unique> <Leader>eu :call PhpExtractUse()<Enter>
-    vnoremap <unique> <Leader>ec :call PhpExtractConst()<Enter>
     nnoremap <unique> <Leader>np :call PhpCreateProperty()<Enter>
     nnoremap <unique> <Leader>du :call PhpDetectUnusedUseStatements()<Enter>
     vnoremap <unique> <Leader>== :call PhpAlignAssigns()<Enter>
@@ -81,6 +80,13 @@ function! PhpDocAll() " {{{
 endfunction
 " }}}
 
+function! s:PhpEchoError(message) " {{{
+    echohl ErrorMsg
+    echomsg a:message
+    echohl NONE
+endfunction
+" }}}
+
 function! PhpExtractUse() " {{{
     call s:incrementUsage('PhpExtractUse')
 
@@ -99,21 +105,6 @@ function! PhpExtractUse() " {{{
     else
         call s:PhpInsertUseStatement(l:fqcn)
     endif
-    normal! `r
-endfunction
-" }}}
-
-function! PhpExtractConst() " {{{
-    call s:incrementUsage('PhpExtractConst')
-
-    if visualmode() != 'v'
-        call s:PhpEchoError('Extract constant only works in Visual mode, not in Visual Line or Visual block')
-        return
-    endif
-    let l:name = toupper(inputdialog("Name of new const: "))
-    normal! mrgv"xy
-    call s:PhpReplaceInCurrentClass(@x, 'self::' . l:name)
-    call s:PhpInsertConst(l:name, @x)
     normal! `r
 endfunction
 " }}}
@@ -195,20 +186,6 @@ function! s:PhpDocument() " {{{
 endfunction
 " }}}
 
-function! s:PhpReplaceInCurrentClass(search, replace) " {{{
-    normal! mr
-
-    call search(s:php_regex_class_line, 'beW')
-    call search('{', 'W')
-    let l:startLine = line('.')
-    call searchpair('{', '', '}', 'W')
-    let l:stopLine = line('.')
-
-    exec l:startLine . ',' . l:stopLine . ':s/' . a:search . '/'. a:replace .'/ge'
-    normal! `r
-endfunction
-" }}}
-
 function! s:PhpInsertUseStatement(use) " {{{
     let l:use = 'use ' . substitute(a:use, '^\\', '', '') . ';'
     if search(s:php_regex_use_line, 'beW') > 0
@@ -222,20 +199,6 @@ function! s:PhpInsertUseStatement(use) " {{{
     else
         call append(1, l:use)
     endif
-endfunction
-" }}}
-
-function! s:PhpInsertConst(name, value) " {{{
-    if search(s:php_regex_const_line, 'beW') > 0
-        call append(line('.'), 'const ' . a:name . ' = ' . a:value . ';')
-    elseif search(s:php_regex_class_line, 'beW') > 0
-        call search('{', 'W')
-        call append(line('.'), 'const ' . a:name . ' = ' . a:value . ';')
-        call append(line('.')+1, '')
-    else
-        call append(line('.'), 'const ' . a:name . ' = ' . a:value . ';')
-    endif
-    normal! j=1=
 endfunction
 " }}}
 
@@ -296,12 +259,5 @@ endfunction
 
 function! s:PhpSearchInRange(pattern, flags, startLine, endLine) " {{{
     return search('\%>' . a:startLine . 'l\%<' . a:endLine . 'l' . a:pattern, a:flags)
-endfunction
-" }}}
-
-function! s:PhpEchoError(message) " {{{
-    echohl ErrorMsg
-    echomsg a:message
-    echohl NONE
 endfunction
 " }}}
