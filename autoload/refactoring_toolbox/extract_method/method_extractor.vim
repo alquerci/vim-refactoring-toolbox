@@ -3,6 +3,7 @@ call refactoring_toolbox#adaptor#vim#begin_script()
 let s:NULL = 'NONE'
 let s:EXPR_NOT_FOUND = -1
 let s:NO_MATCH = -1
+let s:EOL = "\n"
 
 function refactoring_toolbox#extract_method#method_extractor#extractSelectedBlock(
     \ input,
@@ -76,7 +77,7 @@ function s:getSelectedText()
 
     let l:selectionLines = s:texteditor.getLinesBetweenCursorPositions(l:startPosition, l:endPosition)
 
-    return join(l:selectionLines, "\n")
+    return join(l:selectionLines, s:EOL)
 endfunction
 
 function s:determinePositionToInsertMethodCall()
@@ -124,11 +125,15 @@ function s:insertMethodCall(definition, codeToExtract, position)
 endfunction
 
 function s:makeMethodCallStatement(definition, codeToExtract)
-    let l:indent = s:getBaseIndentOfText(a:codeToExtract)
+    let l:indent = s:getStartIndentOfText(a:codeToExtract)
 
     let l:statement = s:language.makeMethodCallStatement(a:definition, a:codeToExtract)
 
     return s:applyIndentOnText(l:indent, l:statement)
+endfunction
+
+function s:getStartIndentOfText(text)
+    return substitute(a:text, '\S.*', '', '')
 endfunction
 
 function s:addMethod(definition, codeToExtract, position)
@@ -148,7 +153,7 @@ function s:prepareMethodBody(definition, codeToExtract)
     if a:definition.isInlineCall
         let l:methodBody = s:language.makeInlineCodeToMethodBody(a:codeToExtract)
 
-        return s:applyIndentOnText(l:indent, l:methodBody)
+        return s:applyIndentOnTextForInlineCall(l:indent, l:methodBody)
     else
         let l:methodBody = s:language.prepareMethodBody(a:definition, a:codeToExtract)
         let l:returnStatement = s:language.makeReturnStatement(a:definition)
@@ -165,12 +170,66 @@ function s:applyIndentOnText(indent, text)
         return ''
     endif
 
-    let l:currentIndent = s:getBaseIndentOfText(a:text)
+    let l:lines = split(a:text, s:EOL)
 
-    let l:text = substitute(a:text, '^'.l:currentIndent, a:indent, 'g')
-    let l:text = substitute(l:text, '\n'.l:currentIndent, '\n'.a:indent, 'g')
+    let l:lines = s:applyIndentOnLines(a:indent, l:lines)
 
-    return substitute(l:text, '\n$', '', 'g')
+    return join(l:lines, s:EOL)
+endfunction
+
+function s:applyIndentOnLines(indent, lines)
+    let l:withIndentLines = []
+
+    let l:fromIndent = s:getMinimumIndentOfLines(a:lines)
+
+    for l:line in a:lines
+        let l:line = substitute(l:line, '^'.l:fromIndent, a:indent, '')
+
+        call add(l:withIndentLines, l:line)
+    endfor
+
+    return l:withIndentLines
+endfunction
+
+function s:getMinimumIndentOfLines(lines)
+    let l:minIndent = s:getStartIndentOfText(a:lines[0])
+
+    for l:line in a:lines
+        if '' == l:line
+            continue
+        endif
+
+        let l:lineIndent = s:getStartIndentOfText(l:line)
+
+        if len(l:minIndent) > len(l:lineIndent)
+            let l:minIndent = l:lineIndent
+        endif
+    endfor
+
+    return l:minIndent
+endfunction
+
+function s:applyIndentOnTextForInlineCall(indent, text)
+    if '' == a:text
+        return ''
+    endif
+
+    let l:lines = split(a:text, s:EOL)
+
+    let l:firstLine = a:indent.l:lines[0]
+    let l:nextLines = s:applyIndentOnTextExceptFirstLine(a:indent, l:lines)
+
+    let l:indentedLines = extend([l:firstLine], l:nextLines)
+
+    return join(l:indentedLines, s:EOL)
+endfunction
+
+function s:applyIndentOnTextExceptFirstLine(indent, lines)
+    if 1 < len(a:lines)
+        return s:applyIndentOnLines(a:indent, a:lines[1:])
+    else
+        return []
+    endif
 endfunction
 
 function s:joinTwoCodeBlock(top, bottom)
@@ -193,10 +252,6 @@ function s:determineIndentationLevelOfMethodBodyPosition(position)
     let l:topLine = s:language.getTopLineOfMethodWithPosition(a:position)
 
     return s:texteditor.getIndentationLevelOfLine(l:topLine)
-endfunction
-
-function s:getBaseIndentOfText(text)
-    return substitute(a:text, '\S.*', '', '')
 endfunction
 
 function s:askForMethodVisibility(default)

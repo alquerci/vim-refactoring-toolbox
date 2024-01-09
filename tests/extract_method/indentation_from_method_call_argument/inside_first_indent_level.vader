@@ -1,0 +1,37 @@
+Given php:
+  <?php
+
+  class AClass
+  {
+      public function someMethod()
+      {
+          $this->callMethod([
+              "statement to extract",
+          ]);
+      }
+  }
+
+Do:
+  /statement to extract\<Enter>
+  vi(
+  ;em
+  extractedMethod\<Enter>
+  \<Enter>
+
+Expect:
+  <?php
+
+  class AClass
+  {
+      public function someMethod()
+      {
+          $this->callMethod($this->extractedMethod());
+      }
+
+      private function extractedMethod()
+      {
+          return [
+              "statement to extract",
+          ];
+      }
+  }
