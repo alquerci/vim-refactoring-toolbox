@@ -43,17 +43,23 @@ function s:echoError(message) " {{{
 endfunction
 
 function s:replaceInCurrentClass(search, replace) " {{{
-    normal! mr
+    let [l:startLine, l:stopLine] = s:findCurrentClassLineRange()
+
+    call s:texteditor.replacePatternWithTextBetweenLines(a:search, a:replace, l:startLine, l:stopLine)
+endfunction
+
+function s:findCurrentClassLineRange()
+    let l:backupPosition = getcurpos()
 
     call search(s:php_regex_class_line, 'beW')
     call search('{', 'W')
     let l:startLine = line('.')
     call searchpair('{', '', '}', 'W')
     let l:stopLine = line('.')
-    let l:search = escape(a:search, '/')
 
-    exec l:startLine . ',' . l:stopLine . ':s/' . l:search . '/'. a:replace .'/ge'
-    normal! `r
+    call setpos('.', l:backupPosition)
+
+    return [l:startLine, l:stopLine]
 endfunction
 
 function s:insertConst(name, value) " {{{

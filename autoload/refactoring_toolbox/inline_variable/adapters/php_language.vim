@@ -2,7 +2,9 @@ let s:regex_after_word_boudary = refactoring_toolbox#adaptor#regex#after_word_bo
 
 call refactoring_toolbox#adaptor#vim#begin_script()
 
-function refactoring_toolbox#inline_variable#adapters#php_language#make()
+function refactoring_toolbox#inline_variable#adapters#php_language#make(texteditor)
+    let s:texteditor = a:texteditor
+
     return s:self
 endfunction
 
@@ -27,9 +29,8 @@ endfunction
 function s:self.replaceNextOccurenceOfVariableWithValue(variable, value)
     let l:variablePattern = a:variable.s:regex_after_word_boudary
     let [l:line, l:col] = searchpos(l:variablePattern)
-    let l:value = escape(a:value, '/')
 
-    execute l:line.','.l:line.':s/'.l:variablePattern.'/'.l:value.'/'
+    call s:texteditor.replacePatternWithTextBetweenLines(l:variablePattern, a:value, l:line, l:line)
 endfunction
 
 call refactoring_toolbox#adaptor#vim#end_script()

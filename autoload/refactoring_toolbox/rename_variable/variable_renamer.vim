@@ -5,9 +5,10 @@ let s:regex_after_word_boundary = refactoring_toolbox#adaptor#regex#after_word_b
 let s:regex_case_sensitive = refactoring_toolbox#adaptor#regex#case_sensitive
 let s:SEARCH_NOT_FOUND = 0
 
-function refactoring_toolbox#rename_variable#variable_renamer#execute(input, output)
+function refactoring_toolbox#rename_variable#variable_renamer#execute(input, output, texteditor)
     let s:input = a:input
     let s:output = a:output
+    let s:texteditor = a:texteditor
 
     try
         let l:oldName = s:readNameOnCurrentPosition()
@@ -103,14 +104,9 @@ function s:renameVariableName(oldName, newName)
 endfunction
 
 function s:replaceInCurrentFunction(search, replace)
-    let l:backupPosition = getcurpos()
-
     let [l:startLine, l:stopLine] = s:findCurrentFunctionLineRange()
-    let l:replace = escape(a:replace, '/')
 
-    exec l:startLine . ',' . l:stopLine . ':s/' . a:search . '/'. l:replace .'/ge'
-
-    call setpos('.', l:backupPosition)
+    call s:texteditor.replacePatternWithTextBetweenLines(a:search, a:replace, l:startLine, l:stopLine)
 endfunction
 
 call refactoring_toolbox#adaptor#vim#end_script()

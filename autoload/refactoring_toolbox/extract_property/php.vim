@@ -7,7 +7,9 @@ let s:regex_case_sensitive = refactoring_toolbox#adaptor#regex#case_sensitive
 let s:regex_local_var_prefix = refactoring_toolbox#adaptor#regex#local_var_prefix
 let s:NO_MATCH = -1
 
-function refactoring_toolbox#extract_property#php#execute()
+function refactoring_toolbox#extract_property#php#execute(texteditor)
+    let s:texteditor = a:texteditor
+
     let l:name = s:readNameOnCurrentPosition()
 
     call s:replaceVariableWithPropertyAccess(l:name)
@@ -40,14 +42,9 @@ function s:makeVariablePattern(variableName)
 endfunction
 
 function s:replaceInCurrentFunction(search, replace)
-    let l:backupPosition = getcurpos()
-
     let [l:startLine, l:stopLine] = s:findCurrentFunctionLineRange()
-    let l:replace = escape(a:replace, '/')
 
-    exec l:startLine . ',' . l:stopLine . ':s/' . a:search . '/'. l:replace .'/ge'
-
-    call setpos('.', l:backupPosition)
+    call s:texteditor.replacePatternWithTextBetweenLines(a:search, a:replace, l:startLine, l:stopLine)
 endfunction
 
 function s:findCurrentFunctionLineRange()

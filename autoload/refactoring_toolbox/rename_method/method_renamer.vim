@@ -6,9 +6,10 @@ let s:regex_after_word_boundary = refactoring_toolbox#adaptor#regex#after_word_b
 let s:php_regex_before_function = '\%(\%('.s:php_regex_func_line.'\)\|$this->\|self::\)\@<='
 let s:SEARCH_NO_MATCH = 0
 
-function refactoring_toolbox#rename_method#method_renamer#execute(input, output)
+function refactoring_toolbox#rename_method#method_renamer#execute(input, output, texteditor)
     let s:input = a:input
     let s:output = a:output
+    let s:texteditor = a:texteditor
 
     try
         let l:oldName = s:readNameOnCurrentPosition()
@@ -103,14 +104,9 @@ function s:makeMethodPattern(methodName)
 endfunction
 
 function s:replaceInCurrentClass(search, replace)
-    let l:backupPosition = getcurpos()
-
     let [l:startLine, l:stopLine] = s:findCurrentClassLineRange()
-    let l:replace = escape(a:replace, '/')
 
-    exec l:startLine . ',' . l:stopLine . ':s/' . a:search . '/'. l:replace .'/ge'
-
-    call setpos('.', l:backupPosition)
+    call s:texteditor.replacePatternWithTextBetweenLines(a:search, a:replace, l:startLine, l:stopLine)
 endfunction
 
 call refactoring_toolbox#adaptor#vim#end_script()

@@ -5,7 +5,8 @@ function refactoring_toolbox#rename_method#main#execute()
 
     call refactoring_toolbox#rename_method#method_renamer#execute(
         \ refactoring_toolbox#adaptor#input#make(),
-        \ refactoring_toolbox#adaptor#output#make()
+        \ refactoring_toolbox#adaptor#output#make(),
+        \ refactoring_toolbox#adaptor#vim_texteditor#make(),
     \ )
 endfunction
 
