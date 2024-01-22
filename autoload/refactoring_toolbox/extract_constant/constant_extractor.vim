@@ -50,8 +50,9 @@ function s:replaceInCurrentClass(search, replace) " {{{
     let l:startLine = line('.')
     call searchpair('{', '', '}', 'W')
     let l:stopLine = line('.')
+    let l:search = escape(a:search, '/')
 
-    exec l:startLine . ',' . l:stopLine . ':s/' . a:search . '/'. a:replace .'/ge'
+    exec l:startLine . ',' . l:stopLine . ':s/' . l:search . '/'. a:replace .'/ge'
     normal! `r
 endfunction
 
