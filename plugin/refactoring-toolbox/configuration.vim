@@ -37,6 +37,10 @@ function s:configure()
         let g:refactoring_toolbox_default_method_visibility = 'private'
     endif
 
+    if !exists('g:refactoring_toolbox_default_constant_visibility')
+        let g:refactoring_toolbox_default_constant_visibility = 'public'
+    endif
+
     if !exists('g:refactoring_toolbox_make_setter_fluent')
         let g:refactoring_toolbox_make_setter_fluent = 0
     endif

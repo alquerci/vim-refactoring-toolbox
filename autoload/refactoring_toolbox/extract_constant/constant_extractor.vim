@@ -62,17 +62,39 @@ function s:findCurrentClassLineRange()
     return [l:startLine, l:stopLine]
 endfunction
 
-function s:insertConst(name, value) " {{{
+function s:insertConst(name, value)
+    let l:statement = s:makeStatement(a:name, a:value)
+
     if search(s:php_regex_const_line, 'beW') > 0
-        call append(line('.'), 'const ' . a:name . ' = ' . a:value . ';')
+        call append(line('.'), l:statement)
     elseif search(s:php_regex_class_line, 'beW') > 0
         call search('{', 'W')
-        call append(line('.'), 'const ' . a:name . ' = ' . a:value . ';')
+        call append(line('.'), l:statement)
         call append(line('.')+1, '')
     else
-        call append(line('.'), 'const ' . a:name . ' = ' . a:value . ';')
+        call append(line('.'), l:statement)
     endif
     normal! j=1=
+endfunction
+
+function s:makeStatement(name, value)
+    let l:beforeConst = s:makeVisibility()
+
+    if '' != l:beforeConst
+        let l:beforeConst .= ' '
+    endif
+
+    return l:beforeConst.'const '.a:name.' = '.a:value.';'
+endfunction
+
+function s:makeVisibility()
+    let l:visibility = g:refactoring_toolbox_default_constant_visibility
+
+    if 'public' == l:visibility
+        return ''
+    else
+        return l:visibility
+    endif
 endfunction
 
 call refactoring_toolbox#adaptor#vim#end_script()

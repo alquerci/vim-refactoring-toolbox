@@ -1,0 +1,31 @@
+Given php:
+  <?php
+
+  class SomeClass
+  {
+      public function someMethod()
+      {
+          'some constant value';
+      }
+  }
+
+Do:
+  :let g:refactoring_toolbox_default_constant_visibility = 'private'\<Enter>
+  /some constant\<Enter>
+  hvt;
+  ;ec
+  NEW_CONSTANT_NAME\<Enter>
+  :call TestResetConfiguration()\<Enter>
+
+Expect:
+  <?php
+
+  class SomeClass
+  {
+      private const NEW_CONSTANT_NAME = 'some constant value';
+
+      public function someMethod()
+      {
+          self::NEW_CONSTANT_NAME;
+      }
+  }
