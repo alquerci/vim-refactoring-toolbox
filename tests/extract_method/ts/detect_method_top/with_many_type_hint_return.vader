@@ -1,0 +1,24 @@
+Given typescript:
+  export class SomeClass {
+      someMethod(argument): SomeType|boolean {
+          statement
+      }
+  }
+
+Do:
+  /statement\<Enter>
+  V
+  ;em
+  extractedMethod\<Enter>
+  \<Enter>
+
+Expect:
+  export class SomeClass {
+      someMethod(argument): SomeType|boolean {
+          this.extractedMethod()
+      }
+
+      private extractedMethod() {
+          statement
+      }
+  }

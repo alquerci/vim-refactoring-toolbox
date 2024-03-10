@@ -1,6 +1,6 @@
-let s:regex_mutation_symbols = refactoring_toolbox#adaptor#js_regex#mutation_symbols
-let s:regex_var_name = refactoring_toolbox#adaptor#js_regex#var_name
-let s:regex_func_line = refactoring_toolbox#adaptor#js_regex#func_line
+let s:regex_mutation_symbols = refactoring_toolbox#adaptor#ts_regex#mutation_symbols
+let s:regex_var_name = refactoring_toolbox#adaptor#ts_regex#var_name
+let s:regex_func_line = refactoring_toolbox#adaptor#ts_regex#func_line
 
 call refactoring_toolbox#adaptor#vim#begin_script()
 
