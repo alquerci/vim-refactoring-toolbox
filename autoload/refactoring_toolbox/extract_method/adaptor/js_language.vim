@@ -21,7 +21,7 @@ function s:self.positionIsInStaticMethod(position)
 endfunction
 
 function s:self.getTopPositionOfMethodWithPosition(position)
-    return s:js_language_common.searchPositionBackwardWithPatternFromPosition(s:regex_func_line, a:position)
+    return s:js_language_common.getTopLineOfMethodWithPatternFromPosition(s:regex_func_line, a:position)
 endfunction
 
 function s:self.getTopLineOfMethodWithPosition(position)

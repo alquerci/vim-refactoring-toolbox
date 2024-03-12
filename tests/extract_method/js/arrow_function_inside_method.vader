@@ -1,0 +1,30 @@
+Given javascript:
+  export class SomeClass {
+      someMethod() {
+          const someArrowFunction = () => {
+          }
+
+          statement
+      }
+  }
+
+Do:
+  /statement\<Enter>
+  V
+  ;em
+  extractedMethod\<Enter>
+  \<Enter>
+
+Expect:
+  export class SomeClass {
+      someMethod() {
+          const someArrowFunction = () => {
+          }
+
+          this._extractedMethod()
+      }
+
+      _extractedMethod() {
+          statement
+      }
+  }

@@ -1,7 +1,7 @@
 call refactoring_toolbox#adaptor#vim#begin_script()
 
-let s:posistion_index_line = 1
-let s:posistion_index_column = 2
+let s:index_line = 1
+let s:index_column = 2
 
 function refactoring_toolbox#extract_method#adaptor#vim_position#make()
     return s:self
@@ -20,18 +20,18 @@ endfunction
 function s:self.makePositionBasedOnPositionWithLineAndColumn(position, line, column)
     let l:newPosition = a:position[:]
 
-    let l:newPosition[s:posistion_index_line] = a:line
-    let l:newPosition[s:posistion_index_column] = a:column
+    let l:newPosition[s:index_line] = a:line
+    let l:newPosition[s:index_column] = a:column
 
     return l:newPosition
 endfunction
 
 function s:self.getLineOfPosition(position)
-    return a:position[s:posistion_index_line]
+    return a:position[s:index_line]
 endfunction
 
 function s:self.getColumnOfPosition(position)
-    return a:position[s:posistion_index_column]
+    return a:position[s:index_column]
 endfunction
 
 function s:self.getCurrentPosition()
@@ -88,6 +88,14 @@ endfunction
 
 function s:addCurrentPositionToHistory()
     call add(s:self.positionHistory, s:self.getCurrentPosition())
+endfunction
+
+function s:self.positionIsAfterPosition(position, referencePosition)
+    if a:referencePosition[s:index_line] == a:position[s:index_line]
+        return a:referencePosition[s:index_column] < a:position[s:index_column]
+    endif
+
+    return a:referencePosition[s:index_line] < a:position[s:index_line]
 endfunction
 
 call refactoring_toolbox#adaptor#vim#end_script()

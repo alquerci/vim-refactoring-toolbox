@@ -59,6 +59,11 @@ function s:self.getLinesBetweenCursorPositions(start, end)
     let l:endColumn = s:position.getColumnOfPosition(a:end)
 
     let l:totalLines = len(l:selectionLines)
+
+    if 0 == l:totalLines
+        return []
+    endif
+
     let l:lastLineIndex = l:totalLines - 1
     let l:lastLine = l:selectionLines[l:lastLineIndex]
     let l:lastLineLength = len(l:lastLine)
