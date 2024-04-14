@@ -15,6 +15,7 @@ let s:self = #{}
 
 function s:self.getTopLineOfMethodWithPatternFromPosition(pattern, position)
     let l:potentialTopPosition = a:position
+    let l:found = v:false
 
     while v:true
         try
@@ -23,20 +24,26 @@ function s:self.getTopLineOfMethodWithPatternFromPosition(pattern, position)
             let l:bottomPosition = s:getClosingPositionBracketFromPosition(l:potentialTopPosition)
 
             if s:position.positionIsAfterPosition(l:bottomPosition, a:position)
-                break
+                let l:foundPosition = l:potentialTopPosition
+
+                let l:found = v:true
             endif
         catch /search_not_found/
-            break
+            if l:found
+                return l:foundPosition
+            else
+                throw 'top_line_not_found'
+            endif
         endtry
     endwhile
-
-    return l:potentialTopPosition
 endfunction
 
 function s:searchPositionBackwardWithPatternFromPosition(pattern, position)
     call s:position.moveToPosition(a:position)
 
     if s:SEARCH_NOT_FOUND == search(a:pattern, 'bW')
+        call s:position.backToPreviousPosition()
+
         throw 'search_not_found'
     endif
 

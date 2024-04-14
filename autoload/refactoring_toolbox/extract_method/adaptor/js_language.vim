@@ -2,6 +2,7 @@ let s:regex_keyword = refactoring_toolbox#adaptor#js_regex#reserved_variable
 let s:regex_mutation_symbols = refactoring_toolbox#adaptor#js_regex#mutation_symbols
 let s:regex_var_name = refactoring_toolbox#adaptor#js_regex#var_name
 let s:regex_func_line = refactoring_toolbox#adaptor#js_regex#func_line
+let s:regex_class_line = '^export class '
 
 call refactoring_toolbox#adaptor#vim#begin_script()
 
@@ -102,7 +103,15 @@ function s:self.makeMethodHeaderLines(definition)
 endfunction
 
 function s:isAnObjectMethod(definition)
-    return 0 < a:definition.indentationLevel
+    let l:fromPosition = a:definition.callPosition
+
+    try
+        call s:js_language_common.getTopLineOfMethodWithPatternFromPosition(s:regex_class_line, l:fromPosition)
+
+        return v:true
+    catch /top_line_not_found/
+        return v:false
+    endtry
 endfunction
 
 function s:makeObjectMethodHeaderLines(definition)

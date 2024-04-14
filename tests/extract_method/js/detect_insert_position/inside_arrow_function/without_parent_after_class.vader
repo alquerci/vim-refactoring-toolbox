@@ -1,0 +1,34 @@
+Given javascript:
+  export class SomeClass {
+  }
+
+  const arrowFunction = () => {
+      const variable = 'value'
+
+      statement
+
+      return variable
+  }
+
+Do:
+  /statement\<Enter>
+  V
+  ;em
+  extractedMethod\<Enter>
+  \<Enter>
+
+Expect:
+  export class SomeClass {
+  }
+
+  const arrowFunction = () => {
+      const variable = 'value'
+
+      extractedMethod()
+
+      return variable
+  }
+
+  const extractedMethod = () => {
+      statement
+  }
