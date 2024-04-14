@@ -13,6 +13,10 @@ endfunction
 
 let s:self = #{}
 
+function s:self.isAnObjectMethod(definition)
+    return 0 < a:definition.indentationLevel
+endfunction
+
 function s:self.getTopLineOfMethodWithPatternFromPosition(pattern, position)
     let l:potentialTopPosition = a:position
     let l:found = v:false

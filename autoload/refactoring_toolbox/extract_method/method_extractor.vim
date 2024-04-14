@@ -27,14 +27,12 @@ function refactoring_toolbox#extract_method#method_extractor#extractSelectedBloc
             \ isStatic: s:NULL,
             \ isInlineCall: s:NULL,
             \ indentationLevel: s:NULL,
-            \ callPosition: s:NULL,
         \ }
 
         let l:methodDefinition.name = s:askForMethodName()
         let l:methodDefinition.visibility = s:getVisibility(g:refactoring_toolbox_default_method_visibility)
 
         let l:methodCallInsertPosition = s:determinePositionToInsertMethodCall()
-        let l:methodDefinition.callPosition = l:methodCallInsertPosition
         let l:codeToExtract = s:getSelectedText()
 
         call s:texteditor.deleteSelectedText()

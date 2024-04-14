@@ -1,0 +1,32 @@
+Given typescript:
+  const parentFunctionName = () => {
+      const arrowFunction = () => {
+          const variable = 'value'
+
+          statement
+
+          return variable
+      }
+  }
+
+Do:
+  /statement\<Enter>
+  V
+  ;em
+  extractedMethod\<Enter>
+  \<Enter>
+
+Expect:
+  const parentFunctionName = () => {
+      const arrowFunction = () => {
+          const variable = 'value'
+
+          extractedMethod()
+
+          return variable
+      }
+  }
+
+  const extractedMethod = () => {
+      statement
+  }

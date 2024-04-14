@@ -99,7 +99,7 @@ function s:self.makeMethodHeaderLines(definition)
 endfunction
 
 function s:isAnObjectMethod(definition)
-    return 0 < a:definition.indentationLevel
+    return s:js_language_common.isAnObjectMethod(a:definition)
 endfunction
 
 function s:makeObjectMethodHeaderLines(definition)
