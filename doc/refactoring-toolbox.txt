@@ -37,6 +37,7 @@ Supported languages:
 - TypeScript
   - Extract Method
   - Extract Variable
+  - Inline Variable
 
 ===============================================================================
 CONFIGURATION                               *refactoring-toolbox-configuration*

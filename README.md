@@ -19,6 +19,7 @@ A set of mappings which help you to refactor code in consistent way across langu
 - TypeScript
   - Extract Method
   - Extract Variable
+  - Inline Variable
 
 
 ## Refactoring Techniques Highlights

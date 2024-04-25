@@ -17,6 +17,12 @@ function s:registerMappings()
             \ '<Plug>refactoring_toolbox_javascript_ExtractVariable',
             \ 'refactoring_toolbox#extract_variable#main#extractVariableForJavaScript()'
         \ )
+
+        call s:addBufferNormalMapping(
+            \ '<LocalLeader>iv',
+            \ '<Plug>refactoring_toolbox_javascript_InlineVariable',
+            \ 'refactoring_toolbox#inline_variable#main#inlineVariableForJavaScript()'
+        \ )
     endif
 endfunction
 

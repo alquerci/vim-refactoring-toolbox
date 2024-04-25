@@ -17,6 +17,12 @@ function s:registerMappings()
             \ '<Plug>refactoring_toolbox_typescript_ExtractVariable',
             \ 'refactoring_toolbox#extract_variable#main#extractVariableForTypeScript()'
         \ )
+
+        call s:addBufferNormalMapping(
+            \ '<LocalLeader>iv',
+            \ '<Plug>refactoring_toolbox_typescript_InlineVariable',
+            \ 'refactoring_toolbox#inline_variable#main#inlineVariableForTypeScript()'
+        \ )
     endif
 endfunction
 

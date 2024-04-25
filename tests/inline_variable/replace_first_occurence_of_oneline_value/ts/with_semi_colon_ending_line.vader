@@ -1,0 +1,14 @@
+Given typescript:
+  const someFunction = () => {
+      const aVariable = null;
+      aVariable;
+  }
+
+Do:
+  /aVariable\<Enter>
+  ;iv
+
+Expect:
+  const someFunction = () => {
+      null;
+  }

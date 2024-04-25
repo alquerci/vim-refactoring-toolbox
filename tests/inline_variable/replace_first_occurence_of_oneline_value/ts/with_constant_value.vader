@@ -1,0 +1,28 @@
+Given typescript:
+  const someFunction = () => {
+      const aVariable = null
+      aVariable
+
+      const anotherVariable = true
+      anotherVariable
+
+      const withEqualSignOnValue = '='
+      withEqualSignOnValue
+  }
+
+Do:
+  /aVariable\<Enter>
+  ;iv
+  /anotherVariable\<Enter>
+  ;iv
+  /withEqualSignOnValue\<Enter>
+  ;iv
+
+Expect:
+  const someFunction = () => {
+      null
+
+      true
+
+      '='
+  }
