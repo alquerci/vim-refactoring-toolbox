@@ -22,6 +22,17 @@ function refactoring_toolbox#rename_variable#main#renameLocalVariable()
     \ )
 endfunction
 
+function refactoring_toolbox#rename_variable#main#renameVariableForJavascript()
+    call refactoring_toolbox#usage#increment('JsRenameVariable')
+
+    call refactoring_toolbox#rename_variable#variable_renamer#execute(
+        \ refactoring_toolbox#rename_variable#adapters#js_language#make(),
+        \ refactoring_toolbox#adapters#input#make(),
+        \ refactoring_toolbox#adapters#output#make(),
+        \ refactoring_toolbox#adapters#vim_texteditor#make(),
+    \ )
+endfunction
+
 function refactoring_toolbox#rename_variable#main#renameVariableForTypescript()
     call refactoring_toolbox#usage#increment('TsRenameVariable')
 

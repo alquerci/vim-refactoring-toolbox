@@ -10,7 +10,7 @@ function refactoring_toolbox#inline_variable#main#execute()
     \ )
 endfunction
 
-function refactoring_toolbox#inline_variable#main#inlineVariableForJavaScript()
+function refactoring_toolbox#inline_variable#main#inlineVariableForJavascript()
     call refactoring_toolbox#usage#increment('JsInlineVariable')
 
     call refactoring_toolbox#inline_variable#variable_inliner#execute(

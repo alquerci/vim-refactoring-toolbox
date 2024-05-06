@@ -29,11 +29,13 @@ A set of mappings which help you to refactor code in consistent way across langu
 Supported languages:
 
 - PHP
-- SH
+- Shell
   - Extract Method
-- JS
+- JavaScript
   - Extract Method
   - Extract Variable
+  - Inline Variable
+  - Rename Variable
 - TypeScript
   - Extract Method
   - Extract Variable

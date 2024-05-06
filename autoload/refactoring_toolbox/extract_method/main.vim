@@ -30,7 +30,7 @@ function refactoring_toolbox#extract_method#main#extractMethodForSh() range
     \ )
 endfunction
 
-function refactoring_toolbox#extract_method#main#extractMethodForJavaScript() range
+function refactoring_toolbox#extract_method#main#extractMethodForJavascript() range
     call refactoring_toolbox#usage#increment('JsExtractMethod')
 
     call refactoring_toolbox#extract_method#method_extractor#extractSelectedBlock(

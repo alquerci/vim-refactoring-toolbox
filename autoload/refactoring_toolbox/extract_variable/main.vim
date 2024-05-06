@@ -9,7 +9,7 @@ function refactoring_toolbox#extract_variable#main#execute() range
     \ )
 endfunction
 
-function refactoring_toolbox#extract_variable#main#extractVariableForJavaScript() range
+function refactoring_toolbox#extract_variable#main#extractVariableForJavascript() range
     call refactoring_toolbox#usage#increment('JsExtractVariable')
 
     call refactoring_toolbox#extract_variable#variable_extractor#execute(

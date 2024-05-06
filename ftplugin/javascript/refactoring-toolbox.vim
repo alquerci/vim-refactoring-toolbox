@@ -9,19 +9,25 @@ function s:registerMappings()
         call s:addBufferVisualMapping(
             \ '<LocalLeader>em',
             \ '<Plug>refactoring_toolbox_javascript_ExtractMethod',
-            \ 'refactoring_toolbox#extract_method#main#extractMethodForJavaScript()'
+            \ 'refactoring_toolbox#extract_method#main#extractMethodForJavascript()'
         \ )
 
         call s:addBufferVisualMapping(
             \ '<LocalLeader>ev',
             \ '<Plug>refactoring_toolbox_javascript_ExtractVariable',
-            \ 'refactoring_toolbox#extract_variable#main#extractVariableForJavaScript()'
+            \ 'refactoring_toolbox#extract_variable#main#extractVariableForJavascript()'
         \ )
 
         call s:addBufferNormalMapping(
             \ '<LocalLeader>iv',
             \ '<Plug>refactoring_toolbox_javascript_InlineVariable',
-            \ 'refactoring_toolbox#inline_variable#main#inlineVariableForJavaScript()'
+            \ 'refactoring_toolbox#inline_variable#main#inlineVariableForJavascript()'
+        \ )
+
+        call s:addBufferNormalMapping(
+            \ '<LocalLeader>rv',
+            \ '<Plug>refactoring_toolbox_javascript_RenameVariable',
+            \ 'refactoring_toolbox#rename_variable#main#renameVariableForJavascript()'
         \ )
     endif
 endfunction
