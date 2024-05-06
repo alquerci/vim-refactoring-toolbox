@@ -12,8 +12,8 @@ syntax enable
 
 let g:refactoring_toolbox_usage_logdir = './var/log'
 let g:test_tmpdir = './var/tmp'
-let s:adaptor_phpactor_rpc_calls = []
-let g:refactoring_toolbox_adaptor_phpactor = 'spy'
+let s:adapters_phpactor_rpc_calls = []
+let g:refactoring_toolbox_adapters_phpactor = 'spy'
 
 set tabstop=4 shiftwidth=4 expandtab
 

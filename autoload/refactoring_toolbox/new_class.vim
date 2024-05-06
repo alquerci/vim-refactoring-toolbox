@@ -1,4 +1,4 @@
-call refactoring_toolbox#adaptor#vim#begin_script()
+call refactoring_toolbox#adapters#vim#begin_script()
 
 function! refactoring_toolbox#new_class#execute(phpactor)
     let s:phpactor = a:phpactor
@@ -23,4 +23,4 @@ function! s:makeClass(currentFilePath, newClassFilePath)
     \ })
 endfunction
 
-call refactoring_toolbox#adaptor#vim#end_script()
+call refactoring_toolbox#adapters#vim#end_script()

@@ -3,9 +3,9 @@ Given php:
 
 Before:
   call refactoring_toolbox#rename_directory#directory_renamer#setTextEditor(
-    \ refactoring_toolbox#rename_directory#adaptors#spy_texteditor#make()
+    \ refactoring_toolbox#rename_directory#adapters#spy_texteditor#make()
   \ )
-  call refactoring_toolbox#rename_directory#adaptors#spy_texteditor#make().setCurrentDirectory('tests/fixtures/projectroot/SomeDir')
+  call refactoring_toolbox#rename_directory#adapters#spy_texteditor#make().setCurrentDirectory('tests/fixtures/projectroot/SomeDir')
 
 Do:
   ;rd
@@ -13,5 +13,5 @@ Do:
   \<C-u>tests/fixtures/projectroot/NewDir\<Enter>
 
 Then:
-  AssertEqual 'tests/fixtures/projectroot/SomeDir/SomeClass.php', refactoring_toolbox#adaptor#phpactor#make().getSourcePath()
-  call refactoring_toolbox#adaptor#phpactor#make().resetTotalCalls()
+  AssertEqual 'tests/fixtures/projectroot/SomeDir/SomeClass.php', refactoring_toolbox#adapters#phpactor#make().getSourcePath()
+  call refactoring_toolbox#adapters#phpactor#make().resetTotalCalls()

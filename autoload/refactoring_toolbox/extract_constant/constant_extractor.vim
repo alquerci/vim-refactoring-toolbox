@@ -1,7 +1,7 @@
-let s:php_regex_class_line = refactoring_toolbox#adaptor#regex#class_line
-let s:php_regex_const_line = refactoring_toolbox#adaptor#regex#const_line
+let s:php_regex_class_line = refactoring_toolbox#adapters#regex#class_line
+let s:php_regex_const_line = refactoring_toolbox#adapters#regex#const_line
 
-call refactoring_toolbox#adaptor#vim#begin_script()
+call refactoring_toolbox#adapters#vim#begin_script()
 
 function refactoring_toolbox#extract_constant#constant_extractor#execute(input, texteditor)
     let s:input = a:input
@@ -97,4 +97,4 @@ function s:makeVisibility()
     endif
 endfunction
 
-call refactoring_toolbox#adaptor#vim#end_script()
+call refactoring_toolbox#adapters#vim#end_script()

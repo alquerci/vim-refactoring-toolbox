@@ -1,6 +1,6 @@
-call refactoring_toolbox#adaptor#vim#begin_script()
+call refactoring_toolbox#adapters#vim#begin_script()
 
-function refactoring_toolbox#extract_variable#adaptor#php_language#make()
+function refactoring_toolbox#extract_variable#adapters#php_language#make()
     return s:self
 endfunction
 
@@ -14,4 +14,4 @@ function s:self.makeAssignation(name, value)
     return '$'.a:name.' = '.a:value.';'
 endfunction
 
-call refactoring_toolbox#adaptor#vim#end_script()
+call refactoring_toolbox#adapters#vim#end_script()

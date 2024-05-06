@@ -1,11 +1,11 @@
-call refactoring_toolbox#adaptor#vim#begin_script()
+call refactoring_toolbox#adapters#vim#begin_script()
 
-let s:regex_before_word_boudary = refactoring_toolbox#adaptor#regex#before_word_boudary
-let s:regex_after_word_boudary = refactoring_toolbox#adaptor#regex#after_word_boudary
+let s:regex_before_word_boudary = refactoring_toolbox#adapters#regex#before_word_boudary
+let s:regex_after_word_boudary = refactoring_toolbox#adapters#regex#after_word_boudary
 
 let s:SEARCH_NOT_FOUND = 0
 
-function refactoring_toolbox#extract_method#adaptor#js_language_common#make(position)
+function refactoring_toolbox#extract_method#adapters#js_language_common#make(position)
     let s:position = a:position
 
     return s:self
@@ -84,4 +84,4 @@ function s:self.makePatternForVariableName(name)
     return s:regex_before_word_boudary.a:name.s:regex_after_word_boudary
 endfunction
 
-call refactoring_toolbox#adaptor#vim#end_script()
+call refactoring_toolbox#adapters#vim#end_script()

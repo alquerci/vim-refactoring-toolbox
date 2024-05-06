@@ -1,6 +1,6 @@
-let s:regex_after_word_boudary = refactoring_toolbox#adaptor#regex#after_word_boudary
+let s:regex_after_word_boudary = refactoring_toolbox#adapters#regex#after_word_boudary
 
-call refactoring_toolbox#adaptor#vim#begin_script()
+call refactoring_toolbox#adapters#vim#begin_script()
 
 function refactoring_toolbox#inline_variable#adapters#php_language#make(texteditor)
     let s:texteditor = a:texteditor
@@ -33,4 +33,4 @@ function s:self.replaceNextOccurenceOfVariableWithValue(variable, value)
     call s:texteditor.replacePatternWithTextBetweenLines(l:variablePattern, a:value, l:line, l:line)
 endfunction
 
-call refactoring_toolbox#adaptor#vim#end_script()
+call refactoring_toolbox#adapters#vim#end_script()

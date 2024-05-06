@@ -1,4 +1,4 @@
-call refactoring_toolbox#adaptor#vim#begin_script()
+call refactoring_toolbox#adapters#vim#begin_script()
 
 let s:NULL = 'NONE'
 let s:EXPR_NOT_FOUND = -1
@@ -354,4 +354,4 @@ function s:writeLinesWithIndent(lines, indent)
     endfor
 endfunction
 
-call refactoring_toolbox#adaptor#vim#end_script()
+call refactoring_toolbox#adapters#vim#end_script()

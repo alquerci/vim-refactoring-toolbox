@@ -1,5 +1,5 @@
 try
-    call refactoring_toolbox#adaptor#vim#begin_ftplugin('refactoring_toolbox')
+    call refactoring_toolbox#adapters#vim#begin_ftplugin('refactoring_toolbox')
 catch /plugin_loaded/
     finish
 endtry
@@ -29,13 +29,13 @@ endfunction
 function s:addUniqueBufferNormalMapping(left, right)
     execute 'nmap <buffer> <unique> '.a:left.' '.a:right
 
-    call refactoring_toolbox#adaptor#vim#appendFileTypeUndo('nunmap <buffer> '.a:left)
+    call refactoring_toolbox#adapters#vim#appendFileTypeUndo('nunmap <buffer> '.a:left)
 endfunction
 
 function s:addUniqueScriptAndBufferNormalMapping(left, right)
     execute 'nnoremap <script> <buffer> <unique> '.a:left.' '.a:right
 
-    call refactoring_toolbox#adaptor#vim#appendFileTypeUndo('nunmap <script> <buffer> '.a:left)
+    call refactoring_toolbox#adapters#vim#appendFileTypeUndo('nunmap <script> <buffer> '.a:left)
 endfunction
 
 function s:addBufferVisualMapping(keys, name, executeFunction)
@@ -49,15 +49,15 @@ endfunction
 function s:addUniqueBufferVisualMapping(left, right)
     execute 'vmap <buffer> <unique> '.a:left.' '.a:right
 
-    call refactoring_toolbox#adaptor#vim#appendFileTypeUndo('vunmap <buffer> '.a:left)
+    call refactoring_toolbox#adapters#vim#appendFileTypeUndo('vunmap <buffer> '.a:left)
 endfunction
 
 function s:addUniqueScriptAndBufferVisualMapping(left, right)
     execute 'vnoremap <script> <buffer> <unique> '.a:left.' '.a:right
 
-    call refactoring_toolbox#adaptor#vim#appendFileTypeUndo('vunmap <script> <buffer> '.a:left)
+    call refactoring_toolbox#adapters#vim#appendFileTypeUndo('vunmap <script> <buffer> '.a:left)
 endfunction
 
 call s:registerMappings()
 
-call refactoring_toolbox#adaptor#vim#end_ftplugin()
+call refactoring_toolbox#adapters#vim#end_ftplugin()

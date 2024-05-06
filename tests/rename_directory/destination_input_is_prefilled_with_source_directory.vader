@@ -7,5 +7,5 @@ Do:
   \<Enter>
 
 Then:
-  AssertEqual 'tests/fixtures/projectroot/OldDir/ClassName.php', refactoring_toolbox#adaptor#phpactor#make().getDestinationPath()
-  call refactoring_toolbox#adaptor#phpactor#make().resetTotalCalls()
+  AssertEqual 'tests/fixtures/projectroot/OldDir/ClassName.php', refactoring_toolbox#adapters#phpactor#make().getDestinationPath()
+  call refactoring_toolbox#adapters#phpactor#make().resetTotalCalls()

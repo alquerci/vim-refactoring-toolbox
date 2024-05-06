@@ -1,7 +1,7 @@
-call refactoring_toolbox#adaptor#vim#begin_script()
+call refactoring_toolbox#adapters#vim#begin_script()
 
-let s:regex_after_word_boundary = refactoring_toolbox#adaptor#regex#after_word_boudary
-let s:regex_case_sensitive = refactoring_toolbox#adaptor#regex#case_sensitive
+let s:regex_after_word_boundary = refactoring_toolbox#adapters#regex#after_word_boudary
+let s:regex_case_sensitive = refactoring_toolbox#adapters#regex#case_sensitive
 let s:SEARCH_NOT_FOUND = 0
 
 function refactoring_toolbox#rename_variable#variable_renamer#execute(language, input, output, texteditor)
@@ -94,4 +94,4 @@ function s:replaceInCurrentFunction(search, replace)
     call s:texteditor.replacePatternWithTextBetweenLines(a:search, a:replace, l:startLine, l:stopLine)
 endfunction
 
-call refactoring_toolbox#adaptor#vim#end_script()
+call refactoring_toolbox#adapters#vim#end_script()

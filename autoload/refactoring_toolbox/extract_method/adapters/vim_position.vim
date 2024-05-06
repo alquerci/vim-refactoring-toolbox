@@ -1,9 +1,9 @@
-call refactoring_toolbox#adaptor#vim#begin_script()
+call refactoring_toolbox#adapters#vim#begin_script()
 
 let s:index_line = 1
 let s:index_column = 2
 
-function refactoring_toolbox#extract_method#adaptor#vim_position#make()
+function refactoring_toolbox#extract_method#adapters#vim_position#make()
     return s:self
 endfunction
 
@@ -98,4 +98,4 @@ function s:self.positionIsAfterPosition(position, referencePosition)
     return a:referencePosition[s:index_line] < a:position[s:index_line]
 endfunction
 
-call refactoring_toolbox#adaptor#vim#end_script()
+call refactoring_toolbox#adapters#vim#end_script()

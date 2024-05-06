@@ -1,32 +1,32 @@
-function refactoring_toolbox#adaptor#vim#begin_ftplugin(name)
+function refactoring_toolbox#adapters#vim#begin_ftplugin(name)
     call s:checkFileTypePluginIsLoadedOnce(a:name)
 
-    call refactoring_toolbox#adaptor#vim#begin_script()
+    call refactoring_toolbox#adapters#vim#begin_script()
 endfunction
 
-function refactoring_toolbox#adaptor#vim#end_ftplugin()
-    call refactoring_toolbox#adaptor#vim#end_script()
+function refactoring_toolbox#adapters#vim#end_ftplugin()
+    call refactoring_toolbox#adapters#vim#end_script()
 endfunction
 
-function refactoring_toolbox#adaptor#vim#begin_plugin(name)
+function refactoring_toolbox#adapters#vim#begin_plugin(name)
     call s:checkPluginIsLoadedOnce(a:name)
 
-    call refactoring_toolbox#adaptor#vim#begin_script()
+    call refactoring_toolbox#adapters#vim#begin_script()
 endfunction
 
-function refactoring_toolbox#adaptor#vim#end_plugin()
-    call refactoring_toolbox#adaptor#vim#end_script()
+function refactoring_toolbox#adapters#vim#end_plugin()
+    call refactoring_toolbox#adapters#vim#end_script()
 endfunction
 
-function refactoring_toolbox#adaptor#vim#begin_script()
+function refactoring_toolbox#adapters#vim#begin_script()
     call s:configureCompatibilityOptions()
 endfunction
 
-function refactoring_toolbox#adaptor#vim#end_script()
+function refactoring_toolbox#adapters#vim#end_script()
     call s:restoreCompatibilityOptions()
 endfunction
 
-function refactoring_toolbox#adaptor#vim#appendFileTypeUndo(script)
+function refactoring_toolbox#adapters#vim#appendFileTypeUndo(script)
     let l:scriptWithTry = 'try|'.a:script.'|catch|endtry'
 
     if !exists('b:undo_ftplugin')
@@ -43,7 +43,7 @@ function s:checkFileTypePluginIsLoadedOnce(name)
 
     let b:did_ftplugin_{a:name} = 1
 
-    call refactoring_toolbox#adaptor#vim#appendFileTypeUndo('unlet! b:did_ftplugin_'.a:name)
+    call refactoring_toolbox#adapters#vim#appendFileTypeUndo('unlet! b:did_ftplugin_'.a:name)
 endfunction
 
 function s:checkPluginIsLoadedOnce(name)

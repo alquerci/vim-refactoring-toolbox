@@ -1,6 +1,6 @@
-call refactoring_toolbox#adaptor#vim#begin_script()
+call refactoring_toolbox#adapters#vim#begin_script()
 
-function refactoring_toolbox#adaptor#vim_texteditor#make()
+function refactoring_toolbox#adapters#vim_texteditor#make()
     return s:self
 endfunction
 
@@ -17,4 +17,4 @@ function s:self.replacePatternWithTextBetweenLines(searchPattern, replaceWithTex
     call setpos('.', l:backupPosition)
 endfunction
 
-call refactoring_toolbox#adaptor#vim#end_script()
+call refactoring_toolbox#adapters#vim#end_script()

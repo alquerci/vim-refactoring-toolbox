@@ -1,14 +1,14 @@
-let s:regex_mutation_symbols = refactoring_toolbox#adaptor#ts_regex#mutation_symbols
-let s:regex_var_name = refactoring_toolbox#adaptor#ts_regex#var_name
-let s:regex_func_line = refactoring_toolbox#adaptor#ts_regex#func_line
+let s:regex_mutation_symbols = refactoring_toolbox#adapters#ts_regex#mutation_symbols
+let s:regex_var_name = refactoring_toolbox#adapters#ts_regex#var_name
+let s:regex_func_line = refactoring_toolbox#adapters#ts_regex#func_line
 
-call refactoring_toolbox#adaptor#vim#begin_script()
+call refactoring_toolbox#adapters#vim#begin_script()
 
 let s:NO_MATCH = -1
 
-function refactoring_toolbox#extract_method#adaptor#ts_language#make(position)
+function refactoring_toolbox#extract_method#adapters#ts_language#make(position)
     let s:position = a:position
-    let s:js_language_common = refactoring_toolbox#extract_method#adaptor#js_language_common#make(s:position)
+    let s:js_language_common = refactoring_toolbox#extract_method#adapters#js_language_common#make(s:position)
 
     return s:self
 endfunction
@@ -155,4 +155,4 @@ function s:makeReturnVariables(definition)
     return join(a:definition.returnVariables, '')
 endfunction
 
-call refactoring_toolbox#adaptor#vim#end_script()
+call refactoring_toolbox#adapters#vim#end_script()

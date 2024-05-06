@@ -1,6 +1,6 @@
-let s:regex_func_line = refactoring_toolbox#adaptor#regex#func_line
+let s:regex_func_line = refactoring_toolbox#adapters#regex#func_line
 
-call refactoring_toolbox#adaptor#vim#begin_script()
+call refactoring_toolbox#adapters#vim#begin_script()
 
 function refactoring_toolbox#rename_variable#adapters#php_language#make()
     return s:self
@@ -31,4 +31,4 @@ function s:self.findCurrentFunctionLineRange()
     return [l:startLine, l:stopLine]
 endfunction
 
-call refactoring_toolbox#adaptor#vim#end_script()
+call refactoring_toolbox#adapters#vim#end_script()

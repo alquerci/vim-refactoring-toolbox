@@ -1,5 +1,5 @@
 Before:
-    let language = refactoring_toolbox#extract_method#adaptor#ts_language#make(#{})
+    let language = refactoring_toolbox#extract_method#adapters#ts_language#make(#{})
 
 Execute:
     Assert language.variableExistsOnCode('variable', 'code(variable)')

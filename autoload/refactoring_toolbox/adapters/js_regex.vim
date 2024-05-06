@@ -1,4 +1,4 @@
-call refactoring_toolbox#adaptor#vim#begin_script()
+call refactoring_toolbox#adapters#vim#begin_script()
 
 let s:keyword_reserved = [
     \ 'await',
@@ -55,14 +55,14 @@ let s:reserved_variable = '\<\%('
     \ .join(s:keyword_reserved, '\|').'\|'.join(s:identifiers_spectial_meaning, '\|')
     \ .'\)\>'
 
-let refactoring_toolbox#adaptor#js_regex#reserved_variable = s:reserved_variable
+let refactoring_toolbox#adapters#js_regex#reserved_variable = s:reserved_variable
 
-let refactoring_toolbox#adaptor#js_regex#mutation_symbols = '\%(=\|+=\|-=\|\*=\|/=\|%=\|\*\*=\)'
+let refactoring_toolbox#adapters#js_regex#mutation_symbols = '\%(=\|+=\|-=\|\*=\|/=\|%=\|\*\*=\)'
 
-let refactoring_toolbox#adaptor#js_regex#var_name = '\%('.s:reserved_variable.'\)\@!\&\%(\.[ \t\n]*\|[a-zA-Z_$]\)\@<!\([a-zA-Z_$][a-zA-Z0-9_$]*\)'
+let refactoring_toolbox#adapters#js_regex#var_name = '\%('.s:reserved_variable.'\)\@!\&\%(\.[ \t\n]*\|[a-zA-Z_$]\)\@<!\([a-zA-Z_$][a-zA-Z0-9_$]*\)'
 
 let s:regex_method_line = '\w([^)]*)\_s*{$'
 let s:regex_arrow_func_line = '=>'
-let refactoring_toolbox#adaptor#js_regex#func_line = '\%('.s:regex_arrow_func_line.'\|'.s:regex_method_line.'\)'
+let refactoring_toolbox#adapters#js_regex#func_line = '\%('.s:regex_arrow_func_line.'\|'.s:regex_method_line.'\)'
 
-call refactoring_toolbox#adaptor#vim#end_script()
+call refactoring_toolbox#adapters#vim#end_script()

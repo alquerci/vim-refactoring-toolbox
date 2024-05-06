@@ -1,4 +1,4 @@
-call refactoring_toolbox#adaptor#vim#begin_script()
+call refactoring_toolbox#adapters#vim#begin_script()
 
 let s:CURRENT_BUFFER = '%'
 
@@ -35,4 +35,4 @@ function s:getCurrentLine()
     return line('.')
 endfunction
 
-call refactoring_toolbox#adaptor#vim#end_script()
+call refactoring_toolbox#adapters#vim#end_script()

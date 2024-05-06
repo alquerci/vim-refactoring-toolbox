@@ -1,6 +1,6 @@
-call refactoring_toolbox#adaptor#vim#begin_script()
+call refactoring_toolbox#adapters#vim#begin_script()
 
-function refactoring_toolbox#rename_directory#adaptors#spy_texteditor#make()
+function refactoring_toolbox#rename_directory#adapters#spy_texteditor#make()
     return s:self
 endfunction
 
@@ -16,4 +16,4 @@ function s:self.setCurrentDirectory(directory)
     let s:self.currentDirectory = a:directory
 endfunction
 
-call refactoring_toolbox#adaptor#vim#end_script()
+call refactoring_toolbox#adapters#vim#end_script()

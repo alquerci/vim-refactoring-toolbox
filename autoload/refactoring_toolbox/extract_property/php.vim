@@ -1,10 +1,10 @@
-call refactoring_toolbox#adaptor#vim#begin_script()
+call refactoring_toolbox#adapters#vim#begin_script()
 
-let s:regex_class_line = refactoring_toolbox#adaptor#regex#class_line
-let s:regex_func_line = refactoring_toolbox#adaptor#regex#func_line
-let s:regex_after_word_boundary = refactoring_toolbox#adaptor#regex#after_word_boudary
-let s:regex_case_sensitive = refactoring_toolbox#adaptor#regex#case_sensitive
-let s:regex_local_var_prefix = refactoring_toolbox#adaptor#regex#local_var_prefix
+let s:regex_class_line = refactoring_toolbox#adapters#regex#class_line
+let s:regex_func_line = refactoring_toolbox#adapters#regex#func_line
+let s:regex_after_word_boundary = refactoring_toolbox#adapters#regex#after_word_boudary
+let s:regex_case_sensitive = refactoring_toolbox#adapters#regex#case_sensitive
+let s:regex_local_var_prefix = refactoring_toolbox#adapters#regex#local_var_prefix
 let s:NO_MATCH = -1
 
 function refactoring_toolbox#extract_property#php#execute(texteditor)
@@ -161,4 +161,4 @@ function s:moveToLineToInsertAssignFromArgument()
     call s:moveToOpenBracket()
 endfunction
 
-call refactoring_toolbox#adaptor#vim#end_script()
+call refactoring_toolbox#adapters#vim#end_script()

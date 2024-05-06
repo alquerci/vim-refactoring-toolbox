@@ -1,6 +1,6 @@
-let s:texteditor = refactoring_toolbox#rename_directory#adaptors#texteditor#make()
+let s:texteditor = refactoring_toolbox#rename_directory#adapters#texteditor#make()
 
-call refactoring_toolbox#adaptor#vim#begin_script()
+call refactoring_toolbox#adapters#vim#begin_script()
 
 function refactoring_toolbox#rename_directory#directory_renamer#execute(
     \ input,
@@ -42,4 +42,4 @@ function s:askQuestion(question, default = '')
     return s:input.askQuestionWithProposedAnswerAndDirectoryCompletion(a:question, a:default)
 endfunction
 
-call refactoring_toolbox#adaptor#vim#end_script()
+call refactoring_toolbox#adapters#vim#end_script()

@@ -1,7 +1,7 @@
-call refactoring_toolbox#adaptor#vim#begin_script()
+call refactoring_toolbox#adapters#vim#begin_script()
 
-function refactoring_toolbox#adaptor#phpactor#make()
-    if 'spy' == get(g:, 'refactoring_toolbox_adaptor_phpactor', '')
+function refactoring_toolbox#adapters#phpactor#make()
+    if 'spy' == get(g:, 'refactoring_toolbox_adapters_phpactor', '')
         return s:spy_phpactor
     else
         return s:phpactor
@@ -41,4 +41,4 @@ function s:spy_phpactor.getDestinationPath()
     return s:spy_phpactor_last_parameters.dest_path
 endfunction
 
-call refactoring_toolbox#adaptor#vim#end_script()
+call refactoring_toolbox#adapters#vim#end_script()

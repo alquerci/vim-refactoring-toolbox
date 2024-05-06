@@ -7,5 +7,5 @@ Do:
   \<C-u>tests/fixtures/projectroot/NewDir\<Enter>
 
 Then:
-  AssertEqual 1, refactoring_toolbox#adaptor#phpactor#make().getTotalCalls()
-  call refactoring_toolbox#adaptor#phpactor#make().resetTotalCalls()
+  AssertEqual 1, refactoring_toolbox#adapters#phpactor#make().getTotalCalls()
+  call refactoring_toolbox#adapters#phpactor#make().resetTotalCalls()
