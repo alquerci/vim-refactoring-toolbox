@@ -1,0 +1,27 @@
+Given typescript:
+  const currentFunctionName = () => {
+      const someVariable
+
+      const arrowFunction = () => {
+        someVariable
+      }
+
+      someVariable
+  }
+
+Do:
+  /someVariable\<Enter>
+  ;rv
+  New\<Enter>
+  \<Enter>
+
+Expect:
+  const currentFunctionName = () => {
+      const someVariableNew
+
+      const arrowFunction = () => {
+        someVariableNew
+      }
+
+      someVariableNew
+  }

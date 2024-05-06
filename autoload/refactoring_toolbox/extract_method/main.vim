@@ -45,7 +45,7 @@ function refactoring_toolbox#extract_method#main#extractMethodForJavaScript() ra
     \ )
 endfunction
 
-function refactoring_toolbox#extract_method#main#extractMethodForTypeScript() range
+function refactoring_toolbox#extract_method#main#extractMethodForTypescript() range
     call refactoring_toolbox#usage#increment('TsExtractMethod')
 
     call refactoring_toolbox#extract_method#method_extractor#extractSelectedBlock(

@@ -18,7 +18,7 @@ function refactoring_toolbox#extract_variable#main#extractVariableForJavaScript(
     \ )
 endfunction
 
-function refactoring_toolbox#extract_variable#main#extractVariableForTypeScript() range
+function refactoring_toolbox#extract_variable#main#extractVariableForTypescript() range
     call refactoring_toolbox#usage#increment('TsExtractVariable')
 
     call refactoring_toolbox#extract_variable#variable_extractor#execute(

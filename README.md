@@ -20,6 +20,7 @@ A set of mappings which help you to refactor code in consistent way across langu
   - Extract Method
   - Extract Variable
   - Inline Variable
+  - Rename Variable
 
 
 ## Refactoring Techniques Highlights

@@ -38,6 +38,7 @@ Supported languages:
   - Extract Method
   - Extract Variable
   - Inline Variable
+  - Rename Variable
 
 ===============================================================================
 CONFIGURATION                               *refactoring-toolbox-configuration*

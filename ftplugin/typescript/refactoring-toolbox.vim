@@ -9,19 +9,25 @@ function s:registerMappings()
         call s:addBufferVisualMapping(
             \ '<LocalLeader>em',
             \ '<Plug>refactoring_toolbox_typescript_ExtractMethod',
-            \ 'refactoring_toolbox#extract_method#main#extractMethodForTypeScript()'
+            \ 'refactoring_toolbox#extract_method#main#extractMethodForTypescript()'
         \ )
 
         call s:addBufferVisualMapping(
             \ '<LocalLeader>ev',
             \ '<Plug>refactoring_toolbox_typescript_ExtractVariable',
-            \ 'refactoring_toolbox#extract_variable#main#extractVariableForTypeScript()'
+            \ 'refactoring_toolbox#extract_variable#main#extractVariableForTypescript()'
         \ )
 
         call s:addBufferNormalMapping(
             \ '<LocalLeader>iv',
             \ '<Plug>refactoring_toolbox_typescript_InlineVariable',
-            \ 'refactoring_toolbox#inline_variable#main#inlineVariableForTypeScript()'
+            \ 'refactoring_toolbox#inline_variable#main#inlineVariableForTypescript()'
+        \ )
+
+        call s:addBufferNormalMapping(
+            \ '<LocalLeader>rv',
+            \ '<Plug>refactoring_toolbox_typescript_RenameVariable',
+            \ 'refactoring_toolbox#rename_variable#main#renameVariableForTypescript()'
         \ )
     endif
 endfunction

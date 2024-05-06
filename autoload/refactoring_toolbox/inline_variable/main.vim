@@ -20,7 +20,7 @@ function refactoring_toolbox#inline_variable#main#inlineVariableForJavaScript()
     \ )
 endfunction
 
-function refactoring_toolbox#inline_variable#main#inlineVariableForTypeScript()
+function refactoring_toolbox#inline_variable#main#inlineVariableForTypescript()
     call refactoring_toolbox#usage#increment('TsInlineVariable')
 
     call refactoring_toolbox#inline_variable#variable_inliner#execute(

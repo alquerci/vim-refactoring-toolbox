@@ -1,11 +1,11 @@
 call refactoring_toolbox#adaptor#vim#begin_script()
 
-let s:php_regex_func_line = refactoring_toolbox#adaptor#regex#func_line
 let s:regex_after_word_boundary = refactoring_toolbox#adaptor#regex#after_word_boudary
 let s:regex_case_sensitive = refactoring_toolbox#adaptor#regex#case_sensitive
 let s:SEARCH_NOT_FOUND = 0
 
-function refactoring_toolbox#rename_variable#variable_renamer#execute(input, output, texteditor)
+function refactoring_toolbox#rename_variable#variable_renamer#execute(language, input, output, texteditor)
+    let s:language = a:language
     let s:input = a:input
     let s:output = a:output
     let s:texteditor = a:texteditor
@@ -23,7 +23,7 @@ function refactoring_toolbox#rename_variable#variable_renamer#execute(input, out
 endfunction
 
 function s:readNameOnCurrentPosition()
-    return substitute(expand('<cword>'), '^\$*', '', '')
+    return s:language.parseVariable(expand('<cword>'))
 endfunction
 
 function s:askForNewName(oldName)
@@ -63,28 +63,13 @@ function s:newNameAlreadyExists(newName)
 endfunction
 
 function s:makeVariablePattern(variableName)
-    return s:regex_case_sensitive.'$'.a:variableName.s:regex_after_word_boundary
+    return s:regex_case_sensitive.s:language.formatVariable(a:variableName).s:regex_after_word_boundary
 endfunction
 
 function s:searchInCurrentFunction(pattern)
-    let [l:startLine, l:stopLine] = s:findCurrentFunctionLineRange()
+    let [l:startLine, l:stopLine] = s:language.findCurrentFunctionLineRange()
 
     return s:searchInRange(a:pattern, l:startLine, l:stopLine)
-endfunction
-
-function s:findCurrentFunctionLineRange()
-    let l:backupPosition = getcurpos()
-
-    call search(s:php_regex_func_line, 'beW')
-    let l:startLine = line('.')
-
-    call search('{', 'W')
-    call searchpair('{', '', '}', 'W')
-    let l:stopLine = line('.')
-
-    call setpos('.', l:backupPosition)
-
-    return [l:startLine, l:stopLine]
 endfunction
 
 function s:searchInRange(pattern, startLine, endLine)
@@ -92,7 +77,7 @@ function s:searchInRange(pattern, startLine, endLine)
 endfunction
 
 function s:userConfirmRename(newName)
-    let l:question = '$'.a:newName.' seems to already exist in the current function scope. Rename anyway ?'
+    let l:question = s:language.formatVariable(a:newName).' seems to already exist in the current function scope. Rename anyway ?'
 
     return s:input.askConfirmation(l:question)
 endfunction
@@ -100,11 +85,11 @@ endfunction
 function s:renameVariableName(oldName, newName)
     let l:variablePattern = s:makeVariablePattern(a:oldName)
 
-    call s:replaceInCurrentFunction(l:variablePattern, '$'.a:newName)
+    call s:replaceInCurrentFunction(l:variablePattern, s:language.formatVariable(a:newName))
 endfunction
 
 function s:replaceInCurrentFunction(search, replace)
-    let [l:startLine, l:stopLine] = s:findCurrentFunctionLineRange()
+    let [l:startLine, l:stopLine] = s:language.findCurrentFunctionLineRange()
 
     call s:texteditor.replacePatternWithTextBetweenLines(a:search, a:replace, l:startLine, l:stopLine)
 endfunction

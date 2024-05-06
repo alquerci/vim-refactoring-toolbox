@@ -1,0 +1,38 @@
+Given typescript:
+  class SomeClass {
+      private firstMethodName() {
+          const someVariable
+      }
+
+      private currentMethodName() {
+          const someVariable
+          someVariable
+      }
+
+      private thirdMethodName() {
+          const someVariable
+      }
+  }
+
+Do:
+  /currentMethodName\<Enter>
+  /someVariable\<Enter>
+  ;rv
+  New\<Enter>
+  \<Enter>
+
+Expect:
+  class SomeClass {
+      private firstMethodName() {
+          const someVariable
+      }
+
+      private currentMethodName() {
+          const someVariableNew
+          someVariableNew
+      }
+
+      private thirdMethodName() {
+          const someVariable
+      }
+  }

@@ -1,0 +1,40 @@
+Given typescript:
+  function firstFunctionName()
+  {
+      const someVariable
+  }
+
+  function currentFunctionName()
+  {
+      const someVariable
+      someVariable
+  }
+
+  function thirdFunctionName()
+  {
+      const someVariable
+  }
+
+Do:
+  /currentFunctionName\<Enter>
+  /someVariable\<Enter>
+  ;rv
+  New\<Enter>
+  \<Enter>
+
+Expect:
+  function firstFunctionName()
+  {
+      const someVariable
+  }
+
+  function currentFunctionName()
+  {
+      const someVariableNew
+      someVariableNew
+  }
+
+  function thirdFunctionName()
+  {
+      const someVariable
+  }
