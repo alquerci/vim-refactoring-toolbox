@@ -1,7 +1,5 @@
 call refactoring_toolbox#adapters#vim#begin_script()
 
-let s:regex_after_word_boundary = refactoring_toolbox#adapters#regex#after_word_boudary
-let s:regex_case_sensitive = refactoring_toolbox#adapters#regex#case_sensitive
 let s:SEARCH_NOT_FOUND = 0
 
 function refactoring_toolbox#rename_variable#variable_renamer#execute(language, input, output, texteditor)
@@ -63,7 +61,7 @@ function s:newNameAlreadyExists(newName)
 endfunction
 
 function s:makeVariablePattern(variableName)
-    return s:regex_case_sensitive.s:language.formatVariable(a:variableName).s:regex_after_word_boundary
+    return s:language.makeVariablePattern(a:variableName)
 endfunction
 
 function s:searchInCurrentFunction(pattern)

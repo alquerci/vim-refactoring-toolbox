@@ -1,4 +1,6 @@
 let s:regex_func_line = refactoring_toolbox#adapters#regex#func_line
+let s:regex_after_word_boundary = refactoring_toolbox#adapters#regex#after_word_boudary
+let s:regex_case_sensitive = refactoring_toolbox#adapters#regex#case_sensitive
 
 call refactoring_toolbox#adapters#vim#begin_script()
 
@@ -14,6 +16,10 @@ endfunction
 
 function s:self.formatVariable(name)
     return '$'.a:name
+endfunction
+
+function s:self.makeVariablePattern(name)
+    return s:regex_case_sensitive.s:self.formatVariable(a:name).s:regex_after_word_boundary
 endfunction
 
 function s:self.findCurrentFunctionLineRange()

@@ -1,0 +1,18 @@
+Given javascript:
+  const currentFunctionName = () => {
+      const someVariable
+      prefixsomeVariable
+  }
+
+Do:
+  /currentFunctionName\<Enter>
+  /someVariable\<Enter>
+  ;rv
+  New\<Enter>
+  \<Enter>
+
+Expect:
+  const currentFunctionName = () => {
+      const someVariableNew
+      prefixsomeVariable
+  }

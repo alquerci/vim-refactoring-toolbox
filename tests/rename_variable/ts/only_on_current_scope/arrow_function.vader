@@ -3,7 +3,7 @@ Given typescript:
       const someVariable
   }
 
-  const currentFunctionName = () => {
+  const currentFunctionName = (): void => {
       const someVariable
       someVariable
   }
@@ -24,7 +24,7 @@ Expect:
       const someVariable
   }
 
-  const currentFunctionName = () => {
+  const currentFunctionName = (): void => {
       const someVariableNew
       someVariableNew
   }
