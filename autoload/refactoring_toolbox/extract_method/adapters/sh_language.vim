@@ -2,8 +2,8 @@ call refactoring_toolbox#adapters#vim#begin_script()
 
 let s:regex_func_line = '^\w\+\s*()$'
 let s:regex_var_name = '\w\+'
-let s:regex_before_word_boudary = refactoring_toolbox#adapters#regex#before_word_boudary
-let s:regex_after_word_boudary = refactoring_toolbox#adapters#regex#after_word_boudary
+let s:regex_before_word_boundary = refactoring_toolbox#adapters#regex#before_word_boundary
+let s:regex_after_word_boundary = refactoring_toolbox#adapters#regex#after_word_boundary
 let s:NO_MATCH = -1
 
 function refactoring_toolbox#extract_method#adapters#sh_language#make(position)
@@ -85,7 +85,7 @@ function s:makeMutateVariablePatternForName(name)
 endfunction
 
 function s:makeVariableNamePatternForName(name)
-    return s:regex_before_word_boudary.a:name.s:regex_after_word_boudary
+    return s:regex_before_word_boundary.a:name.s:regex_after_word_boundary
 endfunction
 
 function s:self.variableExistsOnCode(variable, code)

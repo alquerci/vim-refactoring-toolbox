@@ -5,7 +5,7 @@ Given php:
   {
       private function usageFunctionName()
       {
-          $this->functionToRename()
+          $this->functionToRename();
       }
 
       private function functionToRename()
@@ -25,7 +25,7 @@ Expect:
   {
       private function usageFunctionName()
       {
-          $this->functionToRenameSuffix()
+          $this->functionToRenameSuffix();
       }
 
       private function functionToRenameSuffix()

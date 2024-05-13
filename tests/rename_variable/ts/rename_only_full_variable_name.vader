@@ -1,6 +1,6 @@
 Given typescript:
   const currentFunctionName = (): void => {
-      const someVariable
+      const someVariable = null
       prefixsomeVariable
   }
 
@@ -13,6 +13,6 @@ Do:
 
 Expect:
   const currentFunctionName = (): void => {
-      const someVariableNew
+      const someVariableNew = null
       prefixsomeVariable
   }

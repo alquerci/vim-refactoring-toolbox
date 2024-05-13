@@ -5,7 +5,7 @@ Given php:
   {
       private static function usageFunctionName()
       {
-          self::functionToRename()
+          self::functionToRename();
       }
 
       private static function functionToRename()
@@ -25,7 +25,7 @@ Expect:
   {
       private static function usageFunctionName()
       {
-          self::functionToRenameSuffix()
+          self::functionToRenameSuffix();
       }
 
       private static function functionToRenameSuffix()

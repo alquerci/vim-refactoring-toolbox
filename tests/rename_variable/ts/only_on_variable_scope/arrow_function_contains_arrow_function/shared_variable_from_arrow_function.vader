@@ -1,6 +1,6 @@
 Given typescript:
   const currentFunctionName = () => {
-      const someVariable
+      const someVariable = null
 
       const arrowFunction = () => {
         someVariable
@@ -11,13 +11,14 @@ Given typescript:
 
 Do:
   /someVariable\<Enter>
+  /someVariable\<Enter>
   ;rv
   New\<Enter>
   \<Enter>
 
 Expect:
   const currentFunctionName = () => {
-      const someVariableNew
+      const someVariableNew = null
 
       const arrowFunction = () => {
         someVariableNew

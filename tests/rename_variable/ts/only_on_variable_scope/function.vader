@@ -1,18 +1,18 @@
 Given typescript:
   function firstFunctionName()
   {
-      const someVariable
+      const someVariable = null
   }
 
   function currentFunctionName()
   {
-      const someVariable
+      const someVariable = null
       someVariable
   }
 
   function thirdFunctionName()
   {
-      const someVariable
+      const someVariable = null
   }
 
 Do:
@@ -25,16 +25,16 @@ Do:
 Expect:
   function firstFunctionName()
   {
-      const someVariable
+      const someVariable = null
   }
 
   function currentFunctionName()
   {
-      const someVariableNew
+      const someVariableNew = null
       someVariableNew
   }
 
   function thirdFunctionName()
   {
-      const someVariable
+      const someVariable = null
   }

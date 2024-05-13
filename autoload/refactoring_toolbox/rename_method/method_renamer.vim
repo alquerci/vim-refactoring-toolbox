@@ -2,7 +2,7 @@ call refactoring_toolbox#adapters#vim#begin_script()
 
 let s:php_regex_class_line = refactoring_toolbox#adapters#regex#class_line
 let s:php_regex_func_line = refactoring_toolbox#adapters#regex#func_line
-let s:regex_after_word_boundary = refactoring_toolbox#adapters#regex#after_word_boudary
+let s:regex_after_word_boundary = refactoring_toolbox#adapters#regex#after_word_boundary
 let s:php_regex_before_function = '\%(\%('.s:php_regex_func_line.'\)\|$this->\|self::\)\@<='
 let s:SEARCH_NO_MATCH = 0
 

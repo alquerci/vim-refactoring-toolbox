@@ -1,4 +1,4 @@
-let s:regex_after_word_boudary = refactoring_toolbox#adapters#regex#after_word_boudary
+let s:regex_after_word_boundary = refactoring_toolbox#adapters#regex#after_word_boundary
 
 call refactoring_toolbox#adapters#vim#begin_script()
 
@@ -27,7 +27,7 @@ function s:self.parseAssignmentRightSideOfLines(lines)
 endfunction
 
 function s:self.replaceNextOccurenceOfVariableWithValue(variable, value)
-    let l:variablePattern = a:variable.s:regex_after_word_boudary
+    let l:variablePattern = a:variable.s:regex_after_word_boundary
     let [l:line, l:col] = searchpos(l:variablePattern)
 
     call s:texteditor.replacePatternWithTextBetweenLines(l:variablePattern, a:value, l:line, l:line)

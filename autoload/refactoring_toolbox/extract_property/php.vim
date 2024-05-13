@@ -2,7 +2,7 @@ call refactoring_toolbox#adapters#vim#begin_script()
 
 let s:regex_class_line = refactoring_toolbox#adapters#regex#class_line
 let s:regex_func_line = refactoring_toolbox#adapters#regex#func_line
-let s:regex_after_word_boundary = refactoring_toolbox#adapters#regex#after_word_boudary
+let s:regex_after_word_boundary = refactoring_toolbox#adapters#regex#after_word_boundary
 let s:regex_case_sensitive = refactoring_toolbox#adapters#regex#case_sensitive
 let s:regex_local_var_prefix = refactoring_toolbox#adapters#regex#local_var_prefix
 let s:NO_MATCH = -1

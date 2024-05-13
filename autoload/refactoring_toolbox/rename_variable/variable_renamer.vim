@@ -8,9 +8,13 @@ function refactoring_toolbox#rename_variable#variable_renamer#execute(language, 
     let s:output = a:output
     let s:texteditor = a:texteditor
 
+    let l:backupPosition = getcurpos()
+
     try
         let l:oldName = s:readNameOnCurrentPosition()
         let l:newName = s:askForNewName(l:oldName)
+
+        call s:moveToVariableDefinition(l:oldName)
 
         if s:canRenameVariableTo(l:newName)
             call s:renameVariableName(l:oldName, l:newName)
@@ -18,6 +22,8 @@ function refactoring_toolbox#rename_variable#variable_renamer#execute(language, 
     catch /user_cancel/
         call s:output.echoWarning('You cancelled rename variable.')
     endtry
+
+    call setpos('.', l:backupPosition)
 endfunction
 
 function s:readNameOnCurrentPosition()
@@ -55,23 +61,44 @@ function s:autoValidateRenameIsEnabled()
 endfunction
 
 function s:newNameAlreadyExists(newName)
-    let l:variablePattern = s:makeVariablePattern(a:newName)
+    let l:backupPosition = getcurpos()
 
-    return s:searchInCurrentFunction(l:variablePattern) != s:SEARCH_NOT_FOUND
+    let l:variablePattern = s:language.makeVariablePattern(a:newName)
+
+    let l:exists =  s:currentFunctionContainsPattern(l:variablePattern)
+
+    call setpos('.', l:backupPosition)
+
+    return l:exists
 endfunction
 
-function s:makeVariablePattern(variableName)
-    return s:language.makeVariablePattern(a:variableName)
+function s:moveToVariableDefinition(name)
+    if !s:containsPatternInRange(s:language.makeVariableDefinitionPattern(a:name), line('.'), line('.'))
+        let [l:startLine, l:endLine] = s:language.findCurrentFunctionDefinitionLineRange()
+
+        if s:containsPatternInRange(s:language.makeVariablePattern(a:name), l:startLine, l:endLine)
+            return
+        else
+            let [l:startLine, l:endLine] = s:language.findParentScopeLineRange()
+
+            call s:moveToPatternInRange(s:language.makeVariablePattern(a:name), l:startLine, l:endLine)
+        endif
+    endif
 endfunction
 
-function s:searchInCurrentFunction(pattern)
-    let [l:startLine, l:stopLine] = s:language.findCurrentFunctionLineRange()
-
-    return s:searchInRange(a:pattern, l:startLine, l:stopLine)
+function s:moveToPatternInRange(pattern, startLine, endLine)
+    call cursor(a:startLine, 1)
+    call search('\%>'.(a:startLine - 1).'l\%<'.(a:endLine + 1).'l'.a:pattern, 'cW')
 endfunction
 
-function s:searchInRange(pattern, startLine, endLine)
-    return search('\%>'.a:startLine.'l\%<'.a:endLine.'l'.a:pattern, 'n')
+function s:currentFunctionContainsPattern(pattern)
+    let [l:startLine, l:endLine] = s:language.findCurrentFunctionLineRange()
+
+    return s:containsPatternInRange(a:pattern, l:startLine, l:endLine)
+endfunction
+
+function s:containsPatternInRange(pattern, startLine, endLine)
+    return search('\%>'.(a:startLine - 1).'l\%<'.(a:endLine + 1).'l'.a:pattern, 'n') != s:SEARCH_NOT_FOUND
 endfunction
 
 function s:userConfirmRename(newName)
@@ -81,15 +108,20 @@ function s:userConfirmRename(newName)
 endfunction
 
 function s:renameVariableName(oldName, newName)
-    let l:variablePattern = s:makeVariablePattern(a:oldName)
+    let l:backupPosition = getcurpos()
+
+    let l:variablePattern = s:language.makeVariablePattern(a:oldName)
 
     call s:replaceInCurrentFunction(l:variablePattern, s:language.formatVariable(a:newName))
+
+    call setpos('.', l:backupPosition)
 endfunction
 
 function s:replaceInCurrentFunction(search, replace)
-    let [l:startLine, l:stopLine] = s:language.findCurrentFunctionLineRange()
+    let [l:startLine, l:endLine] = s:language.findCurrentFunctionLineRange()
 
-    call s:texteditor.replacePatternWithTextBetweenLines(a:search, a:replace, l:startLine, l:stopLine)
+
+    call s:texteditor.replacePatternWithTextBetweenLines(a:search, a:replace, l:startLine, l:endLine)
 endfunction
 
 call refactoring_toolbox#adapters#vim#end_script()

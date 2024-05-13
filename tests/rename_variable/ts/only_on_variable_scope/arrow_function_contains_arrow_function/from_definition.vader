@@ -1,11 +1,15 @@
-Given javascript:
+Given typescript:
   const currentFunctionName = () => {
       const someVariable = null
-      prefixsomeVariable
+
+      const arrowFunction = () => {
+        someVariable
+      }
+
+      someVariable
   }
 
 Do:
-  /currentFunctionName\<Enter>
   /someVariable\<Enter>
   ;rv
   New\<Enter>
@@ -14,5 +18,10 @@ Do:
 Expect:
   const currentFunctionName = () => {
       const someVariableNew = null
-      prefixsomeVariable
+
+      const arrowFunction = () => {
+        someVariableNew
+      }
+
+      someVariableNew
   }

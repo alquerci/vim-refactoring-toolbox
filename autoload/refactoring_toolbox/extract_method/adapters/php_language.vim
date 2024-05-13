@@ -5,8 +5,8 @@ let s:regex_static_func = refactoring_toolbox#adapters#regex#static_func
 let s:regex_local_var = refactoring_toolbox#adapters#regex#local_var
 let s:regex_local_var_prefix = refactoring_toolbox#adapters#regex#local_var_prefix
 let s:regex_local_var_mutate = refactoring_toolbox#adapters#regex#local_var_mutate
-let s:regex_before_word_boudary = refactoring_toolbox#adapters#regex#before_word_boudary
-let s:regex_after_word_boudary = refactoring_toolbox#adapters#regex#after_word_boudary
+let s:regex_before_word_boundary = refactoring_toolbox#adapters#regex#before_word_boundary
+let s:regex_after_word_boundary = refactoring_toolbox#adapters#regex#after_word_boundary
 let s:regex_case_sensitive = refactoring_toolbox#adapters#regex#case_sensitive
 let s:NO_MATCH = -1
 
@@ -102,7 +102,7 @@ function s:makeLocalVariableNamePatternForName(name)
 endfunction
 
 function s:makeVariableNamePatternForName(name)
-    return s:regex_before_word_boudary.a:name.s:regex_after_word_boudary
+    return s:regex_before_word_boundary.a:name.s:regex_after_word_boundary
 endfunction
 
 function s:self.codeHasReturn(code)

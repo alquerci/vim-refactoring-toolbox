@@ -1,7 +1,7 @@
 call refactoring_toolbox#adapters#vim#begin_script()
 
-let s:regex_before_word_boudary = refactoring_toolbox#adapters#regex#before_word_boudary
-let s:regex_after_word_boudary = refactoring_toolbox#adapters#regex#after_word_boudary
+let s:regex_before_word_boundary = refactoring_toolbox#adapters#regex#before_word_boundary
+let s:regex_after_word_boundary = refactoring_toolbox#adapters#regex#after_word_boundary
 
 let s:SEARCH_NOT_FOUND = 0
 
@@ -81,7 +81,7 @@ function s:searchOpenBracketThenMoveToClosingFromCurrentPosition()
 endfunction
 
 function s:self.makePatternForVariableName(name)
-    return s:regex_before_word_boudary.a:name.s:regex_after_word_boudary
+    return s:regex_before_word_boundary.a:name.s:regex_after_word_boundary
 endfunction
 
 call refactoring_toolbox#adapters#vim#end_script()

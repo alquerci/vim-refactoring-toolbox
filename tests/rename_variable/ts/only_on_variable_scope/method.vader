@@ -1,16 +1,16 @@
 Given typescript:
   class SomeClass {
       private firstMethodName() {
-          const someVariable
+          const someVariable = null
       }
 
       private currentMethodName() {
-          const someVariable
+          const someVariable = null
           someVariable
       }
 
       private thirdMethodName() {
-          const someVariable
+          const someVariable = null
       }
   }
 
@@ -24,15 +24,15 @@ Do:
 Expect:
   class SomeClass {
       private firstMethodName() {
-          const someVariable
+          const someVariable = null
       }
 
       private currentMethodName() {
-          const someVariableNew
+          const someVariableNew = null
           someVariableNew
       }
 
       private thirdMethodName() {
-          const someVariable
+          const someVariable = null
       }
   }

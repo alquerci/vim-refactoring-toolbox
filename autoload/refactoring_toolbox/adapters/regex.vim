@@ -15,10 +15,11 @@ call refactoring_toolbox#adapters#vim#begin_script()
 
 let s:before_word_boundary = '\<'
 let s:after_word_boundary = '\>'
+let s:case_sensitive = '\C'
 
-let refactoring_toolbox#adapters#regex#before_word_boudary = s:before_word_boundary
-let refactoring_toolbox#adapters#regex#after_word_boudary = s:after_word_boundary
-let refactoring_toolbox#adapters#regex#case_sensitive = '\C'
+let refactoring_toolbox#adapters#regex#before_word_boundary = s:before_word_boundary
+let refactoring_toolbox#adapters#regex#after_word_boundary = s:after_word_boundary
+let refactoring_toolbox#adapters#regex#case_sensitive = s:case_sensitive
 let refactoring_toolbox#adapters#regex#case_ignore = '\c'
 let refactoring_toolbox#adapters#regex#lookbehind_positive = '\@<='
 
@@ -52,6 +53,10 @@ let refactoring_toolbox#adapters#regex#local_var_prefix = s:local_variable_prefi
 let refactoring_toolbox#adapters#regex#local_var = s:local_variable
 let refactoring_toolbox#adapters#regex#local_var_mutate
     \ = s:local_variable.'\('.s:array_access.'\?'.'\_s*'.s:mutation_symbol.'\)\@='
+
+function refactoring_toolbox#adapters#regex#makeLocalVariableDefinition(name)
+    return s:case_sensitive.'$'.a:name.'\('.s:array_access.'\?'.'\_s*'.s:mutation_symbol.'\)\@='
+endfunction
 
 let refactoring_toolbox#adapters#regex#doc_var_type = '@var '
 
