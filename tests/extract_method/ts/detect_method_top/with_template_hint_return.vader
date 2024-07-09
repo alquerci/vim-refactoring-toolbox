@@ -1,0 +1,30 @@
+Given typescript:
+  export class SomeClass {
+      someMethod(argument): Promize<void> {
+          const someObject = {
+          }
+
+          statement
+      }
+  }
+
+Do:
+  /statement\<Enter>
+  V
+  ;em
+  extractedMethod\<Enter>
+  \<Enter>
+
+Expect:
+  export class SomeClass {
+      someMethod(argument): Promize<void> {
+          const someObject = {
+          }
+
+          this.extractedMethod()
+      }
+
+      private extractedMethod() {
+          statement
+      }
+  }
