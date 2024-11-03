@@ -2,10 +2,10 @@ Given php:
   <?php
 
 Before:
-  call refactoring_toolbox#rename_directory#directory_renamer#setTextEditor(
-    \ refactoring_toolbox#rename_directory#adapters#spy_texteditor#make()
+  call refactoring_toolbox#rename_directory#adapters#texteditor_factory#setTextEditor(
+    \ refactoring_toolbox#rename_directory#adapters#stub_texteditor#make()
   \ )
-  call refactoring_toolbox#rename_directory#adapters#spy_texteditor#make().setCurrentDirectory('tests/fixtures/projectroot/SomeDir')
+  call refactoring_toolbox#rename_directory#adapters#stub_texteditor#make().setCurrentFileDirectory('tests/fixtures/projectroot/SomeDir')
 
 Do:
   ;rd

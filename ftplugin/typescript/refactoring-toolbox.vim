@@ -29,6 +29,12 @@ function s:registerMappings()
             \ '<Plug>refactoring_toolbox_typescript_RenameVariable',
             \ 'refactoring_toolbox#rename_variable#main#renameVariableForTypescript()'
         \ )
+
+        call s:addBufferNormalMapping(
+            \ '<LocalLeader>nc',
+            \ '<Plug>refactoring_toolbox_ts_NewClass',
+            \ 'refactoring_toolbox#new_class#main#executeForTypescript()'
+        \ )
     endif
 endfunction
 

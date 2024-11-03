@@ -1,0 +1,17 @@
+Given typescript:
+  AnotherClass
+
+Before:
+  call refactoring_toolbox#new_class#adapters#filesystem_factory#setFilesystem(
+    \ refactoring_toolbox#new_class#adapters#spy_filesystem#make()
+  \ )
+  call refactoring_toolbox#new_class#adapters#texteditor_factory#setTexteditor(
+    \ refactoring_toolbox#new_class#adapters#stub_texteditor#makeWithCurrentFileDirectory('some/current')
+  \ )
+
+Do:
+  /AnotherClass\<Enter>
+  ;nc
+
+Then:
+  AssertEqual ['export class AnotherClass {', '}'], refactoring_toolbox#new_class#adapters#spy_filesystem#get().writtenLinesOnFilepath('some/current/AnotherClass.ts')

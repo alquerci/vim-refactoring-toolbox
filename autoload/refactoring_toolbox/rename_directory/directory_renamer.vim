@@ -1,15 +1,15 @@
-let s:texteditor = refactoring_toolbox#rename_directory#adapters#texteditor#make()
-
 call refactoring_toolbox#adapters#vim#begin_script()
 
 function refactoring_toolbox#rename_directory#directory_renamer#execute(
     \ input,
     \ phpactor,
+    \ texteditor,
 \ )
     let s:phpactor = a:phpactor
     let s:input = a:input
+    let s:texteditor = a:texteditor
 
-    let l:oldDirectory = s:askQuestion("Old directory?", s:texteditor.getCurrentDirectory())
+    let l:oldDirectory = s:askQuestion("Old directory?", s:texteditor.getCurrentFileDirectory())
     let l:newDirectory = s:askQuestion("New directory?", l:oldDirectory)
 
     let l:files = s:searchPhpFilesInDirectory(l:oldDirectory)
@@ -20,10 +20,6 @@ function refactoring_toolbox#rename_directory#directory_renamer#execute(
 
         call s:movePhpFile(l:oldPath, l:newPath)
     endfor
-endfunction
-
-function refactoring_toolbox#rename_directory#directory_renamer#setTextEditor(texteditor)
-    let s:texteditor = a:texteditor
 endfunction
 
 function s:searchPhpFilesInDirectory(directory)
