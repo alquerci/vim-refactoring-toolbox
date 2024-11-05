@@ -16,6 +16,7 @@ function refactoring_toolbox#new_class#main#executeForTypescript()
         \ refactoring_toolbox#new_class#adapters#filesystem_factory#make(),
         \ refactoring_toolbox#new_class#adapters#texteditor_factory#make(),
         \ refactoring_toolbox#new_class#adapters#ts_language#make(),
+        \ refactoring_toolbox#adapters#output#make(),
     \ )
 endfunction
 

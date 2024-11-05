@@ -1,0 +1,21 @@
+Before:
+  call mkdir(g:test_tmpdir, 'p')
+
+After:
+  call delete(g:test_tmpdir, 'rf')
+
+Execute (filepathExists(not_exists_file) == v:false):
+  Assert ! refactoring_toolbox#new_class#adapters#vim_filesystem#make().filepathExists(g:test_tmpdir.'/not_existing')
+
+Execute (filepathExists(file) == v:true):
+  call writefile([], g:test_tmpdir.'/file')
+  Assert refactoring_toolbox#new_class#adapters#vim_filesystem#make().filepathExists(g:test_tmpdir.'/file')
+
+Execute (filepathExists(directory) == v:true):
+  Assert refactoring_toolbox#new_class#adapters#vim_filesystem#make().filepathExists(g:test_tmpdir)
+
+Execute (filepathExists(symlink) == v:true):
+  call writefile([], g:test_tmpdir.'/file')
+  call system('ln -sr '.shellescape(g:test_tmpdir.'/file').' '.shellescape(g:test_tmpdir.'/symlink'))
+
+  Assert refactoring_toolbox#new_class#adapters#vim_filesystem#make().filepathExists(g:test_tmpdir.'/symlink')

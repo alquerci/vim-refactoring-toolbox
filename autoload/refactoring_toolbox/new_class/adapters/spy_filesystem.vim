@@ -20,10 +20,15 @@ let s:constructed = v:false
 function s:constuct()
     let s:self.writtenFiles = []
     let s:self.writtenLines = []
+    let s:self.filesystemList = []
 
     let s:constructed = v:true
 
     return s:self
+endfunction
+
+function s:self.filepathExists(filepath)
+    return s:LIST_ITEM_NOT_FOUND != index(s:self.filesystemList, a:filepath)
 endfunction
 
 function s:self.writeFileWithLines(filepath, lines)
@@ -37,6 +42,10 @@ endfunction
 
 function s:self.writtenLinesOnFilepath(filepath)
     return s:self.writtenLines[s:findFileIndex(a:filepath)]
+endfunction
+
+function s:self.setFilesystemList(list)
+    let s:self.filesystemList = a:list
 endfunction
 
 function s:findFileIndex(filepath)

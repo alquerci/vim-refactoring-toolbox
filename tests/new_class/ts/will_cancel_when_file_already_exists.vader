@@ -1,0 +1,18 @@
+Given typescript:
+  NewClass
+
+Before:
+  call refactoring_toolbox#new_class#adapters#texteditor_factory#setTexteditor(
+    \ refactoring_toolbox#new_class#adapters#stub_texteditor#makeWithCurrentFileDirectory('some/current')
+  \ )
+  call refactoring_toolbox#new_class#adapters#filesystem_factory#setFilesystem(
+    \ refactoring_toolbox#new_class#adapters#spy_filesystem#make()
+  \ )
+  call refactoring_toolbox#new_class#adapters#spy_filesystem#get().setFilesystemList(['some/current/NewClass.ts'])
+
+Do:
+  /NewClass\<Enter>
+  ;nc
+
+Then:
+  AssertEqual [], refactoring_toolbox#new_class#adapters#spy_filesystem#get().writtenFiles

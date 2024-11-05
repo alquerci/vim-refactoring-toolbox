@@ -1,16 +1,21 @@
 call refactoring_toolbox#adapters#vim#begin_script()
 
-function refactoring_toolbox#new_class#class_maker#execute(filesystem, texteditor, language)
+function refactoring_toolbox#new_class#class_maker#execute(filesystem, texteditor, language, output)
     let s:filesystem = a:filesystem
     let s:texteditor = a:texteditor
     let s:language = a:language
+    let s:output = a:output
 
     let l:newClassName = s:texteditor.getWordOnCursor()
     let l:newFilepath = s:getFilePathOfNewClassNamed(l:newClassName, s:language.getFileExtension())
 
-    call s:filesystem.writeFileWithLines(l:newFilepath, s:language.makeClassFileLines(l:newClassName))
+    if s:filesystem.filepathExists(l:newFilepath)
+        call s:output.echoWarning('Going to create new class "'.l:newClassName.'" on file "'.l:newFilepath.'" but that file already exists.')
+    else
+        call s:filesystem.writeFileWithLines(l:newFilepath, s:language.makeClassFileLines(l:newClassName))
 
-    call s:texteditor.openFileAside(l:newFilepath)
+        call s:texteditor.openFileAside(l:newFilepath)
+    endif
 endfunction
 
 function s:getFilePathOfNewClassNamed(className, extension)

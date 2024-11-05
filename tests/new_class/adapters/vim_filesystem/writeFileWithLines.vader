@@ -1,9 +1,9 @@
 Before:
   call mkdir(g:test_tmpdir, 'p')
 
+After:
+  call delete(g:test_tmpdir, 'rf')
+
 Execute:
   call refactoring_toolbox#new_class#adapters#vim_filesystem#make().writeFileWithLines(g:test_tmpdir.'/new_class.ext', ['some line'])
-
-Then:
   AssertEqual ['some line'], readfile(g:test_tmpdir.'/new_class.ext')
-  call delete(g:test_tmpdir, 'rf')
