@@ -44,4 +44,15 @@ function refactoring_toolbox#rename_variable#main#renameVariableForTypescript()
     \ )
 endfunction
 
+function refactoring_toolbox#rename_variable#main#renameVariableForVim()
+    call refactoring_toolbox#usage#increment('VimRenameVariable')
+
+    call refactoring_toolbox#rename_variable#variable_renamer#execute(
+        \ refactoring_toolbox#rename_variable#adapters#vim_language#make(),
+        \ refactoring_toolbox#adapters#input#make(),
+        \ refactoring_toolbox#adapters#output#make(),
+        \ refactoring_toolbox#adapters#vim_texteditor#make(),
+    \ )
+endfunction
+
 call refactoring_toolbox#adapters#vim#end_script()

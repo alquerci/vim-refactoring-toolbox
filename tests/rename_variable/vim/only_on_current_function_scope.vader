@@ -1,0 +1,34 @@
+Given vim:
+  function firstFunctionName()
+      let l:someVariable = v:null
+  endfunction
+
+  function currentFunctionName()
+      let l:someVariable = v:null
+      l:someVariable
+  endfunction
+
+  function thirdFunctionName()
+      let l:someVariable = v:null
+  endfunction
+
+Do:
+  /currentFunctionName\<Enter>
+  /someVariable\<Enter>
+  ;rv
+  New\<Enter>
+  \<Enter>
+
+Expect:
+  function firstFunctionName()
+      let l:someVariable = v:null
+  endfunction
+
+  function currentFunctionName()
+      let l:someVariableNew = v:null
+      l:someVariableNew
+  endfunction
+
+  function thirdFunctionName()
+      let l:someVariable = v:null
+  endfunction

@@ -11,6 +11,12 @@ function s:registerMappings()
             \ '<Plug>refactoring_toolbox_vim_ExtractVariable',
             \ 'refactoring_toolbox#extract_variable#main#extractVariableForVim()'
         \ )
+
+        call s:addBufferNormalMapping(
+            \ '<LocalLeader>rv',
+            \ '<Plug>refactoring_toolbox_vim_RenameVariable',
+            \ 'refactoring_toolbox#rename_variable#main#renameVariableForVim()'
+        \ )
     endif
 endfunction
 
