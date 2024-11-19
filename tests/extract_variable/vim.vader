@@ -1,0 +1,21 @@
+Given vim:
+
+  function s:someFunction()
+
+      return 42
+  endfunction
+
+Do:
+  /42\<Enter>
+  viw
+  ;ev
+  someVariable\<Enter>
+
+Expect:
+
+  function s:someFunction()
+
+      let l:someVariable = 42
+
+      return l:someVariable
+  endfunction

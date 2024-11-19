@@ -27,4 +27,13 @@ function refactoring_toolbox#extract_variable#main#extractVariableForTypescript(
     \ )
 endfunction
 
+function refactoring_toolbox#extract_variable#main#extractVariableForVim() range
+    call refactoring_toolbox#usage#increment('VimExtractVariable')
+
+    call refactoring_toolbox#extract_variable#variable_extractor#execute(
+        \ refactoring_toolbox#adapters#input#make(),
+        \ refactoring_toolbox#extract_variable#adapters#vim_language#make(),
+    \ )
+endfunction
+
 call refactoring_toolbox#adapters#vim#end_script()
