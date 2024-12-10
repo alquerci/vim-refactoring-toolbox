@@ -91,6 +91,7 @@ endfunction
 function s:currentLineEndsWithCommaOrFunctionCallOrBracket()
     return s:currentLineEndsWith(',')
         \ || s:currentLineEndsWith(')')
+        \ || s:currentLineEndsWith('(')
         \ || s:currentLineEndsWith('[')
         \ || s:currentLineEndsWith(']')
 endfunction
