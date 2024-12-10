@@ -17,4 +17,10 @@ function s:self.replacePatternWithTextBetweenLines(searchPattern, replaceWithTex
     call setpos('.', l:backupPosition)
 endfunction
 
+function s:self.replaceStringWithTextBetweenLines(searchString, replaceWithText, startLine, endLine)
+    let l:searchPattern = '\V'.escape(a:searchString, '\')
+
+    call s:self.replacePatternWithTextBetweenLines(l:searchPattern, a:replaceWithText, a:startLine, a:endLine)
+endfunction
+
 call refactoring_toolbox#adapters#vim#end_script()

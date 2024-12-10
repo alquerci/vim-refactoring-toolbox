@@ -45,7 +45,7 @@ endfunction
 function s:replaceInCurrentClass(search, replace) " {{{
     let [l:startLine, l:stopLine] = s:findCurrentClassLineRange()
 
-    call s:texteditor.replacePatternWithTextBetweenLines(a:search, a:replace, l:startLine, l:stopLine)
+    call s:texteditor.replaceStringWithTextBetweenLines(a:search, a:replace, l:startLine, l:stopLine)
 endfunction
 
 function s:findCurrentClassLineRange()
