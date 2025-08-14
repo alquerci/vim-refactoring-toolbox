@@ -1,0 +1,19 @@
+Given php:
+  <?php
+
+  'some constant value';
+  'some constant value';
+
+Do:
+  /some constant\<Enter>
+  hvt;
+  ;ec
+  NEW_CONSTANT_NAME\<Enter>
+
+Expect:
+  <?php
+
+  const NEW_CONSTANT_NAME = 'some constant value';
+
+  self::NEW_CONSTANT_NAME;
+  self::NEW_CONSTANT_NAME;

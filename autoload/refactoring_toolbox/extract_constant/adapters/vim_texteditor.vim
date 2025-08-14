@@ -19,4 +19,38 @@ function s:self.isInVisualLineMode()
     return visualmode() == 'V'
 endfunction
 
+function s:self.appendText(text)
+    call append(line('.'), '')
+    call cursor(line('.') + 1, 0)
+
+    call s:writeText(a:text)
+endfunction
+
+function s:self.moveToLine(line)
+    call cursor(a:line, 0)
+endfunction
+
+function s:writeText(text)
+    if 1 == &l:paste
+        let l:backuppaste = 'paste'
+    else
+        let l:backuppaste = 'nopaste'
+    endif
+    setlocal paste
+
+    exec 'normal! i' . a:text
+
+    exec 'setlocal '.l:backuppaste
+endfunction
+
+function s:self.autoIndentLinesFromLine(totalLines, firstLine)
+    let l:backupPosition = getcurpos()
+
+    call cursor(a:firstLine, 0)
+
+    execute 'normal ='.a:totalLines.'='
+
+    call setpos('.', l:backupPosition)
+endfunction
+
 call refactoring_toolbox#adapters#vim#end_script()

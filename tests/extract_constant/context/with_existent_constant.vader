@@ -1,0 +1,34 @@
+Given php:
+  <?php
+
+  class SomeClass
+  {
+      const SOME_CONSTANT_NAME = 'constant value';
+
+      public function someMethod()
+      {
+          'some constant value'
+              .'suffix string';
+      }
+  }
+
+Do:
+  /some constant\<Enter>
+  hvjt;
+  ;ec
+  new_constant_name\<Enter>
+
+Expect:
+  <?php
+
+  class SomeClass
+  {
+      const SOME_CONSTANT_NAME = 'constant value';
+      const NEW_CONSTANT_NAME = 'some constant value'
+          .'suffix string';
+
+      public function someMethod()
+      {
+          self::NEW_CONSTANT_NAME;
+      }
+  }

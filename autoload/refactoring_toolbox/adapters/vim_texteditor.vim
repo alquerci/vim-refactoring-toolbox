@@ -10,6 +10,7 @@ function s:self.replacePatternWithTextBetweenLines(searchPattern, replaceWithTex
     let l:backupPosition = getcurpos()
 
     let l:searchPattern = escape(a:searchPattern, '/')
+
     let l:replaceWithText = escape(a:replaceWithText, '/')
 
     execute a:startLine . ',' . a:endLine . ':s/' . l:searchPattern . '/'. l:replaceWithText .'/ge'
@@ -19,6 +20,7 @@ endfunction
 
 function s:self.replaceStringWithTextBetweenLines(searchString, replaceWithText, startLine, endLine)
     let l:searchPattern = '\V'.escape(a:searchString, '\')
+    let l:searchPattern = substitute(l:searchPattern, '\n', '\\n', 'g')
 
     call s:self.replacePatternWithTextBetweenLines(l:searchPattern, a:replaceWithText, a:startLine, a:endLine)
 endfunction
