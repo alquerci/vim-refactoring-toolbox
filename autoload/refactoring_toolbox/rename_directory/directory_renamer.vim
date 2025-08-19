@@ -6,12 +6,12 @@ function refactoring_toolbox#rename_directory#directory_renamer#execute(
     \ phpactor,
     \ texteditor,
 \ )
-    try
-        let s:phpactor = a:phpactor
-        let s:input = a:input
-        let s:output = a:output
-        let s:texteditor = a:texteditor
+    let s:phpactor = a:phpactor
+    let s:input = a:input
+    let s:output = a:output
+    let s:texteditor = a:texteditor
 
+    try
         let [l:oldDirectory, l:newDirectory] = s:askForOldAndNewDirectory()
 
         call s:renameDirectoryWithNewName(l:oldDirectory, l:newDirectory)

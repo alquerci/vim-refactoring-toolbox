@@ -28,7 +28,7 @@ function refactoring_toolbox#extract_variable#variable_extractor#execute(input, 
         " go to start on selection
         call setpos('.', l:backupPosition)
     catch /user_cancel/
-        call s:output.echoWarning('You cancelled extract constant.')
+        call s:output.echoWarning('You cancelled extract variable.')
     endtry
 endfunction
 
