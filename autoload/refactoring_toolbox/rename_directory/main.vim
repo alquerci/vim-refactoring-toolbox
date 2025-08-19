@@ -5,6 +5,7 @@ function refactoring_toolbox#rename_directory#main#execute()
 
     call refactoring_toolbox#rename_directory#directory_renamer#execute(
         \ refactoring_toolbox#adapters#input#make(),
+        \ refactoring_toolbox#adapters#output#make(),
         \ refactoring_toolbox#adapters#phpactor#make(),
         \ refactoring_toolbox#rename_directory#adapters#texteditor_factory#make(),
     \ )

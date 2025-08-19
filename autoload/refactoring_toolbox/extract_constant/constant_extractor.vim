@@ -4,8 +4,9 @@ let s:SEARCH_NOT_FOUND = 0
 
 call refactoring_toolbox#adapters#vim#begin_script()
 
-function refactoring_toolbox#extract_constant#constant_extractor#execute(input, texteditor)
+function refactoring_toolbox#extract_constant#constant_extractor#execute(input, output, texteditor)
     let s:input = a:input
+    let s:output = a:output
     let s:texteditor = a:texteditor
 
     try
@@ -21,7 +22,7 @@ function refactoring_toolbox#extract_constant#constant_extractor#execute(input, 
 
         normal! `r
     catch /user_cancel/
-        return
+        call s:output.echoWarning('You cancelled extract constant.')
     catch /unexpected_mode/
         call s:echoError('Extract constant doesn''t works in Visual line or Visual Block mode. Use Visual mode.')
     endtry

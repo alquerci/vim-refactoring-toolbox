@@ -1,7 +1,8 @@
 call refactoring_toolbox#adapters#vim#begin_script()
 
-function refactoring_toolbox#extract_variable#variable_extractor#execute(input, language)
+function refactoring_toolbox#extract_variable#variable_extractor#execute(input, output, language)
     let s:input = a:input
+    let s:output = a:output
     let s:language = a:language
 
     try
@@ -27,7 +28,7 @@ function refactoring_toolbox#extract_variable#variable_extractor#execute(input, 
         " go to start on selection
         call setpos('.', l:backupPosition)
     catch /user_cancel/
-        return
+        call s:output.echoWarning('You cancelled extract constant.')
     endtry
 endfunction
 

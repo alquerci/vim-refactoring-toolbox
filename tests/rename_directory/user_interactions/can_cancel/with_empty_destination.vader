@@ -4,8 +4,8 @@ Given php:
 Do:
   ;rd
   \<C-u>tests/fixtures/projectroot/OldDir\<Enter>
-  \<Backspace>\<Enter>
+  \<C-u>\<Enter>
 
 Then:
-  AssertEqual 'tests/fixtures/projectroot/OldDi/ClassName.php', refactoring_toolbox#adapters#phpactor#make().getDestinationPath()
+  AssertEqual 0, refactoring_toolbox#adapters#phpactor#make().getTotalCalls()
   call refactoring_toolbox#adapters#phpactor#make().resetTotalCalls()
