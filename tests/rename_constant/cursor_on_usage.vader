@@ -1,0 +1,32 @@
+Given php:
+  <?php
+
+  class AClassName
+  {
+      const A_CONSTANT_NAME = '';
+
+      public function aFunctionName()
+      {
+          self::A_CONSTANT_NAME;
+      }
+  }
+
+Do:
+  /A_CONSTANT_NAME\<Enter>
+  n
+  ;rc
+  _NEW\<Enter>
+  \<Enter>
+
+Expect:
+  <?php
+
+  class AClassName
+  {
+      const A_CONSTANT_NAME_NEW = '';
+
+      public function aFunctionName()
+      {
+          self::A_CONSTANT_NAME_NEW;
+      }
+  }

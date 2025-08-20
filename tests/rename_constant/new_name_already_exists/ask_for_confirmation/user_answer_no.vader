@@ -1,0 +1,23 @@
+Given php:
+  <?php
+
+  class AClassName
+  {
+      const A_CONSTANT_NAME = '';
+      const A_CONSTANT_NAME_NEW = '';
+  }
+
+Do:
+  /A_CONSTANT_NAME\<Enter>
+  ;rc
+  _NEW\<Enter>
+  1\<Enter>
+
+Expect:
+  <?php
+
+  class AClassName
+  {
+      const A_CONSTANT_NAME = '';
+      const A_CONSTANT_NAME_NEW = '';
+  }

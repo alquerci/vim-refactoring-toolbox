@@ -5,7 +5,7 @@ function refactoring_toolbox#extract_property#main#execute()
     call refactoring_toolbox#usage#increment('PhpExtractProperty')
 
     call refactoring_toolbox#extract_property#php#execute(
-        \ refactoring_toolbox#adapters#vim_texteditor#make(),
+        \ refactoring_toolbox#adapters#vim_texteditor#construct(),
     \ )
 endfunction
 

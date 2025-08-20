@@ -67,6 +67,12 @@ function s:registerMappings()
         \ )
 
         call s:addBufferNormalMapping(
+            \ '<LocalLeader>rc',
+            \ '<Plug>refactoring_toolbox_php_RenameConstant',
+            \ 'refactoring_toolbox#rename_constant#main#renameConstantForPhp()'
+        \ )
+
+        call s:addBufferNormalMapping(
             \ '<LocalLeader>rcv',
             \ '<Plug>refactoring_toolbox_php_RenameClassVariable',
             \ 'refactoring_toolbox#rename_property#main#renameClassVariable()'

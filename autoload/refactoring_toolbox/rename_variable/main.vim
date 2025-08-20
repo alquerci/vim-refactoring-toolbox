@@ -7,7 +7,7 @@ function refactoring_toolbox#rename_variable#main#execute()
         \ refactoring_toolbox#rename_variable#adapters#php_language#make(),
         \ refactoring_toolbox#adapters#input#make(),
         \ refactoring_toolbox#adapters#output#make(),
-        \ refactoring_toolbox#adapters#vim_texteditor#make(),
+        \ refactoring_toolbox#adapters#vim_texteditor#construct(),
     \ )
 endfunction
 
@@ -18,7 +18,7 @@ function refactoring_toolbox#rename_variable#main#renameLocalVariable()
         \ refactoring_toolbox#rename_variable#adapters#php_language#make(),
         \ refactoring_toolbox#adapters#input#make(),
         \ refactoring_toolbox#adapters#output#make(),
-        \ refactoring_toolbox#adapters#vim_texteditor#make(),
+        \ refactoring_toolbox#adapters#vim_texteditor#construct(),
     \ )
 endfunction
 
@@ -29,7 +29,7 @@ function refactoring_toolbox#rename_variable#main#renameVariableForJavascript()
         \ refactoring_toolbox#rename_variable#adapters#js_language#make(),
         \ refactoring_toolbox#adapters#input#make(),
         \ refactoring_toolbox#adapters#output#make(),
-        \ refactoring_toolbox#adapters#vim_texteditor#make(),
+        \ refactoring_toolbox#adapters#vim_texteditor#construct(),
     \ )
 endfunction
 
@@ -40,7 +40,7 @@ function refactoring_toolbox#rename_variable#main#renameVariableForTypescript()
         \ refactoring_toolbox#rename_variable#adapters#ts_language#make(),
         \ refactoring_toolbox#adapters#input#make(),
         \ refactoring_toolbox#adapters#output#make(),
-        \ refactoring_toolbox#adapters#vim_texteditor#make(),
+        \ refactoring_toolbox#adapters#vim_texteditor#construct(),
     \ )
 endfunction
 
@@ -51,7 +51,7 @@ function refactoring_toolbox#rename_variable#main#renameVariableForVim()
         \ refactoring_toolbox#rename_variable#adapters#vim_language#make(),
         \ refactoring_toolbox#adapters#input#make(),
         \ refactoring_toolbox#adapters#output#make(),
-        \ refactoring_toolbox#adapters#vim_texteditor#make(),
+        \ refactoring_toolbox#adapters#vim_texteditor#construct(),
     \ )
 endfunction
 

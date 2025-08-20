@@ -43,12 +43,15 @@ let refactoring_toolbox#adapters#regex#func_line = '^\s*\%(\%(private\|protected
 let refactoring_toolbox#adapters#regex#static_func = 'static\s\+'.s:modifier_visibility.'\?\s*\(function\)\@='
 
 let s:visibility_or_scope_property_modifiers = '\%(\%('.s:modifier_visibility.'\|'.s:modifier_scope.'\)\s\+\)\{1,2}'
-let s:member = '\s*\%('.s:visibility_or_scope_property_modifiers.'\%('.s:type_declaration.'\s\+\)\?\)\$'
-let refactoring_toolbox#adapters#regex#member_line = '^'.s:member
+let s:member_declaration  = '\s*\%('.s:visibility_or_scope_property_modifiers.'\%('.s:type_declaration.'\s\+\)\?\)\$'
+let refactoring_toolbox#adapters#regex#member_line = '^'.s:member_declaration
 
-let refactoring_toolbox#adapters#regex#member_declaration_or_usage = '\%('.s:member.'\|$this->\)'
+let refactoring_toolbox#adapters#regex#member_declaration_or_usage = '\%('.s:member_declaration.'\|$this->\)'
 
-let refactoring_toolbox#adapters#regex#const_line = '^\s*const\s\+[^;]\+;'
+let s:constant_declaration = '\s*\%(const\s\+\)'
+let refactoring_toolbox#adapters#regex#constant_declaration_or_usage = '\%('.s:constant_declaration.'\|self::\)'
+
+let refactoring_toolbox#adapters#regex#const_line = '^'.s:constant_declaration.'[^;]\+;'
 let refactoring_toolbox#adapters#regex#local_var_prefix = s:local_variable_prefix
 let refactoring_toolbox#adapters#regex#local_var = s:local_variable
 let refactoring_toolbox#adapters#regex#local_var_mutate

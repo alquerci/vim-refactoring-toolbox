@@ -41,6 +41,7 @@ To help boy-scout to clean the code.
 * Rename Method (`<LocalLeader>rm`)
 * Rename Variable (`<LocalLeader>rv`)
 * Extract Constant (`<LocalLeader>ec`)
+* Rename Constant (`<LocalLeader>rc`)
 * Rename Property (`<LocalLeader>rp`)
 
 ### To quickly change code location.

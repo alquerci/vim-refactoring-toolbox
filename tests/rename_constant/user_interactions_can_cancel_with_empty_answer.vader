@@ -1,0 +1,30 @@
+Given php:
+  <?php
+
+  class AClassName
+  {
+      const A_CONSTANT_NAME = '';
+
+      public function aFunctionName()
+      {
+          self::A_CONSTANT_NAME;
+      }
+  }
+
+Do:
+  /A_CONSTANT_NAME\<Enter>
+  ;rc
+  \<c-u>\<Enter>
+
+Expect:
+  <?php
+
+  class AClassName
+  {
+      const A_CONSTANT_NAME = '';
+
+      public function aFunctionName()
+      {
+          self::A_CONSTANT_NAME;
+      }
+  }

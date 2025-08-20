@@ -2,7 +2,7 @@ call refactoring_toolbox#adapters#vim#begin_script()
 
 let s:SEARCH_NOT_FOUND = 0
 
-function refactoring_toolbox#rename_method#method_renamer#execute(input, output, texteditor, language)
+function refactoring_toolbox#rename_constant#constant_renamer#execute(input, output, texteditor, language)
     let s:input = a:input
     let s:output = a:output
     let s:texteditor = a:texteditor
@@ -12,18 +12,20 @@ function refactoring_toolbox#rename_method#method_renamer#execute(input, output,
         let l:oldName = s:readNameOnCurrentPosition()
         let l:newName = s:askForNewName(l:oldName)
 
-        if s:canRenameMethodTo(l:newName)
-            call s:renameMethodNameWithNewName(l:oldName, l:newName)
+        let l:newName = s:language.formatConstant(l:newName)
+
+        if s:canRenameConstantTo(l:newName)
+            call s:renameConstantNameWithNewName(l:oldName, l:newName)
         endif
     catch /user_cancel/
-        call s:output.echoWarning('You cancelled rename method.')
+        call s:output.echoWarning('You cancelled rename constant.')
     endtry
 endfunction
 
 function s:readNameOnCurrentPosition()
     let l:word = s:texteditor.getWordOnCursor()
 
-    return s:language.parseMethod(l:word)
+    return s:language.parseConstant(l:word)
 endfunction
 
 function s:askForNewName(oldName)
@@ -36,7 +38,7 @@ function s:askForNewName(oldName)
     return l:answer
 endfunction
 
-function s:canRenameMethodTo(newName)
+function s:canRenameConstantTo(newName)
     if s:shouldAskUserToValidateRename()
         try
             call s:askForConfirmationWhenNewNameAlreadyExists(a:newName)
@@ -54,7 +56,7 @@ endfunction
 
 function s:askForConfirmationWhenNewNameAlreadyExists(newName)
     if s:newNameAlreadyExists(a:newName)
-        if s:input.askConfirmation('Method named '.a:newName.'() seems to already exist in the current class. Rename anyway ?')
+        if s:input.askConfirmation('Constant named '.a:newName.' seems to already exist in the current class. Rename anyway ?')
             return
         endif
 
@@ -63,9 +65,9 @@ function s:askForConfirmationWhenNewNameAlreadyExists(newName)
 endfunction
 
 function s:newNameAlreadyExists(newName)
-    let l:methodPattern = s:language.makeMethodPattern(a:newName)
+    let l:constantPattern = s:language.makeConstantPattern(a:newName)
 
-    return s:patternMatchesInCurrentClass(l:methodPattern)
+    return s:patternMatchesInCurrentClass(l:constantPattern)
 endfunction
 
 function s:patternMatchesInCurrentClass(pattern)
@@ -74,10 +76,10 @@ function s:patternMatchesInCurrentClass(pattern)
     return s:texteditor.patternMatchesBetweenLines(a:pattern, l:startLine, l:stopLine)
 endfunction
 
-function s:renameMethodNameWithNewName(oldName, newName)
-    let l:methodPattern = s:language.makeMethodPattern(a:oldName)
+function s:renameConstantNameWithNewName(oldName, newName)
+    let l:constantPattern = s:language.makeConstantPattern(a:oldName)
 
-    call s:replaceInCurrentClass(l:methodPattern, a:newName)
+    call s:replaceInCurrentClass(l:constantPattern, a:newName)
 endfunction
 
 function s:replaceInCurrentClass(search, replace)
