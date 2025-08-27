@@ -1,0 +1,13 @@
+Given typescript:
+
+  const variable = `some_item`
+
+  variable
+
+Do:
+  /variable\<Enter>
+  ;iv
+
+Expect:
+
+  `some_item`

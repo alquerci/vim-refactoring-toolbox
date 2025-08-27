@@ -28,11 +28,19 @@ function s:removeExpressionOnCurrentPosition()
     let l:startLine = s:getCurrentLine()
     let l:endLine = s:language.findEndExpressionLineFromCurrentPosition()
 
+    if s:linesAroundLineRangeAreBothEmpty(l:startLine, l:endLine)
+        let l:endLine += 1
+    endif
+
     call deletebufline(s:CURRENT_BUFFER, l:startLine, l:endLine)
 endfunction
 
 function s:getCurrentLine()
     return line('.')
+endfunction
+
+function s:linesAroundLineRangeAreBothEmpty(startLine, endLine)
+    return '' == getline(a:startLine - 1) && '' == getline(a:endLine + 1)
 endfunction
 
 call refactoring_toolbox#adapters#vim#end_script()

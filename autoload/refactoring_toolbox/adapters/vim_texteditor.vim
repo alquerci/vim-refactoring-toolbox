@@ -18,7 +18,7 @@ function refactoring_toolbox#adapters#vim_texteditor#construct()
 
         let l:searchPattern = escape(a:searchPattern, '/')
 
-        let l:replaceWithText = escape(a:replaceWithText, '/')
+        let l:replaceWithText = escape(a:replaceWithText, '/\')
 
         execute a:startLine . ',' . a:endLine . ':s/' . l:searchPattern . '/'. l:replaceWithText .'/ge'
 
