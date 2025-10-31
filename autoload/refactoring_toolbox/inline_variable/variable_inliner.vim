@@ -8,9 +8,11 @@ function refactoring_toolbox#inline_variable#variable_inliner#execute(language)
     let l:variable = s:readVariableOnCurrentPosition()
     let l:rightSideExpression = s:readAssignmentRightSideOnCurrentPosition()
 
-    call s:removeExpressionOnCurrentPosition()
+    if s:language.hasNextOccurenceOfVariable(l:variable)
+        call s:removeExpressionOnCurrentPosition()
 
-    call s:language.replaceNextOccurenceOfVariableWithValue(l:variable, l:rightSideExpression)
+        call s:language.replaceNextOccurenceOfVariableWithValue(l:variable, l:rightSideExpression)
+    endif
 endfunction
 
 function s:readVariableOnCurrentPosition()
@@ -33,6 +35,8 @@ function s:removeExpressionOnCurrentPosition()
     endif
 
     call deletebufline(s:CURRENT_BUFFER, l:startLine, l:endLine)
+
+    call s:moveToStartOfLine()
 endfunction
 
 function s:getCurrentLine()
@@ -41,6 +45,10 @@ endfunction
 
 function s:linesAroundLineRangeAreBothEmpty(startLine, endLine)
     return '' == getline(a:startLine - 1) && '' == getline(a:endLine + 1)
+endfunction
+
+function s:moveToStartOfLine()
+    call cursor(0, 1)
 endfunction
 
 call refactoring_toolbox#adapters#vim#end_script()

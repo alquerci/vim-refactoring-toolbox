@@ -105,4 +105,10 @@ function s:self.replaceNextOccurenceOfVariableWithValue(variable, value)
     call s:texteditor.replacePatternWithTextBetweenLines(l:variablePattern, a:value, l:line, l:line)
 endfunction
 
+function s:self.hasNextOccurenceOfVariable(variable)
+    let l:variablePattern = a:variable.s:regex_after_word_boundary
+
+    return 0 != search(l:variablePattern, 'nW')
+endfunction
+
 call refactoring_toolbox#adapters#vim#end_script()

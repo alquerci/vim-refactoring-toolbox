@@ -1,0 +1,29 @@
+Given php:
+  <?php
+
+  function action()
+  {
+      $aVariable = $variableValue;
+  }
+
+  function secondAction()
+  {
+      $aVariable;
+  }
+
+Do:
+  /aVariable\<Enter>
+  ;iv
+
+Expect:
+  <?php
+
+  function action()
+  {
+      $aVariable = $variableValue;
+  }
+
+  function secondAction()
+  {
+      $aVariable;
+  }

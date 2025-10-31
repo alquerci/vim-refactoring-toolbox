@@ -1,0 +1,16 @@
+Given javascript:
+  const someFunction = () => {
+      aVariable
+      const aVariable = null
+  }
+
+Do:
+  /aVariable\<Enter>
+  n
+  ;iv
+
+Expect:
+  const someFunction = () => {
+      aVariable
+      const aVariable = null
+  }
