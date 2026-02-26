@@ -89,6 +89,12 @@ function s:registerMappings()
             \ '<Plug>refactoring_toolbox_php_OnlyGetters',
             \ 'refactoring_toolbox#create_getter_and_setter#main#createOnlyGetters()'
         \ )
+
+        call s:addBufferNormalMapping(
+            \ '<LocalLeader>sa',
+            \ '<Plug>refactoring_toolbox_php_SwapArgument',
+            \ 'refactoring_toolbox#swap_argument#main#swapArgumentForPhp()'
+        \ )
     endif
 endfunction
 

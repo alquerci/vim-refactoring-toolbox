@@ -1,0 +1,13 @@
+Given php:
+  <?php
+
+  ($first, $second, $third)
+
+Do:
+  /first\<Enter>
+  ;sa
+
+Expect:
+  <?php
+
+  ($second, $first, $third)

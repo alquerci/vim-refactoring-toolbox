@@ -1,0 +1,13 @@
+Given php:
+  <?php
+
+  someFunctionName($second, $first)
+
+Do:
+  /second\<Enter>
+  ;sa
+
+Expect:
+  <?php
+
+  someFunctionName($first, $second)
