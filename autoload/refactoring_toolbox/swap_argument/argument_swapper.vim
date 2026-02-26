@@ -3,6 +3,7 @@ call refactoring_toolbox#adapters#vim#begin_script()
 let s:SEPARATOR = ', '
 let s:DELIMITER_START = '('
 let s:DELIMITER_END = ')'
+let s:NOT_MATCHED = -1
 
 function refactoring_toolbox#swap_argument#argument_swapper#construct(texteditor)
     let public = #{}
@@ -51,7 +52,10 @@ function refactoring_toolbox#swap_argument#argument_swapper#construct(texteditor
     endfunction
 
     function private.argumentNameMatchArgumentCode(name, code) closure
-        return '$' . a:name == a:code
+        let l:equalPosition = match(a:code, '=')
+        let l:namePattern = '$' . a:name . '\>'
+
+        return s:NOT_MATCHED != match(a:code[: l:equalPosition], l:namePattern)
     endfunction
 
     function private.swapArgumentIndexForArguments(index, arguments) closure
@@ -76,10 +80,14 @@ function refactoring_toolbox#swap_argument#argument_swapper#construct(texteditor
     endfunction
 
     function private.writeArguments(arguments) closure
+        let l:backupPosition = getcurpos()
+
         let l:swap = join(a:arguments, s:SEPARATOR)
 
         execute 'normal di'.s:DELIMITER_START
         execute 'normal i'.l:swap
+
+        call setpos('.', l:backupPosition)
     endfunction
 
     return public

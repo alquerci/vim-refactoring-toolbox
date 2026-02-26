@@ -1,0 +1,14 @@
+Given php:
+  <?php
+
+  ($firstAnother = '$first', $first, $third)
+
+Do:
+  /first\<Enter>
+  n
+  ;sa
+
+Expect:
+  <?php
+
+  ($firstAnother = '$first', $third, $first)

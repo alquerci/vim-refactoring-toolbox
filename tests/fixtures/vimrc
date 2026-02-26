@@ -99,3 +99,6 @@ endfunction
 function AssertCursorOnLine(line)
     AssertEqual getcurpos()[1], a:line, 'cursor is on line '.a:line.', but got '.getcurpos()[1]
 endfunction
+function AssertCursorOnColumn(column)
+    AssertEqual getcurpos()[2], a:column, 'cursor is on column '.a:column.', but got '.getcurpos()[2]
+endfunction
