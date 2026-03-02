@@ -85,7 +85,7 @@ function refactoring_toolbox#swap_argument#argument_swapper#construct(texteditor
         let l:swap = join(a:arguments, s:SEPARATOR)
 
         execute 'normal di'.s:DELIMITER_START
-        execute 'normal i'.l:swap
+        call private.texteditor.writeText(l:swap)
 
         call setpos('.', l:backupPosition)
     endfunction

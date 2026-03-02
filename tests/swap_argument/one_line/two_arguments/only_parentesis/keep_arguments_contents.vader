@@ -1,0 +1,14 @@
+Given php:
+  <?php
+
+  ($first, $second)
+
+Do:
+  :inoremap <buffer> f fff<Esc>i\<Enter>
+  /first\<Enter>
+  ;sa
+
+Expect:
+  <?php
+
+  ($second, $first)

@@ -8,7 +8,7 @@ function refactoring_toolbox#extract_method#main#extractMethodForPhp() range
         \ refactoring_toolbox#extract_method#adapters#php_language#make(
             \ refactoring_toolbox#extract_method#adapters#vim_position#make()
         \ ),
-        \ refactoring_toolbox#extract_method#adapters#vim_texteditor#make(
+        \ refactoring_toolbox#extract_method#adapters#vim_texteditor#construct(
             \ refactoring_toolbox#extract_method#adapters#vim_position#make()
         \ ),
         \ refactoring_toolbox#extract_method#adapters#output#make()
@@ -23,7 +23,7 @@ function refactoring_toolbox#extract_method#main#extractMethodForSh() range
         \ refactoring_toolbox#extract_method#adapters#sh_language#make(
             \ refactoring_toolbox#extract_method#adapters#vim_position#make()
         \ ),
-        \ refactoring_toolbox#extract_method#adapters#vim_texteditor#make(
+        \ refactoring_toolbox#extract_method#adapters#vim_texteditor#construct(
             \ refactoring_toolbox#extract_method#adapters#vim_position#make()
         \ ),
         \ refactoring_toolbox#extract_method#adapters#output#make()
@@ -38,7 +38,7 @@ function refactoring_toolbox#extract_method#main#extractMethodForJavascript() ra
         \ refactoring_toolbox#extract_method#adapters#js_language#make(
             \ refactoring_toolbox#extract_method#adapters#vim_position#make()
         \ ),
-        \ refactoring_toolbox#extract_method#adapters#vim_texteditor#make(
+        \ refactoring_toolbox#extract_method#adapters#vim_texteditor#construct(
             \ refactoring_toolbox#extract_method#adapters#vim_position#make()
         \ ),
         \ refactoring_toolbox#extract_method#adapters#output#make()
@@ -53,7 +53,7 @@ function refactoring_toolbox#extract_method#main#extractMethodForTypescript() ra
         \ refactoring_toolbox#extract_method#adapters#ts_language#make(
             \ refactoring_toolbox#extract_method#adapters#vim_position#make()
         \ ),
-        \ refactoring_toolbox#extract_method#adapters#vim_texteditor#make(
+        \ refactoring_toolbox#extract_method#adapters#vim_texteditor#construct(
             \ refactoring_toolbox#extract_method#adapters#vim_position#make()
         \ ),
         \ refactoring_toolbox#extract_method#adapters#output#make()

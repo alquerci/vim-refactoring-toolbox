@@ -1,153 +1,146 @@
 call refactoring_toolbox#adapters#vim#begin_script()
 
-function refactoring_toolbox#extract_method#adapters#vim_texteditor#make(position)
-    let s:position = a:position
+function refactoring_toolbox#extract_method#adapters#vim_texteditor#construct(position)
+    let public = #{}
+    let private = #{
+        \ position: a:position,
+        \ parent: refactoring_toolbox#adapters#vim_texteditor#construct(),
+    \ }
 
-    return s:self
-endfunction
+    function public.deleteSelectedText() closure
+        normal! gvs
+    endfunction
 
-let s:self = #{}
+    function public.isInVisualBlockMode() closure
+        return visualmode() == ''
+    endfunction
 
-function s:self.deleteSelectedText()
-    normal! gvs
-endfunction
+    function public.isInVisualMode() closure
+        return visualmode() == 'v'
+    endfunction
 
-function s:self.isInVisualBlockMode()
-    return visualmode() == ''
-endfunction
+    function public.getStartPositionOfSelection() closure
+        return private.position.getStartPositionOfSelection()
+    endfunction
 
-function s:self.isInVisualMode()
-    return visualmode() == 'v'
-endfunction
+    function public.getEndPositionOfSelection() closure
+        return private.position.getEndPositionOfSelection()
+    endfunction
 
-function s:self.getStartPositionOfSelection()
-    return s:position.getStartPositionOfSelection()
-endfunction
+    function public.getLinesBetweenLineAndPosition(line, position) closure
+        let l:start = private.position.makePositionBasedOnPositionWithLineAndColumn(
+            \ a:position,
+            \ a:line,
+            \ 1,
+        \ )
 
-function s:self.getEndPositionOfSelection()
-    return s:position.getEndPositionOfSelection()
-endfunction
+        return public.getLinesBetweenCursorPositions(l:start, a:position)
+    endfunction
 
-function s:self.getLinesBetweenLineAndPosition(line, position)
-    let l:start = s:position.makePositionBasedOnPositionWithLineAndColumn(
-        \ a:position,
-        \ a:line,
-        \ 1,
-    \ )
+    function public.getLinesBetweenPositionAndLine(position, line) closure
+        let l:end = private.position.makePositionBasedOnPositionWithLineAndColumn(
+            \ a:position,
+            \ a:line,
+            \ len(getline(a:line)),
+        \ )
 
-    return s:self.getLinesBetweenCursorPositions(l:start, a:position)
-endfunction
-
-function s:self.getLinesBetweenPositionAndLine(position, line)
-    let l:end = s:position.makePositionBasedOnPositionWithLineAndColumn(
-        \ a:position,
-        \ a:line,
-        \ len(getline(a:line)),
-    \ )
-
-    return s:self.getLinesBetweenCursorPositions(a:position, l:end)
-endfunction
+        return public.getLinesBetweenCursorPositions(a:position, l:end)
+    endfunction
 
 
-function s:self.getLinesBetweenCursorPositions(start, end)
-    let l:startLine = s:position.getLineOfPosition(a:start)
-    let l:endLine = s:position.getLineOfPosition(a:end)
+    function public.getLinesBetweenCursorPositions(start, end) closure
+        let l:startLine = private.position.getLineOfPosition(a:start)
+        let l:endLine = private.position.getLineOfPosition(a:end)
 
-    let l:selectionLines = getline(l:startLine, l:endLine)
+        let l:selectionLines = getline(l:startLine, l:endLine)
 
-    let l:startColumn = s:position.getColumnOfPosition(a:start)
-    let l:endColumn = s:position.getColumnOfPosition(a:end)
+        let l:startColumn = private.position.getColumnOfPosition(a:start)
+        let l:endColumn = private.position.getColumnOfPosition(a:end)
 
-    let l:totalLines = len(l:selectionLines)
+        let l:totalLines = len(l:selectionLines)
 
-    if 0 == l:totalLines
-        return []
-    endif
+        if 0 == l:totalLines
+            return []
+        endif
 
-    let l:lastLineIndex = l:totalLines - 1
-    let l:lastLine = l:selectionLines[l:lastLineIndex]
-    let l:lastLineLength = len(l:lastLine)
+        let l:lastLineIndex = l:totalLines - 1
+        let l:lastLine = l:selectionLines[l:lastLineIndex]
+        let l:lastLineLength = len(l:lastLine)
 
-    let l:endColumnIndex = l:endColumn - l:lastLineLength - 1
-    let l:selectionLines[l:lastLineIndex] = l:lastLine[: l:endColumnIndex]
+        let l:endColumnIndex = l:endColumn - l:lastLineLength - 1
+        let l:selectionLines[l:lastLineIndex] = l:lastLine[: l:endColumnIndex]
 
-    let l:startColumnIndex = l:startColumn - 1
-    let l:selectionLines[0] = l:selectionLines[0][l:startColumnIndex :]
+        let l:startColumnIndex = l:startColumn - 1
+        let l:selectionLines[0] = l:selectionLines[0][l:startColumnIndex :]
 
-    return l:selectionLines
-endfunction
+        return l:selectionLines
+    endfunction
 
-function s:self.moveToPosition(position)
-    call s:position.moveToPosition(a:position)
-endfunction
+    function public.moveToPosition(position) closure
+        call private.position.moveToPosition(a:position)
+    endfunction
 
-function s:self.backToPreviousPosition()
-    call s:position.backToPreviousPosition()
-endfunction
+    function public.backToPreviousPosition() closure
+        call private.position.backToPreviousPosition()
+    endfunction
 
-function s:self.getIndentForLevel(level)
-    if 0 == a:level
-        return ''
-    endif
+    function public.getIndentForLevel(level) closure
+        if 0 == a:level
+            return ''
+        endif
 
-    let l:baseIndent = s:detectIntentation()
+        let l:baseIndent = private.detectIntentation()
 
-    return repeat(l:baseIndent, a:level)
-endfunction
+        return repeat(l:baseIndent, a:level)
+    endfunction
 
-function s:detectIntentation()
-    if &expandtab
-        return repeat(' ', shiftwidth())
-    else
-        return "\t"
-    fi
-endfunction
+    function private.detectIntentation() closure
+        if &expandtab
+            return repeat(' ', shiftwidth())
+        else
+            return "\t"
+        fi
+    endfunction
 
-function s:self.writeLine(text)
-    call append(s:position.getCurrentLine(), a:text)
+    function public.writeLine(text) closure
+        call append(private.position.getCurrentLine(), a:text)
 
-    call s:forwardOneLine()
-endfunction
+        call private.forwardOneLine()
+    endfunction
 
-function s:forwardOneLine()
-    call s:moveToLine(s:position.getCurrentLine() + 1)
-endfunction
+    function private.forwardOneLine() closure
+        call private.moveToLine(private.position.getCurrentLine() + 1)
+    endfunction
 
-function s:moveToLine(line)
-    call cursor(a:line, 0)
-endfunction
+    function private.moveToLine(line) closure
+        call cursor(a:line, 0)
+    endfunction
 
-function s:self.writeText(text)
-    if 1 == &l:paste
-        let l:backuppaste = 'paste'
-    else
-        let l:backuppaste = 'nopaste'
-    endif
-    setlocal paste
+    function public.writeText(text) closure
+        call private.parent.writeText(a:text)
+    endfunction
 
-    exec 'normal! i' . a:text
+    function public.getIndentationLevelOfLine(line) closure
+        let l:lineIndentation = private.getLineIndentation(a:line)
 
-    exec 'setlocal '.l:backuppaste
-endfunction
+        return private.determineIndentationLevelForIndentation(l:lineIndentation)
+    endfunction
 
-function s:self.getIndentationLevelOfLine(line)
-    let l:lineIndentation = s:getLineIndentation(a:line)
+    function private.determineIndentationLevelForIndentation(indentation) closure
+        return float2nr(ceil(len(a:indentation) / len(private.detectIntentation())))
+    endfunction
 
-    return s:determineIndentationLevelForIndentation(l:lineIndentation)
-endfunction
+    function private.getLineIndentation(line) closure
+        let l:text = getline(a:line)
 
-function s:determineIndentationLevelForIndentation(indentation)
-    return float2nr(ceil(len(a:indentation) / len(s:detectIntentation())))
-endfunction
+        return private.getBaseIndentOfText(l:text)
+    endfunction
 
-function s:getLineIndentation(line)
-    let l:text = getline(a:line)
+    function private.getBaseIndentOfText(text) closure
+        return substitute(a:text, '\S.*', '', '')
+    endfunction
 
-    return s:getBaseIndentOfText(l:text)
-endfunction
-
-function s:getBaseIndentOfText(text)
-    return substitute(a:text, '\S.*', '', '')
+    return public
 endfunction
 
 call refactoring_toolbox#adapters#vim#end_script()

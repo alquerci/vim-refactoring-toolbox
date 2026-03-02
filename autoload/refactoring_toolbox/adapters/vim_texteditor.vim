@@ -33,6 +33,19 @@ function refactoring_toolbox#adapters#vim_texteditor#construct()
         return expand('<cword>')
     endfunction
 
+    function public.writeText(text) closure
+        if 1 == &l:paste
+            let l:backuppaste = 'paste'
+        else
+            let l:backuppaste = 'nopaste'
+        endif
+        setlocal paste
+
+        exec 'normal! i' . a:text
+
+        exec 'setlocal '.l:backuppaste
+    endfunction
+
     return public
 endfunction
 
