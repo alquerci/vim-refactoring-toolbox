@@ -1,6 +1,6 @@
 call refactoring_toolbox#adapters#vim#begin_script()
 
-let s:SEPARATOR = ', '
+let s:SEPARATOR = ','
 let s:DELIMITER_START = '('
 let s:DELIMITER_END = ')'
 let s:NOT_MATCHED = -1
@@ -21,27 +21,70 @@ function refactoring_toolbox#swap_argument#argument_swapper#construct(texteditor
     endfunction
 
     function private.readArguments() closure
-        let l:rawArguments = private.readRawArguments()
+        let l:backupPosition = getcurpos()
 
-        return split(l:rawArguments, s:SEPARATOR)
+        let l:arguments = []
+
+        let l:start = searchpairpos(s:DELIMITER_START, '', s:DELIMITER_END, 'zcWb')
+        let l:end = searchpairpos(s:DELIMITER_START, s:SEPARATOR, s:DELIMITER_END, 'zW')
+
+        while 0 != l:end[0] && 0 != l:end[1]
+            let l:lines = private.getLinesBetweenLineColumnPairsExclude(l:start, l:end)
+            call add(l:arguments, join(l:lines, ''))
+
+            let l:start = l:end
+            let l:start[1] += 1
+            let l:end = searchpairpos(s:DELIMITER_START, s:SEPARATOR, s:DELIMITER_END, 'zW')
+        endwhile
+
+        call setpos('.', l:backupPosition)
+
+        return l:arguments
     endfunction
 
-    function private.readRawArguments() closure
-        let l:line = getline('.')
+    function private.getLinesBetweenLineColumnPairsExclude(start, end) closure
+        let l:start = a:start
+        let l:end = a:end
+        let l:start[1] = a:start[1] + 1
+        let l:end[1] = a:end[1] - 1
 
-        let l:startPosition = match(l:line, s:DELIMITER_START) + 1
-        let l:endPosition = match(l:line, s:DELIMITER_END) - 1
+        return private.getLinesBetweenLineColumnPairs(l:start, l:end)
+    endfunction
 
-        return l:line[l:startPosition : l:endPosition]
+    function private.getLinesBetweenLineColumnPairs(start, end) closure
+        let l:startLine = a:start[0]
+        let l:endLine = a:end[0]
+        let l:startColumn = a:start[1]
+        let l:endColumn = a:end[1]
+
+        let l:selectionLines = getline(l:startLine, l:endLine)
+
+        let l:totalLines = len(l:selectionLines)
+
+        if 0 == l:totalLines
+            return []
+        endif
+
+        let l:lastLineIndex = l:totalLines - 1
+        let l:lastLine = l:selectionLines[l:lastLineIndex]
+        let l:lastLineLength = len(l:lastLine)
+
+        let l:endColumnIndex = l:endColumn - l:lastLineLength - 1
+        let l:selectionLines[l:lastLineIndex] = l:lastLine[: l:endColumnIndex]
+
+        let l:startColumnIndex = l:startColumn - 1
+        let l:selectionLines[0] = l:selectionLines[0][l:startColumnIndex :]
+
+        return l:selectionLines
     endfunction
 
     function private.findArgumentIndex(arguments) closure
-        let l:word = private.texteditor.getWordOnCursor()
+        let l:selectedArgument = private.readArgumentOnCursor()
 
         let l:index = 0
 
         for l:argument in a:arguments
-            if private.argumentNameMatchArgumentCode(l:word, l:argument)
+            if l:selectedArgument == l:argument
                 return l:index
             endif
 
@@ -51,11 +94,13 @@ function refactoring_toolbox#swap_argument#argument_swapper#construct(texteditor
         return -1
     endfunction
 
-    function private.argumentNameMatchArgumentCode(name, code) closure
-        let l:equalPosition = match(a:code, '=')
-        let l:namePattern = '$' . a:name . '\>'
+    function private.readArgumentOnCursor() closure
+        let l:start = searchpairpos(s:DELIMITER_START, s:SEPARATOR, s:DELIMITER_END, 'zncWb')
+        let l:end = searchpairpos(s:DELIMITER_START, s:SEPARATOR, s:DELIMITER_END, 'zncW')
 
-        return s:NOT_MATCHED != match(a:code[: l:equalPosition], l:namePattern)
+        let l:lines = private.getLinesBetweenLineColumnPairsExclude(l:start, l:end)
+
+        return join(l:lines, '')
     endfunction
 
     function private.swapArgumentIndexForArguments(index, arguments) closure
@@ -82,7 +127,8 @@ function refactoring_toolbox#swap_argument#argument_swapper#construct(texteditor
     function private.writeArguments(arguments) closure
         let l:backupPosition = getcurpos()
 
-        let l:swap = join(a:arguments, s:SEPARATOR)
+        let l:arguments = map(a:arguments, {_, arg -> trim(arg, ' ')})
+        let l:swap = join(l:arguments, s:SEPARATOR . ' ')
 
         execute 'normal di'.s:DELIMITER_START
         call private.texteditor.writeText(l:swap)

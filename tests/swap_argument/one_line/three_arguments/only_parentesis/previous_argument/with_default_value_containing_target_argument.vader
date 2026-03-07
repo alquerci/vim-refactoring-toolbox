@@ -5,7 +5,7 @@ Given php:
 
 Do:
   /first\<Enter>
-  n
+  nn
   ;sa
 
 Expect:

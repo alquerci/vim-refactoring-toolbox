@@ -52,10 +52,19 @@ function refactoring_toolbox#extract_method#adapters#vim_texteditor#construct(po
         let l:startLine = private.position.getLineOfPosition(a:start)
         let l:endLine = private.position.getLineOfPosition(a:end)
 
-        let l:selectionLines = getline(l:startLine, l:endLine)
-
         let l:startColumn = private.position.getColumnOfPosition(a:start)
         let l:endColumn = private.position.getColumnOfPosition(a:end)
+
+        return private.getLinesBetweenLineColumnPairs([l:startLine, l:startColumn], [l:endLine, l:endColumn])
+    endfunction
+
+    function private.getLinesBetweenLineColumnPairs(start, end) closure
+        let l:startLine = a:start[0]
+        let l:endLine = a:end[0]
+        let l:startColumn = a:start[1]
+        let l:endColumn = a:end[1]
+
+        let l:selectionLines = getline(l:startLine, l:endLine)
 
         let l:totalLines = len(l:selectionLines)
 
