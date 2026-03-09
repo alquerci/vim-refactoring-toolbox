@@ -37,6 +37,10 @@ function refactoring_toolbox#swap_argument#argument_swapper#construct(texteditor
             let l:end = searchpairpos(s:DELIMITER_START, s:SEPARATOR, s:DELIMITER_END, 'zW')
         endwhile
 
+        if "" == trim(l:arguments[-1], ' ')
+            call remove(l:arguments, -1)
+        endif
+
         call setpos('.', l:backupPosition)
 
         return l:arguments
