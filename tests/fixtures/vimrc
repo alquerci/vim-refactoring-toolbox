@@ -38,10 +38,14 @@ function TestResetConfiguration()
 endfunction
 
 function TestDebug(name, value)
+    let l:backupPosition = getcurpos()
+
     call append(line('.'), '')
     call cursor(line('.') + 1, 0)
 
     execute 'normal! i'.a:name.'='.json_encode(a:value)
+
+    call setpos('.', l:backupPosition)
 endfunction
 
 function TestLoadFileTypeInIsolation(type)

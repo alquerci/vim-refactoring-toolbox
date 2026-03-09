@@ -106,7 +106,7 @@ function refactoring_toolbox#swap_argument#argument_swapper#construct(texteditor
     function private.swapArgumentIndexForArguments(index, arguments) closure
         let l:target = private.determineTargetArgumentIndex(a:arguments, a:index)
 
-        call private.swapListIndexFroSourceToTarget(a:arguments, a:index, l:target)
+        call private.swapListIndexFromSourceToTarget(a:arguments, a:index, l:target)
     endfunction
 
     function private.determineTargetArgumentIndex(arguments, index) closure
@@ -117,7 +117,7 @@ function refactoring_toolbox#swap_argument#argument_swapper#construct(texteditor
         endif
     endfunction
 
-    function private.swapListIndexFroSourceToTarget(items, source, target) closure
+    function private.swapListIndexFromSourceToTarget(items, source, target) closure
         let l:argument = a:items[a:target]
 
         let a:items[a:target] = a:items[a:source]
