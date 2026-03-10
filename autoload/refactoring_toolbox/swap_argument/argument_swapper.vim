@@ -28,12 +28,15 @@ function refactoring_toolbox#swap_argument#argument_swapper#construct(texteditor
         let l:start = searchpairpos(s:DELIMITER_START, '', s:DELIMITER_END, 'zcWb')
         let l:end = searchpairpos(s:DELIMITER_START, s:SEPARATOR, s:DELIMITER_END, 'zW')
 
-        while 0 != l:end[0] && 0 != l:end[1]
+        while 0 != l:end[1]
             let l:lines = private.getLinesBetweenLineColumnPairsExclude(l:start, l:end)
             call add(l:arguments, join(l:lines, ''))
 
+            if private.lineColumnIsOnEndDelimiter(l:end[0], l:end[1])
+                break
+            endif
+
             let l:start = l:end
-            let l:start[1] += 1
             let l:end = searchpairpos(s:DELIMITER_START, s:SEPARATOR, s:DELIMITER_END, 'zW')
         endwhile
 
@@ -46,9 +49,13 @@ function refactoring_toolbox#swap_argument#argument_swapper#construct(texteditor
         return l:arguments
     endfunction
 
+    function private.lineColumnIsOnEndDelimiter(line, column) closure
+        return s:DELIMITER_END == getline(a:line)[a:column - 1]
+    endfunction
+
     function private.getLinesBetweenLineColumnPairsExclude(start, end) closure
-        let l:start = a:start
-        let l:end = a:end
+        let l:start = copy(a:start)
+        let l:end = copy(a:end)
         let l:start[1] = a:start[1] + 1
         let l:end[1] = a:end[1] - 1
 
