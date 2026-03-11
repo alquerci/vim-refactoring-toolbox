@@ -141,10 +141,17 @@ function refactoring_toolbox#swap_argument#argument_swapper#construct(texteditor
         let l:arguments = map(a:arguments, {_, arg -> trim(arg, ' ')})
         let l:swap = join(l:arguments, s:SEPARATOR . ' ')
 
-        execute 'normal di'.s:DELIMITER_START
+        call private.clearArguments()
+
         call private.texteditor.writeText(l:swap)
 
         call setpos('.', l:backupPosition)
+    endfunction
+
+    function private.clearArguments() closure
+        execute 'normal ca'.s:DELIMITER_START
+
+        call private.texteditor.writeText(s:DELIMITER_START.s:DELIMITER_END)
     endfunction
 
     return public
