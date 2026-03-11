@@ -6,7 +6,9 @@ let s:DELIMITER_END = ')'
 
 function refactoring_toolbox#multi_line#multiliner#construct()
     let public = #{}
-    let private = #{}
+    let private = #{
+        \ lastDelimiterIsEnding: v:false,
+    \ }
 
     function public.execute() closure
         call private.moveToFirstCharacter()
@@ -25,16 +27,16 @@ function refactoring_toolbox#multi_line#multiliner#construct()
     endfunction
 
     function private.searchFirstPosition() closure
-        let l:start = searchpairpos(s:DELIMITER_START, '', s:DELIMITER_END, 'nzcWb')
+        let l:position = searchpairpos(s:DELIMITER_START, '', s:DELIMITER_END, 'nzcWb')
 
         return [
-            \ l:start[0],
-            \ l:start[1] + 1,
+            \ l:position[0],
+            \ l:position[1] + 1,
         \ ]
     endfunction
 
     function private.cursorIsNotOnEndDelimiter() closure
-        return !private.lineColumnIsOnEndDelimiter(line('.'), col('.'))
+        return !private.lastDelimiterIsEnding
     endfunction
 
     function private.moveToNextPosition() closure
@@ -44,12 +46,14 @@ function refactoring_toolbox#multi_line#multiliner#construct()
     endfunction
 
     function private.searchNextPosition() closure
-        let l:start = searchpairpos(s:DELIMITER_START, s:SEPARATOR, s:DELIMITER_END, 'nzcW')
+        let l:position = searchpairpos(s:DELIMITER_START, s:SEPARATOR, s:DELIMITER_END, 'nzcW')
 
-        if private.lineColumnIsOnEndDelimiter(l:start[0], l:start[1])
-            return l:start
+        let private.lastDelimiterIsEnding = private.lineColumnIsOnEndDelimiter(l:position[0], l:position[1])
+
+        if private.lastDelimiterIsEnding
+            return l:position
         else
-            return [l:start[0], l:start[1] + 1]
+            return [l:position[0], l:position[1] + 1]
         endif
     endfunction
 
