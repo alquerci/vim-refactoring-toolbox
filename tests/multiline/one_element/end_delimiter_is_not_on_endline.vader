@@ -1,0 +1,17 @@
+Given php:
+  <?php
+
+  someFunction ($first) {
+  }
+
+Do:
+  /first\<Enter>
+  ;ml
+
+Expect:
+  <?php
+
+  someFunction (
+  $first
+  ) {
+  }

@@ -95,6 +95,12 @@ function s:registerMappings()
             \ '<Plug>refactoring_toolbox_php_SwapArgument',
             \ 'refactoring_toolbox#swap_argument#main#swapArgumentForPhp()'
         \ )
+
+        call s:addBufferNormalMapping(
+            \ '<LocalLeader>ml',
+            \ '<Plug>refactoring_toolbox_php_MultiLine',
+            \ 'refactoring_toolbox#multi_line#main#multiLineForPhp()'
+        \ )
     endif
 endfunction
 

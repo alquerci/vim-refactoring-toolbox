@@ -1,0 +1,18 @@
+Given php:
+  <?php
+
+  ($first, $second, $third, $four)
+
+Do:
+  /$first\<Enter>
+  ;ml
+
+Expect:
+  <?php
+
+  (
+  $first,
+   $second,
+   $third,
+   $four
+  )

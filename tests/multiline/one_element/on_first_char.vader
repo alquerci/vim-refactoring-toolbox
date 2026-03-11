@@ -1,0 +1,15 @@
+Given php:
+  <?php
+
+  ($first)
+
+Do:
+  /$first\<Enter>
+  ;ml
+
+Expect:
+  <?php
+
+  (
+  $first
+  )
