@@ -143,7 +143,7 @@ function refactoring_toolbox#swap_argument#argument_swapper#construct(texteditor
 
         call private.clearArguments()
 
-        call private.texteditor.writeText(l:swap)
+        call private.texteditor.insertText(l:swap)
 
         call setpos('.', l:backupPosition)
     endfunction
@@ -151,7 +151,7 @@ function refactoring_toolbox#swap_argument#argument_swapper#construct(texteditor
     function private.clearArguments() closure
         execute 'normal ca'.s:DELIMITER_START
 
-        call private.texteditor.writeText(s:DELIMITER_START.s:DELIMITER_END)
+        call private.texteditor.appendText(s:DELIMITER_START.s:DELIMITER_END)
     endfunction
 
     return public

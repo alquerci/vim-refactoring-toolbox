@@ -119,7 +119,7 @@ function s:insertMethodCall(definition, codeToExtract, position)
 
     let l:statement = s:makeMethodCallStatement(a:definition, a:codeToExtract)
 
-    call s:texteditor.writeText(l:statement)
+    call s:texteditor.insertText(l:statement)
 
     call s:texteditor.backToPreviousPosition()
 endfunction
@@ -330,7 +330,7 @@ function s:insertMethod(definition, body)
     call s:writeLinesWithIndent(l:headerLines, l:indent)
 
     call s:texteditor.writeLine('')
-    call s:texteditor.writeText(a:body)
+    call s:texteditor.insertText(a:body)
 
     let l:footerLines = s:language.makeMethodFooterLines(a:definition)
     call s:writeLinesWithIndent(l:footerLines, l:indent)

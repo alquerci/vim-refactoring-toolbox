@@ -1,9 +1,10 @@
 call refactoring_toolbox#adapters#vim#begin_script()
 
-function refactoring_toolbox#extract_variable#variable_extractor#execute(input, output, language)
+function refactoring_toolbox#extract_variable#variable_extractor#execute(input, output, language, texteditor)
     let s:input = a:input
     let s:output = a:output
     let s:language = a:language
+    let s:texteditor = a:texteditor
 
     try
         if visualmode() != 'v'
@@ -45,20 +46,7 @@ function s:cutCodeToExtractAndMoveToInsertPosition()
 endfunction
 
 function s:insertVariable(name)
-    call s:writeText(s:language.makeVariableUsage(a:name))
-endfunction
-
-function s:writeText(text)
-    if 1 == &l:paste
-        let l:backuppaste = 'paste'
-    else
-        let l:backuppaste = 'nopaste'
-    endif
-    setlocal paste
-
-    exec 'normal! a' . a:text
-
-    exec 'setlocal '.l:backuppaste
+    call s:texteditor.appendText(s:language.makeVariableUsage(a:name))
 endfunction
 
 function s:writeDefinition(name, value)
@@ -69,7 +57,7 @@ function s:writeDefinition(name, value)
 
     let l:indent = s:getIndentOfNextNonBlankLine()
 
-    call s:writeText(l:indent.s:language.makeAssignation(a:name, a:value))
+    call s:texteditor.appendText(l:indent.s:language.makeAssignation(a:name, a:value))
 
     call s:writeEmptyNewLine()
 endfunction

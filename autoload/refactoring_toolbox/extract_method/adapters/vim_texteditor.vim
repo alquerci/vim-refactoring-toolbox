@@ -1,10 +1,10 @@
 call refactoring_toolbox#adapters#vim#begin_script()
 
 function refactoring_toolbox#extract_method#adapters#vim_texteditor#construct(position)
+    let parent = refactoring_toolbox#adapters#vim_texteditor#construct()
     let public = #{}
     let private = #{
         \ position: a:position,
-        \ parent: refactoring_toolbox#adapters#vim_texteditor#construct(),
     \ }
 
     function public.deleteSelectedText() closure
@@ -125,8 +125,8 @@ function refactoring_toolbox#extract_method#adapters#vim_texteditor#construct(po
         call cursor(a:line, 0)
     endfunction
 
-    function public.writeText(text) closure
-        call private.parent.writeText(a:text)
+    function public.insertText(text) closure
+        call parent.insertText(a:text)
     endfunction
 
     function public.getIndentationLevelOfLine(line) closure

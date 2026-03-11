@@ -4,7 +4,9 @@ let s:SEARCH_NOT_FOUND = 0
 
 function refactoring_toolbox#adapters#vim_texteditor#construct()
     let public = #{}
-    let private = #{}
+    let private = #{
+        \ previousPasteConfig: v:null,
+    \ }
 
     function public.replaceStringWithTextBetweenLines(searchString, replaceWithText, startLine, endLine) closure
         let l:searchPattern = '\V'.escape(a:searchString, '\')
@@ -33,17 +35,34 @@ function refactoring_toolbox#adapters#vim_texteditor#construct()
         return expand('<cword>')
     endfunction
 
-    function public.writeText(text) closure
-        if 1 == &l:paste
-            let l:backuppaste = 'paste'
-        else
-            let l:backuppaste = 'nopaste'
-        endif
+    function public.appendText(text) closure
+        call private.backupPaste()
+
         setlocal paste
+        execute 'normal! a' . a:text
 
-        exec 'normal! i' . a:text
+        call private.restorePaste()
+    endfunction
 
-        exec 'setlocal '.l:backuppaste
+    function public.insertText(text) closure
+        call private.backupPaste()
+
+        setlocal paste
+        execute 'normal! i' . a:text
+
+        call private.restorePaste()
+    endfunction
+
+    function private.backupPaste() closure
+        if 1 == &l:paste
+            let private.previousPasteConfig = 'paste'
+        else
+            let private.previousPasteConfig = 'nopaste'
+        endif
+    endfunction
+
+    function private.restorePaste() closure
+        execute 'setlocal ' . private.previousPasteConfig
     endfunction
 
     return public

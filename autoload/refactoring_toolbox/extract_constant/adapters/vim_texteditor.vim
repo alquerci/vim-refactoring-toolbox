@@ -1,56 +1,40 @@
 call refactoring_toolbox#adapters#vim#begin_script()
 
 function refactoring_toolbox#extract_constant#adapters#vim_texteditor#make()
-    let l:this = #{}
+    let public = #{}
+    let private = #{}
+    let parent = refactoring_toolbox#adapters#vim_texteditor#construct()
 
-    call extend(l:this, refactoring_toolbox#adapters#vim_texteditor#construct())
-    call extend(l:this, s:self)
+    function public.isInVisualBlockMode() closure
+        return visualmode() == ''
+    endfunction
 
-    return l:this
-endfunction
+    function public.isInVisualLineMode() closure
+        return visualmode() == 'V'
+    endfunction
 
-let s:self = #{}
+    function public.moveToLine(line) closure
+        call cursor(a:line, 0)
+    endfunction
 
-function s:self.isInVisualBlockMode()
-    return visualmode() == ''
-endfunction
+    function public.appendText(text) closure
+        call append(line('.'), '')
+        call cursor(line('.') + 1, 0)
 
-function s:self.isInVisualLineMode()
-    return visualmode() == 'V'
-endfunction
+        call parent.insertText(a:text)
+    endfunction
 
-function s:self.appendText(text)
-    call append(line('.'), '')
-    call cursor(line('.') + 1, 0)
+    function public.autoIndentLinesFromLine(totalLines, firstLine) closure
+        let l:backupPosition = getcurpos()
 
-    call s:writeText(a:text)
-endfunction
+        call cursor(a:firstLine, 0)
 
-function s:self.moveToLine(line)
-    call cursor(a:line, 0)
-endfunction
+        execute 'normal ='.a:totalLines.'='
 
-function s:writeText(text)
-    if 1 == &l:paste
-        let l:backuppaste = 'paste'
-    else
-        let l:backuppaste = 'nopaste'
-    endif
-    setlocal paste
+        call setpos('.', l:backupPosition)
+    endfunction
 
-    exec 'normal! i' . a:text
-
-    exec 'setlocal '.l:backuppaste
-endfunction
-
-function s:self.autoIndentLinesFromLine(totalLines, firstLine)
-    let l:backupPosition = getcurpos()
-
-    call cursor(a:firstLine, 0)
-
-    execute 'normal ='.a:totalLines.'='
-
-    call setpos('.', l:backupPosition)
+    return extend(public, parent, 'keep')
 endfunction
 
 call refactoring_toolbox#adapters#vim#end_script()

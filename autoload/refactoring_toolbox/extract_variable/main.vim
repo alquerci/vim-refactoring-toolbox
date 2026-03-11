@@ -7,6 +7,7 @@ function refactoring_toolbox#extract_variable#main#execute() range
         \ refactoring_toolbox#adapters#input#make(),
         \ refactoring_toolbox#adapters#output#make(),
         \ refactoring_toolbox#extract_variable#adapters#php_language#make(),
+        \ refactoring_toolbox#adapters#vim_texteditor#construct(),
     \ )
 endfunction
 
@@ -17,6 +18,7 @@ function refactoring_toolbox#extract_variable#main#extractVariableForJavascript(
         \ refactoring_toolbox#adapters#input#make(),
         \ refactoring_toolbox#adapters#output#make(),
         \ refactoring_toolbox#extract_variable#adapters#js_language#make(),
+        \ refactoring_toolbox#adapters#vim_texteditor#construct(),
     \ )
 endfunction
 
@@ -27,6 +29,7 @@ function refactoring_toolbox#extract_variable#main#extractVariableForTypescript(
         \ refactoring_toolbox#adapters#input#make(),
         \ refactoring_toolbox#adapters#output#make(),
         \ refactoring_toolbox#extract_variable#adapters#js_language#make(),
+        \ refactoring_toolbox#adapters#vim_texteditor#construct(),
     \ )
 endfunction
 
@@ -37,6 +40,7 @@ function refactoring_toolbox#extract_variable#main#extractVariableForVim() range
         \ refactoring_toolbox#adapters#input#make(),
         \ refactoring_toolbox#adapters#output#make(),
         \ refactoring_toolbox#extract_variable#adapters#vim_language#make(),
+        \ refactoring_toolbox#adapters#vim_texteditor#construct(),
     \ )
 endfunction
 
