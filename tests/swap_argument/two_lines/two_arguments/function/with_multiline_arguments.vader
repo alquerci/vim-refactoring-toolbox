@@ -13,4 +13,7 @@ Do:
 Expect:
   <?php
 
-  someFunctionName($first, $second)
+  someFunctionName(
+  $first,
+   $second
+  )

@@ -13,4 +13,7 @@ Do:
 Expect:
   <?php
 
-  ($second, $first)
+  (
+  $second,
+   $first
+  )

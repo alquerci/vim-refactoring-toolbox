@@ -5,14 +5,18 @@ let s:DELIMITER_START = '('
 let s:DELIMITER_END = ')'
 let s:NOT_MATCHED = -1
 
-function refactoring_toolbox#swap_argument#argument_swapper#construct(texteditor)
+function refactoring_toolbox#swap_argument#argument_swapper#construct(texteditor, multiliner)
     let public = #{}
     let private = #{
         \ texteditor: a:texteditor,
+        \ multiliner: a:multiliner,
+        \ hasMultiLines : v:false,
     \ }
 
     function public.execute() closure
+        let private.hasMultiLines = v:false
         let l:arguments = private.readArguments()
+
         let l:index = private.findArgumentIndex(l:arguments)
 
         call private.swapArgumentIndexForArguments(l:index, l:arguments)
@@ -27,9 +31,11 @@ function refactoring_toolbox#swap_argument#argument_swapper#construct(texteditor
 
         let l:start = searchpairpos(s:DELIMITER_START, '', s:DELIMITER_END, 'zcWb')
         let l:end = searchpairpos(s:DELIMITER_START, s:SEPARATOR, s:DELIMITER_END, 'zW')
+        let l:startLine = l:start[0]
 
         while 0 != l:end[1]
             let l:lines = private.getLinesBetweenLineColumnPairsExclude(l:start, l:end)
+
             call add(l:arguments, join(l:lines, ''))
 
             if private.lineColumnIsOnEndDelimiter(l:end[0], l:end[1])
@@ -39,6 +45,8 @@ function refactoring_toolbox#swap_argument#argument_swapper#construct(texteditor
             let l:start = l:end
             let l:end = searchpairpos(s:DELIMITER_START, s:SEPARATOR, s:DELIMITER_END, 'zW')
         endwhile
+
+        let private.hasMultiLines = l:startLine != l:end[0]
 
         if "" == trim(l:arguments[-1], ' ')
             call remove(l:arguments, -1)
@@ -144,6 +152,10 @@ function refactoring_toolbox#swap_argument#argument_swapper#construct(texteditor
         call private.clearArguments()
 
         call private.texteditor.insertText(l:swap)
+
+        if private.hasMultiLines
+            call private.multiliner.execute()
+        endif
 
         call setpos('.', l:backupPosition)
     endfunction

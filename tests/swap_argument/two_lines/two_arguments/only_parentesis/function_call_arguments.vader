@@ -1,8 +1,8 @@
 Given php:
   <?php
 
-  ($first,
-  $second)
+  (first(),
+  second())
 
 Do:
   /first\<Enter>
@@ -12,6 +12,6 @@ Expect:
   <?php
 
   (
-  $second,
-   $first
+  second(),
+   first()
   )
