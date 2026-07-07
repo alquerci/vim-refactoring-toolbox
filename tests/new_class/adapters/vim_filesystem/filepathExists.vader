@@ -16,6 +16,6 @@ Execute (filepathExists(directory) == v:true):
 
 Execute (filepathExists(symlink) == v:true):
   call writefile([], g:test_tmpdir.'/file')
-  call system('ln -sr '.shellescape(g:test_tmpdir.'/file').' '.shellescape(g:test_tmpdir.'/symlink'))
+  call system('ln -s '.shellescape(g:test_tmpdir.'/file').' '.shellescape(g:test_tmpdir.'/symlink'))
 
   Assert refactoring_toolbox#new_class#adapters#vim_filesystem#make().filepathExists(g:test_tmpdir.'/symlink')

@@ -11,7 +11,7 @@ filetype indent on
 syntax enable
 
 let g:refactoring_toolbox_usage_logdir = './var/log'
-let g:test_tmpdir = './var/tmp'
+let g:test_tmpdir = getcwd().'/var/tmp'
 let s:adapters_phpactor_rpc_calls = []
 let g:refactoring_toolbox_adapters_phpactor = 'spy'
 
