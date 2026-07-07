@@ -5,6 +5,7 @@ let s:regex_func_line = refactoring_toolbox#adapters#regex#func_line
 let s:regex_after_word_boundary = refactoring_toolbox#adapters#regex#after_word_boundary
 let s:regex_case_sensitive = refactoring_toolbox#adapters#regex#case_sensitive
 let s:regex_local_var_prefix = refactoring_toolbox#adapters#regex#local_var_prefix
+let s:regex_static_func = refactoring_toolbox#adapters#regex#static_func
 let s:NO_MATCH = -1
 
 function refactoring_toolbox#extract_property#php#execute(texteditor)
@@ -33,8 +34,17 @@ endfunction
 
 function s:replaceVariableWithPropertyAccess(name)
     let l:variablePattern = s:makeVariablePattern(a:name)
+    let l:replacement = s:makePropertyUsage(a:name)
 
-    call s:replaceInCurrentFunction(l:variablePattern, '$this->'.a:name)
+    call s:replaceInCurrentFunction(l:variablePattern, l:replacement)
+endfunction
+
+function s:makePropertyUsage(name)
+    if s:isInStaticMethod()
+        return 'self::$'.a:name
+    else
+        return '$this->'.a:name
+    endif
 endfunction
 
 function s:makeVariablePattern(variableName)
@@ -71,12 +81,21 @@ function s:addPropertyDeclaration(name)
     let l:backupPosition = getcurpos()
 
     let l:indent = s:detectIntentation()
+    let l:declaration = s:makePropertyDeclaration(a:name)
 
     call s:moveToLineToInsertNewProperty()
-    call s:writeLine(l:indent.'private $'.a:name.';')
+    call s:writeLine(l:indent.l:declaration)
     call s:writeLine('')
 
     call setpos('.', l:backupPosition)
+endfunction
+
+function s:makePropertyDeclaration(name)
+    if s:isInStaticMethod()
+        return 'private static $'.a:name.';'
+    else
+        return 'private $'.a:name.';'
+    endif
 endfunction
 
 function s:detectIntentation()
@@ -142,6 +161,13 @@ function s:findCurrentFunctionDeclarationLineRange()
     return [l:startLine, l:stopLine]
 endfunction
 
+function s:isInStaticMethod()
+    let [l:startLine, _] = s:findCurrentFunctionDeclarationLineRange()
+    let l:definitionLine = getline(l:startLine)
+
+    return match(l:definitionLine, s:regex_static_func) != s:NO_MATCH
+endfunction
+
 function s:addAssignFromArgument(name)
     let l:backupPosition = getcurpos()
 
@@ -149,7 +175,9 @@ function s:addAssignFromArgument(name)
 
     call s:moveToLineToInsertAssignFromArgument()
 
-    call s:writeLine(l:indent.l:indent.'$this->'.a:name.' = $'.a:name.';')
+    let l:assignment = s:makePropertyUsage(a:name).' = $'.a:name.';'
+
+    call s:writeLine(repeat(l:indent, 2).l:assignment)
     call s:writeLine('')
 
     call setpos('.', l:backupPosition)

@@ -1,5 +1,12 @@
 #! /bin/sh -eu
 
+main ()
+{
+    installVader
+
+    vim -esNu tests/fixtures/vimrc -c 'Vader! -x -q '"${1-tests/**}"
+}
+
 installVader ()
 {
     vaderdir='vendor/vader.vim'
@@ -26,6 +33,4 @@ installVader ()
     }
 }
 
-installVader
-
-vim -esNu tests/fixtures/vimrc -c 'Vader! -x -q '"${1-tests/**}"
+main ${1+"$@"}
